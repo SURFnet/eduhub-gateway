@@ -2,9 +2,17 @@
 
 * Running tests
 
+  Run all tests with:
+
   #+begin_src sh
     docker-compose -f docker-compose.test.yml build
     npm test
+  #+end_src
+
+  Run all but the integration tests with:
+
+  #+begin_src sh
+    MOCKA_SKIP=integration npm test
   #+end_src
 
 * Security
