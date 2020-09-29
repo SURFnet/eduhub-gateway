@@ -7,6 +7,9 @@ apiEndpoints:
   api:
     host: localhost
     paths: '/ip'
+  example:
+    host: localhost
+    paths: '/example'
 serviceEndpoints:
   httpbin:
     url: 'https://httpbin.org'
@@ -19,6 +22,7 @@ policies:
   - oauth2
   - proxy
   - rate-limit
+  - example
 pipelines:
   default:
     apiEndpoints:
@@ -30,3 +34,8 @@ pipelines:
           - action:
               serviceEndpoint: httpbin 
               changeOrigin: true
+  example:
+    apiEndpoints:
+      - example
+    policies:
+      - example:

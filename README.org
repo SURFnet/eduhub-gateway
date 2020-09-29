@@ -1,4 +1,10 @@
-* Surf OOAPI Gateway
+#+TITLE:  Surf OOAPI Gateway
+
+* Running tests
+
+  #+begin_src sh
+    npm test
+  #+end_src
 
 * Security
 
