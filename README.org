@@ -2,5 +2,5 @@
 
 * Security
 
-See [[docs/security.org]] on the strategies we use to keep the gateway
+See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
 secure.

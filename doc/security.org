@@ -1,20 +1,20 @@
 #+TITLE: OOAPI Gateway Security
 
 Since the OOAPI Gateway will be channeling sensitive information to
-users over the public internet, we must make sure the implementation
+users over the public Internet, we must make sure the implementation
 will stay secure.
 
 * Encryption
 
-  The provided configuration and codebase must use in-flight
+  The provided configuration and code base must use in-flight
   encryption to protect users from eavesdropping by third parties.
 
   Strategy: the standard configurations provided will have TLS
   encryption configured for all connections to external services and
-  for incoming connections from clients. Non-encrypted inncoming
+  for incoming connections from clients. Non-encrypted incoming
   connections will not be accepted.
 
-  Since we don't want to modify the ~Express Gateway~ codebase
+  Since we don't want to modify the ~Express Gateway~ code base
   directly (see [[Updating dependencies][Updating Dependencies]]), this will need to be done via
   the standard configuration mechanism. Comments warning against
   changing the relevant settings will be included in the configuration
@@ -26,17 +26,17 @@ will stay secure.
   system against known issues.
 
   Strategy: avoid modifying dependencies down-stream. Use dependencies
-  as provided. Only fork codebases temporarily, when changes will be
+  as provided. Only fork code bases temporarily, when changes will be
   integrated up-stream in a later release.
 
   In practice this means that ~Express Gateway~ is included as a
-  straight dependency in [[../package.json]], that [[../package-lock.json]] is
+  normal dependency in [[../package.json]], that [[../package-lock.json]] is
   used to specify exact versions of all dependencies and we do not
   include ~node_modules~ in the repository.
 
   All OOAPI Gateway specific functionality is implemented using
   standard Express Gateway extension points (custom policies and
-  configuration of standard mechanims).
+  configuration of standard mechanisms).
 
 * Logging
 
@@ -51,8 +51,8 @@ will stay secure.
   Request/response logging: never log a full request or response; do not
   log request or response bodies, do not log authentication tokens, user
   names, passwords, tokens or other credentials. Explicitly specify
-  headers and other data to be logged (use allowlists, not
-  denylists). Do not relax these constraints when logging failed
+  headers and other data to be logged (use allow-lists, not
+  deny-lists). Do not relax these constraints when logging failed
   attempts at authentication.
 
   Configuration logging: never log credentials from the configuration.
@@ -60,15 +60,15 @@ will stay secure.
 * Caching
 
   A buggy caching algorithm can leak information between users. The best
-  way to prevent bugs is to make the codebase simpler and smaller.
+  way to prevent bugs is to make the code base simpler and smaller.
 
   Strategy: cache as little as possible.
 
-  Reponse caching: because some information returned can be personal,
+  Response caching: because some information returned can be personal,
   do not cache responses or response content to avoid returning
   personalized data to the wrong users.
 
-  Temporary authentication tokens: OAuth and OpenID Connect use
+  Temporary authentication tokens: OAuth and Open ID Connect use
   temporary tokens for authentication. When using these authentication
   mechanisms for authenticating the gateway against the backend
   services, the temporary tokens should be cached to prevent overloading
