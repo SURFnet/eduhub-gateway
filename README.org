@@ -3,6 +3,7 @@
 * Running tests
 
   #+begin_src sh
+    docker-compose -f docker-compose.test.yml build
     npm test
   #+end_src
 

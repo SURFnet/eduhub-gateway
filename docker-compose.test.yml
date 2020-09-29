@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  gw-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "8080:8080"
