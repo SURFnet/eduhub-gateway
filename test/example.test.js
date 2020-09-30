@@ -16,14 +16,14 @@ describe('example', () => {
       calledNext = gotStatus = undefined;
       middleware({headers: {example: true}}, res, next);
       assert(!calledNext);
-      assert(gotStatus === 200);
+      assert.equal(gotStatus, 200);
     });
 
     it('without example header calls sendStatus(400)', () => {
       calledNext = gotStatus = undefined;
       middleware({headers: {}}, res, next);
       assert(!calledNext);
-      assert(gotStatus === 400);
+      assert.equal(gotStatus, 400);
     })
   });
 });

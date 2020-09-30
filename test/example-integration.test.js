@@ -36,12 +36,12 @@ describe('example integration with container', () => {
   it('should respond with 400 without example header', async () => {
     const port = gwContainer.getMappedPort(8080);
     const res = await httpGet(`http://localhost:${port}/example`);
-    assert(res.status === 400, `expected status 400 but got ${res.status}`);
+    assert.equal(res.status, 400);
   });
 
   it('should respond with 200 with example header', async () => {
     const port = gwContainer.getMappedPort(8080);
     const res = await httpGet(`http://localhost:${port}/example`, {headers: {Example: true}});
-    assert(res.status === 200, `expected status 200 but got ${res.status}`);
+    assert.equal(res.status, 200);
   });
 });
