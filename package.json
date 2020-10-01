@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "express-gateway": "^1.16.10",
-    "express-openapi-validator": "4.0.0-beta.2"
+    "express-openapi-validator": "^4.0.0-beta.2",
+    "winston": "^3.2.1"
   }
 }
