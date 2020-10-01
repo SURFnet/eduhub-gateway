@@ -1,4 +1,7 @@
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel("[OAGW:Validator]");
+const validator = require('express-openapi-validator');
+const bodyParser = require("body-parser");
+const {squashMiddlewareStack} = require("../lib/utils.js");
 
 module.exports = {
   name: "openapi-validator",
@@ -23,11 +26,7 @@ module.exports = {
   },
   policy: ({apiSpec, validateRequests, validateResponses}) => {
     logger.info("Instantiating validator",apiSpec, validateRequests, validateResponses);
-    const OpenApiValidator = require('express-openapi-validator');
-    const bodyParser = require("body-parser");
-
-    const {squashMiddlewareStack} = require("../lib/utils.js");
-    const middlewareStack =  OpenApiValidator.middleware( {apiSpec, validateRequests, validateResponses} );
+    const middlewareStack =  validator.middleware( {apiSpec, validateRequests, validateResponses} );
     middlewareStack.unshift(bodyParser.urlencoded({extended: false}));
     middlewareStack.unshift(bodyParser.text());
     middlewareStack.unshift(bodyParser.json());
