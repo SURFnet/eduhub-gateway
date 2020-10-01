@@ -25,6 +25,6 @@
   First, install [[https://nodejs.org/en/][NodeJS + NPM]]
 
   #+BEGIN_SRC sh
- $ npm install # install js dependencies
- $ npm start # run the gateway
+    npm install # install js dependencies
+    npm start # run the gateway
   #+END_SRC
