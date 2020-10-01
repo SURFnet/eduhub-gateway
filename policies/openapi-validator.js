@@ -1,4 +1,4 @@
-const logger = require('../lib/logger').createLoggerWithLabel("[OAGW:Validator]");
+const logger = require('express-gateway/lib/logger').createLoggerWithLabel("[OAGW:Validator]");
 
 module.exports = {
   name: "openapi-validator",
