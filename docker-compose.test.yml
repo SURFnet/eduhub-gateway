@@ -6,3 +6,7 @@ services:
       dockerfile: Dockerfile.test
     ports:
       - "8080:8080"
+    links:
+      - ooapi-mock
+  ooapi-mock:
+    image: "jlmr/ooapi-mock:latest"
