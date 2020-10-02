@@ -13,6 +13,7 @@
     "testcontainers": "^3.4.11"
   },
   "dependencies": {
-    "express-gateway": "^1.16.10"
+    "express-gateway": "^1.16.10",
+    "express-openapi-validator": "^4.0.0-beta.2"
   }
 }

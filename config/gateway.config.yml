@@ -6,13 +6,13 @@ admin:
 apiEndpoints:
   api:
     host: localhost
-    paths: '/ip'
+    paths: ['/', '/courses','/courses/*', '/organizations','/organizations/*','/buildings','/buildings/*']
   example:
     host: localhost
     paths: '/example'
 serviceEndpoints:
-  httpbin:
-    url: 'https://httpbin.org'
+  mockOwl:
+    url: 'https://mock.owl.surf.nl/'
 policies:
   - basic-auth
   - cors
@@ -23,19 +23,23 @@ policies:
   - proxy
   - rate-limit
   - example
+  - openapi-validator
 pipelines:
-  default:
-    apiEndpoints:
-      - api
-    policies:
-    # Uncomment `key-auth:` when instructed to in the Getting Started guide.
-    # - key-auth:
-      - proxy:
-          - action:
-              serviceEndpoint: httpbin 
-              changeOrigin: true
   example:
     apiEndpoints:
       - example
     policies:
       - example:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      - openapi-validator:
+          - action:
+              apiSpec: "ooapiv4.json"
+              validateResponses: true
+              validateRequests: true
+      - proxy:
+          - action:
+              serviceEndpoint: mockOwl
+              changeOrigin: true

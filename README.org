@@ -17,5 +17,14 @@
 
 * Security
 
-See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
-secure.
+  See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
+  secure.
+
+* Setting up development environment
+
+  First, install [[https://nodejs.org/en/][NodeJS + NPM]]
+
+  #+BEGIN_SRC sh
+    npm install # install js dependencies
+    npm start # run the gateway
+  #+END_SRC
