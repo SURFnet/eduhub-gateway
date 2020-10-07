@@ -11,7 +11,7 @@ const appFromRequest = (req, apps) => {
   if (credEncoded) {
     const cred = Buffer.from(credEncoded, 'base64').toString('utf-8');
     const [_, user, pass] = cred.match(/^([^:]+):(.*)/) || [];
-    const app = apps.find(({id}) => id === user);
+    const app = apps[user];
 
     if (app && hashPassword(pass, app.passwordSalt) === app.passwordHash) {
       return user;

@@ -27,20 +27,20 @@ describe('gatekeeper/authentication', () => {
   describe('appFromRequest', () => {
     let salt;
 
-    const apps = [{
-      id: 'fred',
-      passwordHash: authentication.hashPassword('wilma', salt = uuid()),
-      passwordSalt: salt
-    }, {
-      id: 'barney',
-      passwordHash: authentication.hashPassword('betty', salt = uuid()),
-      passwordSalt: salt
-    }, {
-      id: 'with-colon', // note: it's not possible to have a colon in
-                        // the user id with basic authentication
-      passwordHash: authentication.hashPassword('with:colon', salt = uuid()),
-      passwordSalt: salt
-    }];
+    const apps = {
+      fred: {
+        passwordHash: authentication.hashPassword('wilma', salt = uuid()),
+        passwordSalt: salt
+      },
+      barney: {
+        passwordHash: authentication.hashPassword('betty', salt = uuid()),
+        passwordSalt: salt
+      },
+      'with-colon': { // note: it's not possible to have a colon in the user id with basic authentication
+        passwordHash: authentication.hashPassword('with:colon', salt = uuid()),
+        passwordSalt: salt
+      }
+    };
 
     const authorizationHeader = (user, pass) => (
       `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`

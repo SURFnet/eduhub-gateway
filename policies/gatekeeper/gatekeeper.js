@@ -1,4 +1,5 @@
 const authentication = require('./authentication');
+const credentials = require('./credentials');
 
 const realm =
       process.env.SURFNET_OOAPI_GW_CLIENT_REALM ||
@@ -6,7 +7,7 @@ const realm =
 
 module.exports = (params) => (
   (req, res, next) => {
-    if (authentication.appFromRequest(req, params.apps)) {
+    if (authentication.appFromRequest(req, credentials.read())) {
       delete req.headers.authorization;
       next();
     } else {

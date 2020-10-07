@@ -4,21 +4,8 @@ module.exports = {
   schema: {
     $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-gatekeeper.json',
     type: 'object',
-    properties: {
-      apps: {
-        type: 'array',
-        items: {
-          type: 'object',
-          required: ['id', 'passwordHash', 'passwordSalt'],
-          properties: {
-            id: {type: 'string'},
-            passwordHash: {type: 'string'},
-            passwordSalt: {type: 'string'}
-          }
-        }
-      }
-    },
-    required: ['apps']
+    properties: {},
+    required: []
   },
 
   policy: require('./gatekeeper.js')
