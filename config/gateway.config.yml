@@ -24,11 +24,13 @@ policies:
   - rate-limit
   - example
   - openapi-validator
+  - gatekeeper
 pipelines:
   example:
     apiEndpoints:
       - example
     policies:
+      - gatekeeper:
       - example:
   default:
     apiEndpoints:

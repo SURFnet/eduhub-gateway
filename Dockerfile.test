@@ -2,6 +2,8 @@ FROM node:lts
 
 ADD . /app
 WORKDIR /app
+COPY config/credentials.json.test config/credentials.json
+
 
 RUN npm install
 CMD npm start
