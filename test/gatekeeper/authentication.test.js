@@ -1,14 +1,16 @@
-const {v4:uuid} = require('uuid');
 const assert = require('assert');
+const crypto = require('crypto');
 
 const authentication = require('../../policies/gatekeeper/authentication');
 
+const randomString = () => crypto.randomBytes(16).toString('hex');
+
 describe('gatekeeper/authentication', () => {
   describe('hashPassword', () => {
-    const pass = uuid();
-    const otherPass = uuid();
-    const salt = uuid();
-    const otherSalt = uuid();
+    const pass = randomString();
+    const otherPass = randomString();
+    const salt = randomString();
+    const otherSalt = randomString();
 
     assert.equal(
       authentication.hashPassword(pass, salt),
@@ -29,15 +31,15 @@ describe('gatekeeper/authentication', () => {
 
     const apps = {
       fred: {
-        passwordHash: authentication.hashPassword('wilma', salt = uuid()),
+        passwordHash: authentication.hashPassword('wilma', salt = randomString()),
         passwordSalt: salt
       },
       barney: {
-        passwordHash: authentication.hashPassword('betty', salt = uuid()),
+        passwordHash: authentication.hashPassword('betty', salt = randomString()),
         passwordSalt: salt
       },
       'with-colon': { // note: it's not possible to have a colon in the user id with basic authentication
-        passwordHash: authentication.hashPassword('with:colon', salt = uuid()),
+        passwordHash: authentication.hashPassword('with:colon', salt = randomString()),
         passwordSalt: salt
       }
     };
