@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "mocha -t 60000 test/*.test.js test/**/*.test.js"
+    "test": "mocha --require test/integration.hook.js -t 60000 test/*.test.js test/**/*.test.js"
   },
   "devDependencies": {
     "mocha": "^8.1.3",
