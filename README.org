@@ -20,6 +20,27 @@
   See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
   secure.
 
+** Client authentication
+
+   Use the [[./bin/credentials]] command line tool to /create/, /update/
+   and /delete/ client credentials.
+
+   #+begin_src sh
+     ./bin/credentials create myapp
+   #+end_src
+
+   Will update [[./config/credentials.json]] file and output credentials
+   to be used with basic authentication.  In the following example
+   ~myapp~ is the username part and ~0123456789abcdef0123456789abcdef~
+   is the password.
+
+   #+begin_example
+     myapp:0123456789abcdef0123456789abcdef
+   #+end_example
+
+   Please note: only a hash of the password is stored, the password
+   itself is not stored.
+
 * Setting up development environment
 
   First, install [[https://nodejs.org/en/][NodeJS + NPM]]
