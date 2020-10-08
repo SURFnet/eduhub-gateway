@@ -8,20 +8,26 @@ const credentialsFile = path.join(
 );
 
 let credentials = null;
-if (fs.existsSync(credentialsFile)) {
+
+try {
   fs.watch(credentialsFile, {persistent: false}, () => credentials = null);
+  logger.debug('Watching credentials');
+} catch (err) {
+  if (err.code !== 'ENOENT') {
+    logger.warn(`Can't watch ${credentialsFile}: ${err}`);
+  }
 }
 
 const read = () => {
   if (!credentials) {
     try {
-      logger.info('Loading credentials');
+      logger.debug('Loading credentials');
       credentials = JSON.parse(fs.readFileSync(credentialsFile));
     } catch (err) {
       if (err.code === 'ENOENT') {
         credentials = {};
       } else {
-        console.error(`Can't read from ${credentialsFile}: ${err}`);
+        logger.error(`Can't read from ${credentialsFile}: ${err}`);
         process.exit(1);
       }
     }
@@ -40,7 +46,7 @@ const write = (newCredentials) => {
 
     credentials = newCredentials;
   } catch (err) {
-    console.error(`Can't write to ${credentialsFile}: ${err}`);
+    logger.error(`Can't write to ${credentialsFile}: ${err}`);
     process.exit(1);
   }
 }
