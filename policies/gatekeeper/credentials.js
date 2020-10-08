@@ -12,6 +12,10 @@ let credentials = null;
 try {
   fs.watch(credentialsFile, {persistent: false}, () => credentials = null);
   logger.debug('Watching credentials');
+
+  if (fs.statSync(credentialsFile).mode & 0o04) {
+    logger.warn(`Credentials file world readable: ${credentialsFile}`);
+  }
 } catch (err) {
   if (err.code !== 'ENOENT') {
     logger.warn(`Can't watch ${credentialsFile}: ${err}`);
