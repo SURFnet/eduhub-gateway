@@ -10,3 +10,6 @@ services:
       - ooapi-mock
   ooapi-mock:
     image: "jlmr/ooapi-mock:latest"
+    ports:
+      - "8081:8080"
+      

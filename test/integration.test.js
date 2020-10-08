@@ -22,6 +22,8 @@ describe('in integration environment', () => {
       const composeFilePath = path.resolve(__dirname, "..");
       const composeFile = "docker-compose.test.yml";
 
+      process.env.OOAPI_MOCK_URL='http://ooapi-mock:8080/';
+
       environment = await new DockerComposeEnvironment(composeFilePath, composeFile).
         withWaitStrategy("surf-ooapi-gateway_ooapi-mock_1",Wait.forLogMessage("port:")).up();
 

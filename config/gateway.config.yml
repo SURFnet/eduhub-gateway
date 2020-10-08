@@ -12,7 +12,7 @@ apiEndpoints:
     paths: '/example'
 serviceEndpoints:
   mockOwl:
-    url: 'http://ooapi-mock:8080/'
+    url: '${OOAPI_MOCK_URL:-http://localhost:8081}'
 policies:
   - basic-auth
   - cors
