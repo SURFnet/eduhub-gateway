@@ -64,19 +64,19 @@ describe('gatekeeper/authentication', () => {
       );
     });
 
-    it('should return nothing with bad from basic authentication credentials', () => {
+    it('should return nothing with bad basic authentication credentials', () => {
       assert.equal(
         authentication.appFromRequest({
           headers: {authorization: authorizationHeader('fred', 'betty')}
         }, apps),
-        undefined
+        null
       );
     });
 
     it('should return nothing without basic authentication header', () => {
       assert.equal(
         authentication.appFromRequest({headers: {}}, apps),
-        undefined
+        null
       );
     });
 
@@ -85,7 +85,7 @@ describe('gatekeeper/authentication', () => {
         authentication.appFromRequest({
           headers: {authorization: 'Basic bamm-bamm'}
         }, apps),
-        undefined
+        null
       );
     });
   });

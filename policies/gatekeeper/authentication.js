@@ -18,7 +18,7 @@ const appFromRequest = (req, apps) => {
     }
   }
 
-  return undefined;
+  return null;
 };
 
 module.exports = {
