@@ -32,8 +32,7 @@ module.exports = {
   integrationContext: (description, callback) => {
     if (skipTest) {
       describe.skip(description, callback);
-    }
-    else {
+    } else {
       describe(description,callback);
     }
   },
