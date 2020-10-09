@@ -1,5 +1,9 @@
 #+TITLE:  Surf OOAPI Gateway
 
+* Status
+
+Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
+
 * Running tests
 
   Run all tests with:
