@@ -10,9 +10,9 @@ integrationContext('validation policy', function () {
     assert.strictEqual(res.statusCode, 200)
   })
 
-  it('should respond with 400 when specifying an unknown parameter', async () => {
+  it('should respond with 400 when specifying a parameter with the wrong format', async () => {
     const port = gwContainer().getMappedPort(8080)
-    const res = await httpGet(`http://localhost:${port}/courses?foo=bar`)
+    const res = await httpGet(`http://localhost:${port}/courses?pageNumber=bar`)
     assert.strictEqual(res.statusCode, 400)
   })
 })

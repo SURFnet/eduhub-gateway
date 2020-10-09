@@ -1,7 +1,10 @@
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
-const validator = require('express-openapi-validator')
+const { OpenApiValidator } = require('express-openapi-validate')
 const bodyParser = require('body-parser')
+const fs = require('fs')
+const jsYaml = require('js-yaml')
 const { squashMiddlewareStack } = require('../lib/utils.js')
+const mung = require('express-mung')
 
 module.exports = {
   name: 'openapi-validator',
@@ -25,8 +28,22 @@ module.exports = {
     required: ['apiSpec']
   },
   policy: ({ apiSpec, validateRequests, validateResponses }) => {
-    logger.info(`Instantiating validator for spec ${apiSpec}, ${validateRequests}, ${validateResponses}`)
-    const middlewareStack = validator.middleware({ apiSpec, validateRequests, validateResponses })
+    logger.info(`Initializing validator for ${apiSpec}`)
+    const openApiDocument = jsYaml.safeLoad(
+      fs.readFileSync(apiSpec, 'utf-8')
+    )
+    const validator = new OpenApiValidator(openApiDocument)
+    const middlewareStack = []
+    if (validateRequests) {
+      middlewareStack.push(validator.match())
+    }
+    if (validateResponses) {
+      logger.info('validating responses')
+      middlewareStack.push(mung.json((body, req, res) => {
+        logger.info(`body: ${body}`)
+        return body
+      }))
+    }
     middlewareStack.unshift(bodyParser.urlencoded({ extended: false }))
     middlewareStack.unshift(bodyParser.text())
     middlewareStack.unshift(bodyParser.json())
