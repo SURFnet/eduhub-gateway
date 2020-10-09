@@ -25,7 +25,7 @@ module.exports = {
     required: ['apiSpec']
   },
   policy: ({ apiSpec, validateRequests, validateResponses }) => {
-    logger.info('Instantiating validator', apiSpec, validateRequests, validateResponses)
+    logger.info(`Instantiating validator for spec ${apiSpec}, ${validateRequests}, ${validateResponses}`)
     const middlewareStack = validator.middleware({ apiSpec, validateRequests, validateResponses })
     middlewareStack.unshift(bodyParser.urlencoded({ extended: false }))
     middlewareStack.unshift(bodyParser.text())
