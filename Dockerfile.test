@@ -1,6 +1,6 @@
 FROM node:lts
 
-ADD . /app
+COPY . /app
 WORKDIR /app
 COPY config/credentials.json.test config/credentials.json
 
