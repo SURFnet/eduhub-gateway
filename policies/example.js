@@ -9,9 +9,9 @@ module.exports = {
   policy: (actionParams) => {
     return (req, res, next) => {
       if (req.headers.example) {
-        res.sendStatus(200);
+        res.sendStatus(200)
       } else {
-        res.sendStatus(400);
+        res.sendStatus(400)
       }
     }
   }

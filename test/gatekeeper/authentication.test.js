@@ -1,34 +1,35 @@
-const assert = require('assert');
-const crypto = require('crypto');
+/* eslint-env mocha */
 
-const authentication = require('../../policies/gatekeeper/authentication');
+const assert = require('assert')
+const crypto = require('crypto')
 
-const randomString = () => crypto.randomBytes(16).toString('hex');
+const authentication = require('../../policies/gatekeeper/authentication')
+
+const randomString = () => crypto.randomBytes(16).toString('hex')
 
 describe('gatekeeper/authentication', () => {
   describe('hashPassword', () => {
-    const pass = randomString();
-    const otherPass = randomString();
-    const salt = randomString();
-    const otherSalt = randomString();
+    const pass = randomString()
+    const otherPass = randomString()
+    const salt = randomString()
+    const otherSalt = randomString()
 
-    assert.equal(
+    assert.strictEqual(
       authentication.hashPassword(pass, salt),
       authentication.hashPassword(pass, salt)
-    );
-    assert.notEqual(
+    )
+    assert.notStrictEqual(
       authentication.hashPassword(pass, salt),
       authentication.hashPassword(pass, otherSalt)
-    );
-    assert.notEqual(
+    )
+    assert.notStrictEqual(
       authentication.hashPassword(otherPass, salt),
       authentication.hashPassword(pass, salt)
-    );
-  });
+    )
+  })
 
   describe('appFromRequest', () => {
-    let salt;
-
+    let salt
     const apps = {
       fred: {
         passwordHash: authentication.hashPassword('wilma', salt = randomString()),
@@ -42,53 +43,53 @@ describe('gatekeeper/authentication', () => {
         passwordHash: authentication.hashPassword('with:colon', salt = randomString()),
         passwordSalt: salt
       }
-    };
+    }
 
     const authorizationHeader = (user, pass) => (
       `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`
     )
 
     it('should return app from basic authentication', () => {
-      assert.equal(
+      assert.strictEqual(
         authentication.appFromRequest({
-          headers: {authorization: authorizationHeader('fred', 'wilma')}
+          headers: { authorization: authorizationHeader('fred', 'wilma') }
         }, apps),
         'fred'
-      );
-    });
+      )
+    })
 
     it('should allow colon in password', () => {
-      assert.equal(
+      assert.strictEqual(
         authentication.appFromRequest({
-          headers: {authorization: authorizationHeader('with-colon', 'with:colon')}
+          headers: { authorization: authorizationHeader('with-colon', 'with:colon') }
         }, apps),
         'with-colon'
-      );
-    });
+      )
+    })
 
     it('should return nothing with bad basic authentication credentials', () => {
-      assert.equal(
+      assert.strictEqual(
         authentication.appFromRequest({
-          headers: {authorization: authorizationHeader('fred', 'betty')}
+          headers: { authorization: authorizationHeader('fred', 'betty') }
         }, apps),
         null
-      );
-    });
+      )
+    })
 
     it('should return nothing without basic authentication header', () => {
-      assert.equal(
-        authentication.appFromRequest({headers: {}}, apps),
+      assert.strictEqual(
+        authentication.appFromRequest({ headers: {} }, apps),
         null
-      );
-    });
+      )
+    })
 
     it('should return nothing with bad basic authentication header', () => {
-      assert.equal(
+      assert.strictEqual(
         authentication.appFromRequest({
-          headers: {authorization: 'Basic bamm-bamm'}
+          headers: { authorization: 'Basic bamm-bamm' }
         }, apps),
         null
-      );
-    });
-  });
-});
+      )
+    })
+  })
+})

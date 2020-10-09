@@ -1,10 +1,10 @@
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel("[OAGW:Validator]");
-const validator = require('express-openapi-validator');
-const bodyParser = require("body-parser");
-const {squashMiddlewareStack} = require("../lib/utils.js");
+const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
+const validator = require('express-openapi-validator')
+const bodyParser = require('body-parser')
+const { squashMiddlewareStack } = require('../lib/utils.js')
 
 module.exports = {
-  name: "openapi-validator",
+  name: 'openapi-validator',
   schema: {
     $id: 'http://express-gateway.io/schemas/policies/openapi-validator.json',
     type: 'object',
@@ -22,14 +22,14 @@ module.exports = {
         description: 'whether to validate responses'
       }
     },
-    required: ['apiSpec'],
+    required: ['apiSpec']
   },
-  policy: ({apiSpec, validateRequests, validateResponses}) => {
-    logger.info("Instantiating validator",apiSpec, validateRequests, validateResponses);
-    const middlewareStack =  validator.middleware( {apiSpec, validateRequests, validateResponses} );
-    middlewareStack.unshift(bodyParser.urlencoded({extended: false}));
-    middlewareStack.unshift(bodyParser.text());
-    middlewareStack.unshift(bodyParser.json());
-    return squashMiddlewareStack(middlewareStack);
+  policy: ({ apiSpec, validateRequests, validateResponses }) => {
+    logger.info('Instantiating validator', apiSpec, validateRequests, validateResponses)
+    const middlewareStack = validator.middleware({ apiSpec, validateRequests, validateResponses })
+    middlewareStack.unshift(bodyParser.urlencoded({ extended: false }))
+    middlewareStack.unshift(bodyParser.text())
+    middlewareStack.unshift(bodyParser.json())
+    return squashMiddlewareStack(middlewareStack)
   }
 }

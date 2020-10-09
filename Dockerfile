@@ -1,6 +1,6 @@
 FROM node:lts
 
-ADD . /app
+COPY . /app
 WORKDIR /app
 RUN cp config/system.config.yml.prod config/system.config.yml
 

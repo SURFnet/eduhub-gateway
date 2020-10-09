@@ -1,10 +1,10 @@
-const environment = require('./integration.environment.js');
+const environment = require('./integration.environment.js')
 
 exports.mochaHooks = {
-  async beforeAll() {
-    return environment.up();
+  async beforeAll () {
+    return environment.up()
   },
-  async afterAll() {
-    return environment.down();
+  async afterAll () {
+    return environment.down()
   }
-};
+}
