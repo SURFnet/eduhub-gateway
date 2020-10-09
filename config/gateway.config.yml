@@ -13,6 +13,8 @@ apiEndpoints:
 serviceEndpoints:
   mockOwl:
     url: '${OOAPI_MOCK_URL:-http://localhost:8081}'
+  invalid-backend:
+    url: '${OOAPI_INVALID_BACKEND_URL:-http://localhost:8082}'
 policies:
   - basic-auth
   - cors
@@ -70,5 +72,5 @@ pipelines:
               validateRequests: true
       - proxy:
           - action:
-              serviceEndpoint: mockOwl
+              serviceEndpoint: invalid-backend
               changeOrigin: true

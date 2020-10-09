@@ -3,6 +3,7 @@ services:
   gw-test:
     environment:
       - "OOAPI_MOCK_URL=http://ooapi-mock:8080/"
+      - "OOAPI_INVALID_BACKEND_URL=http://invalid-backend/"
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -10,7 +11,14 @@ services:
       - "8080:8080"
     links:
       - ooapi-mock
+      - invalid-backend
   ooapi-mock:
     image: "jlmr/ooapi-mock:latest"
     ports:
       - "8081:8080"
+  invalid-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.invalid-backend
+    ports:
+      - "8082:80"
