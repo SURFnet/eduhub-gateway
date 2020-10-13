@@ -75,3 +75,34 @@ will stay secure.
   the identity providers. Code dealing with these caches must be
   reviewed strictly and have extensive automated tests.
 
+* Validating Requests
+  All requests will be validated according to the Open Onderwijs API
+  Specification. When a request body is present the request content
+  type must be ~application/json~
+
+  Currently we only accept ~GET~ requests (no request body).
+
+* Access Control
+
+  Clients will get access to a set of endpoints (urls and http
+  methods), controlled with an ACL will be configurable in /location
+  to be determined/.
+
+  Currently we only accept ~GET~ requests.
+
+* Security Headers
+
+  SURF has the following list of required headers for HTTP
+  responses. These will be enforced by the gateway using the
+  configuration in [[../config/gateway.config.yml]]. The integration tests
+  in [[../test/headers.integration.test.js]] will check this.
+
+#+BEGIN_SRC
+    X-XSS-Protection 1; mode=block
+    Strict-Transport-Security 'max-age=31536000; includeSubDomains; preload'
+    X-Frame-Options SAMEORIGIN
+    X-Content-Type-Options nosniff
+    Content-Security-Policy default-src 'self';
+    Access-Control-Allow-Origin *.surf.nl
+    Referrer-Policy no-referrer-when-downgrade
+#+END_SRC
