@@ -16,6 +16,6 @@
   "dependencies": {
     "express-gateway": "^1.16.10",
     "express-openapi-validate": "0.5.1",
-    "express-mung": "0.5.1"
+    "express-modify-response": "1.0.2"
   }
 }

@@ -1,10 +1,10 @@
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
-const { OpenApiValidator } = require('express-openapi-validate')
+const { OpenApiValidator, ValidationError } = require('express-openapi-validate')
 const bodyParser = require('body-parser')
 const fs = require('fs')
 const jsYaml = require('js-yaml')
 const { squashMiddlewareStack } = require('../lib/utils.js')
-const mung = require('express-mung')
+const modifyResponse = require('express-modify-response')
 
 module.exports = {
   name: 'openapi-validator',
@@ -39,16 +39,41 @@ module.exports = {
     }
     if (validateResponses) {
       logger.info('validating responses')
-      middlewareStack.push((req, res, next) => {
-        
-        const oldWrite = res.write
-        logger.info(`middleware called, replacing ${oldWrite}`)
-        res.write = function (chunk) {
-          logger.info('write', chunk)
-          oldWrite.apply(res, arguments)
-        }
-        next()
-      })
+
+      middlewareStack.push(
+        modifyResponse(
+          (req, res) => {
+            console.log('check')
+            return true
+          },
+          (req, res, body) => {
+            try {
+              validator.validateResponse(req.method.toLowerCase(), req.path)(
+                {
+                  statusCode: res.statusCode,
+                  headers: res.getHeaders(),
+                  body: JSON.parse(body.toString())
+                }
+              )
+            } catch (e) {
+              console.info(e)
+              if (e instanceof ValidationError) {
+                res.statusCode = 502
+                res.setHeader('content-type', 'application/json')
+                return JSON.stringify({
+                  message: e.message,
+                  data: e.data
+                })
+              } else {
+                res.statusCode = 500
+                res.setHeader('content-type', 'text/plain')
+                return e.message
+              }
+            }
+            return body
+          }
+        )
+      )
     }
     middlewareStack.unshift(bodyParser.urlencoded({ extended: false }))
     middlewareStack.unshift(bodyParser.text())
