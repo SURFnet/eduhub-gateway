@@ -39,10 +39,16 @@ module.exports = {
     }
     if (validateResponses) {
       logger.info('validating responses')
-      middlewareStack.push(mung.json((body, req, res) => {
-        logger.info(`body: ${body}`)
-        return body
-      }))
+      middlewareStack.push((req, res, next) => {
+        
+        const oldWrite = res.write
+        logger.info(`middleware called, replacing ${oldWrite}`)
+        res.write = function (chunk) {
+          logger.info('write', chunk)
+          oldWrite.apply(res, arguments)
+        }
+        next()
+      })
     }
     middlewareStack.unshift(bodyParser.urlencoded({ extended: false }))
     middlewareStack.unshift(bodyParser.text())

@@ -4,6 +4,7 @@ services:
     environment:
       - "OOAPI_MOCK_URL=http://ooapi-mock:8080/"
       - "OOAPI_INVALID_BACKEND_URL=http://invalid-backend/"
+      - "DEBUG=express-openapi-validate"
     build:
       context: .
       dockerfile: Dockerfile.test
