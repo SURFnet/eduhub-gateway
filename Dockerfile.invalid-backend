@@ -1,7 +1,0 @@
-FROM ubuntu
-RUN apt-get update
-RUN apt-get install nginx -y
-RUN sed -i 's/default_type application\/octet-stream;/default_type application\/json;/g' /etc/nginx/nginx.conf
-COPY invalid-backend/ /var/www/html/
-EXPOSE 80
-CMD ["nginx","-g","daemon off;"]
