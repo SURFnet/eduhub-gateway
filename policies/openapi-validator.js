@@ -38,12 +38,10 @@ module.exports = {
       middlewareStack.push(validator.match())
     }
     if (validateResponses) {
-      logger.info('validating responses')
-
       middlewareStack.push(
         modifyResponse(
           (req, res) => {
-            console.log('check')
+            // This should return true if the response body is to be validated
             return true
           },
           (req, res, body) => {
@@ -56,16 +54,15 @@ module.exports = {
                 }
               )
             } catch (e) {
-              console.info(e)
               if (e instanceof ValidationError) {
-                res.statusCode = 502
+                res.statusCode = 502 // Bad Gateway
                 res.setHeader('content-type', 'application/json')
                 return JSON.stringify({
                   message: e.message,
                   data: e.data
                 })
               } else {
-                res.statusCode = 500
+                res.statusCode = 500 // Internal error
                 res.setHeader('content-type', 'text/plain')
                 return e.message
               }
