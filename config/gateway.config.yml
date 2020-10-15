@@ -6,15 +6,48 @@ admin:
 apiEndpoints:
   api:
     host: localhost
-    paths: ['/', '/courses','/courses/*', '/organizations','/organizations/*','/buildings','/buildings/*']
+    # all matching paths should be specified including any template
+    # params as used in the ooapi spec
+    paths:
+       - '/'
+       - '/academic-sessions'
+       - '/academic-sessions/:academicSessionId'
+       - '/academic-sessions/:academicSessionId/offerings'
+       - '/associations/:associationId'
+       - '/buildings'
+       - '/buildings/:buildingId'
+       - '/components/:componentId'
+       - '/components/:componentId/offerings'
+       - '/courses'
+       - '/courses/:courseId'
+       - '/courses/:courseId/components'
+       - '/courses/:courseId/offerings'
+       - '/news-feeds'
+       - '/news-feeds/:newsFeedId'
+       - '/news-feeds/:newsFeedId/news-items'
+       - '/news-items/:newsItemId'
+       - '/offerings/:offeringId'
+       - '/offerings/:offeringId/associations'
+       - '/organizations'
+       - '/organizations/:organizationId'
+       - '/organizations/:organizationId/components'
+       - '/organizations/:organizationId/courses'
+       - '/organizations/:organizationId/programs'
+       - '/persons'
+       - '/persons/:personId'
+       - '/persons/:personId/associations'
+       - '/programs'
+       - '/programs/:programId'
+       - '/programs/:programId/courses'
+       - '/programs/:programId/offerings'
+       - '/rooms'
+       - '/rooms/:roomId'
   example:
     host: localhost
     paths: ['/example', '/example/:id']
 serviceEndpoints:
-  mockOwl:
-    url: '${OOAPI_MOCK_URL:-http://localhost:8081}'
-  invalid-backend:
-    url: '${OOAPI_INVALID_BACKEND_URL:-http://localhost:8082}'
+  test-backend:
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
 policies:
   - basic-auth
   - cors
@@ -67,10 +100,10 @@ pipelines:
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
       - openapi-validator:
           - action:
-              apiSpec: "ooapiv4.json"
+              apiSpec: 'ooapiv4.json'
               validateResponses: true
               validateRequests: true
       - proxy:
           - action:
-              serviceEndpoint: invalid-backend
+              serviceEndpoint: test-backend
               changeOrigin: true

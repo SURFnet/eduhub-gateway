@@ -1,0 +1,110 @@
+{
+  "courseId": "900d900d-900d-900d-900d-900d900d900d",
+  "name": "string",
+  "abbreviation": "string",
+  "ects": 0,
+  "description": "string",
+  "learningOutcomes": [
+    "string"
+  ],
+  "requirements": "string",
+  "level": "mbo 3",
+  "modeOfDelivery": [
+    "distance-learning"
+  ],
+  "enrollment": "string",
+  "resources": [
+    "string"
+  ],
+  "assessment": "string",
+  "link": "http://example.com",
+  "ext": {},
+  "programs": [{
+    "programId": "bc59f66b-913a-48ec-ae2b-7ee29d7bcfbb",
+    "type": "program",
+    "name": "string",
+    "abbreviation": "string",
+    "description": "string",
+    "ects": 0,
+    "qualificationAwarded": "AD",
+    "lengthOfProgram": 0,
+    "levelOfQualification": "1",
+    "sector": "mbo",
+    "fieldsOfStudy": "0732",
+    "profileOfProgram": "string",
+    "learningOutcomes": [
+      "string"
+    ],
+    "admissionRequirements": "string",
+    "qualificationRequirements": "string",
+    "link": "http://example.com"
+  }],
+  "coordinator": [{
+    "personId": "f3e5ff26-28ff-4cd6-9b1b-e303a185a13a",
+    "givenName": "string",
+    "surnamePrefix": "string",
+    "surname": "string",
+    "displayName": "string",
+    "initials": "string",
+    "dateOfBirth": "2019-08-24",
+    "cityOfBirth": "string",
+    "countryOfBirth": "string",
+    "nationality": "string",
+    "dateOfNationality": "2019-08-24",
+    "affiliations": [
+      "student"
+    ],
+    "mail": "user@example.com",
+    "secondaryMail": "user@example.com",
+    "telephoneNumber": "string",
+    "mobileNumber": "string",
+    "photoSocial": "http://example.com",
+    "photoOfficial": "http://example.com",
+    "gender": "M",
+    "titlePrefix": "string",
+    "titleSuffix": "string",
+    "office": "string",
+    "address": {
+      "type": "postal",
+      "street": "Moreelsepark",
+      "streetNumber": "48",
+      "additional": "On the other side of the road",
+      "postalCode": "3511 EP",
+      "city": "Utrecht",
+      "countryCode": "NL",
+      "geolocation": {
+        "latitude": 0,
+        "longitude": 0
+      }
+    },
+    "ICEName": "string",
+    "ICEPhoneNumber": "string",
+    "ICERelation": "partner",
+    "languageOfChoice": [
+      "nl-NL"
+    ]
+  }],
+  "organization": {
+    "organizationId": "7bc05553-4b68-44e8-b7bc-37be63c6d9e9",
+    "name": "string",
+    "shortName": "string",
+    "description": "string",
+    "type": "root",
+    "addresses": [{
+      "type": "postal",
+      "street": "Moreelsepark",
+      "streetNumber": "48",
+      "additional": "On the other side of the road",
+      "postalCode": "3511 EP",
+      "city": "Utrecht",
+      "countryCode": "NL",
+      "geolocation": {
+        "latitude": 0,
+        "longitude": 0
+      }
+    }],
+    "link": "http://example.com",
+    "logo": "http://example.com",
+    "brin": "string"
+  }
+}
