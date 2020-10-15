@@ -2,19 +2,8 @@
     "openapi": "3.0.3",
     "info": {
         "version": "4.0-DRAFT",
-        "title": "Open Education API",
-        "description": "OpenAPI (fka Swagger) specification for the Open Education API.
-
-# Error responses
-Error responses are formatted in the `problem+json` media type ([RFC7807](https://tools.ietf.org/html/rfc7807)):
-
-```
-{
-  \"code\": 404,
-  \"title\": \"Resource not found\"
-}
-```
-",
+      "title": "Open Education API",
+      "description": "OpenAPI (fka Swagger) specification for the Open Education API.\n\n# Error responses\nError responses are formatted in the `problem+json` media type ([RFC7807](https://tools.ietf.org/html/rfc7807)):\n\n```\n{\n  \"code\": 404,\n \"title\": \"Resource not found\"\n}\n```\n",
         "x-logo": {
             "url": "../logo.png"
         }
