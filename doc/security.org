@@ -76,6 +76,7 @@ will stay secure.
   reviewed strictly and have extensive automated tests.
 
 * Validating Requests
+
   All requests will be validated according to the Open Onderwijs API
   Specification. When a request body is present the request content
   type must be ~application/json~
@@ -97,12 +98,10 @@ will stay secure.
   configuration in [[../config/gateway.config.yml]]. The integration tests
   in [[../test/headers.integration.test.js]] will check this.
 
-#+BEGIN_SRC
-    X-XSS-Protection 1; mode=block
-    Strict-Transport-Security 'max-age=31536000; includeSubDomains; preload'
-    X-Frame-Options SAMEORIGIN
-    X-Content-Type-Options nosniff
-    Content-Security-Policy default-src 'self';
-    Access-Control-Allow-Origin *.surf.nl
-    Referrer-Policy no-referrer-when-downgrade
-#+END_SRC
+  - ~X-XSS-Protection~ :: ~1; mode-block~
+  - ~Strict-Transport-Security~ :: ~max-age=31536000; includeSubDomains; preload~
+  - ~X-Frame-Options~ :: ~SAMEORIGIN~
+  - ~X-Content-Type-Options~ :: ~nosniff~
+  - ~Content-Security-Policy~ :: ~default-src 'self';~
+  - ~Access-Control-Allow-Origin~ :: ~*.surf.nl~
+  - ~Referrer-Policy~ :: ~no-referrer-when-downgrade~
