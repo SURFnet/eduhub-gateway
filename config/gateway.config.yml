@@ -25,6 +25,7 @@ policies:
   - example
   - openapi-validator
   - gatekeeper
+  - response-transformer
 pipelines:
   example:
     apiEndpoints:
@@ -36,6 +37,20 @@ pipelines:
     apiEndpoints:
       - api
     policies:
+      - response-transformer:
+          - action:
+              headers:
+                add:
+                  # note: literal header values should be quoted twice
+                  # see https://www.express-gateway.io/docs/policies/response-transformer/
+                  'X-XSS-Protection': "'1; mode-block'"
+                  'Strict-Transport-Security': "'max-age=31536000; includeSubDomains; preload'"
+                  'X-Frame-Options': "'SAMEORIGIN'"
+                  'X-Content-Type-Options': "'nosniff'"
+                  # note: double escaping because of YAML parsing
+                  'Content-Security-Policy': "'default-src \\'self\\''"
+                  'Access-Control-Allow-Origin': "'*.surf.nl'"
+                  'Referrer-Policy': "'no-referrer-when-downgrade'"
       - openapi-validator:
           - action:
               apiSpec: "ooapiv4.json"
