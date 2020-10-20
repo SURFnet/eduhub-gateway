@@ -102,6 +102,6 @@ will stay secure.
   - ~Strict-Transport-Security~ :: ~max-age=31536000; includeSubDomains; preload~
   - ~X-Frame-Options~ :: ~SAMEORIGIN~
   - ~X-Content-Type-Options~ :: ~nosniff~
-  - ~Content-Security-Policy~ :: ~default-src 'self';~
+  - ~Content-Security-Policy~ :: ~default-src 'self'~
   - ~Access-Control-Allow-Origin~ :: ~*.surf.nl~
   - ~Referrer-Policy~ :: ~no-referrer-when-downgrade~

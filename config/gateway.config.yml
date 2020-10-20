@@ -48,7 +48,7 @@ pipelines:
                   'X-Frame-Options': "'SAMEORIGIN'"
                   'X-Content-Type-Options': "'nosniff'"
                   # note: double escaping because of YAML parsing
-                  'Content-Security-Policy': "'default-src \\'self\\';'"
+                  'Content-Security-Policy': "'default-src \\'self\\''"
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
       - openapi-validator:

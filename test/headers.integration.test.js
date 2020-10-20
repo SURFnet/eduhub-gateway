@@ -12,7 +12,7 @@ integrationContext('security headers', function () {
       'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',
       'x-frame-options': 'SAMEORIGIN',
       'x-content-type-options': 'nosniff',
-      'content-security-policy': 'default-src \'self\';',
+      'content-security-policy': 'default-src \'self\'',
       'access-control-allow-origin': '*.surf.nl',
       'referrer-policy': 'no-referrer-when-downgrade'
     }
