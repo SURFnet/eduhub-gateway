@@ -16,7 +16,7 @@ Master branch status: [[https://github.com/persistent-services/surf-ooapi-gatewa
   Run all but the integration tests with:
 
   #+begin_src sh
-    MOCKA_SKIP=integration npm test
+    MOCHA_SKIP=integration npm test
   #+end_src
 
 * Security
