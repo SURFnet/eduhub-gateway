@@ -3,9 +3,8 @@ const path = require('path')
 
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Credentials]')
 
-const credentialsFile = path.join(
-  __filename, '../../../config/credentials.json'
-)
+const configFile = (filename) => path.join(__filename, `../../../config/${filename}`)
+const credentialsFile = configFile('credentials.json')
 
 let credentials = null
 
@@ -22,16 +21,17 @@ try {
   }
 }
 
-const read = () => {
+const read = (filename) => {
   if (!credentials) {
+    const file = filename ? configFile(filename) : credentialsFile
     try {
       logger.debug('Loading credentials')
-      credentials = JSON.parse(fs.readFileSync(credentialsFile))
+      credentials = JSON.parse(fs.readFileSync(file))
     } catch (err) {
       if (err.code === 'ENOENT') {
         credentials = {}
       } else {
-        logger.error(`Can't read from ${credentialsFile}: ${err}`)
+        logger.error(`Can't read from ${file}: ${err}`)
         process.exit(1)
       }
     }

@@ -9,7 +9,7 @@ apiEndpoints:
     paths: ['/', '/courses','/courses/*', '/organizations','/organizations/*','/buildings','/buildings/*']
   example:
     host: localhost
-    paths: '/example'
+    paths: ['/example', '/example/:id']
 serviceEndpoints:
   mockOwl:
     url: '${OOAPI_MOCK_URL:-http://localhost:8081}'
@@ -32,6 +32,18 @@ pipelines:
       - example
     policies:
       - gatekeeper:
+          - action:
+              acls:
+                - app: fred
+                  endpoints:
+                    - endpoint: wilma
+                      paths: ['/example', '/example/:id']
+                    - endpoint: betty
+                      paths: ['/example']
+                - app: barney
+                  endpoints:
+                    - endpoint: betty
+                      paths: ['/example', '/example/:id']
       - example:
   default:
     apiEndpoints:
