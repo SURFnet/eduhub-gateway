@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 const http = require('http')
 const path = require('path')
 const { DockerComposeEnvironment, Wait } = require('testcontainers')

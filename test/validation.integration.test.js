@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 const assert = require('assert')
 const { httpGet, gwContainer, integrationContext } = require('./integration.environment.js')
 
