@@ -147,10 +147,6 @@ describe('gatekeeper/authorization', () => {
         )
         assert.strictEqual(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo' })
-        )
-        assert.strictEqual(
-          false,
           isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/bar' })
         )
       })
