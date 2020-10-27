@@ -2,15 +2,18 @@ version: "3.8"
 services:
   gw-test:
     environment:
-      - "OOAPI_MOCK_URL=http://ooapi-mock:8080/"
+      - "OOAPI_TEST_BACKEND_URL=http://test-backend/"
+      - "DEBUG=express-openapi-validate"
     build:
       context: .
       dockerfile: Dockerfile.test
     ports:
       - "8080:8080"
     links:
-      - ooapi-mock
-  ooapi-mock:
-    image: "jlmr/ooapi-mock:latest"
+      - test-backend
+  test-backend:
+    build:
+      context: test-backend
+      dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "8082:80"

@@ -4,8 +4,7 @@ const http = require('http')
 const path = require('path')
 const { DockerComposeEnvironment, Wait } = require('testcontainers')
 
-let environment
-let gwContainer
+let environment, gwContainer
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 module.exports = {
@@ -16,19 +15,30 @@ module.exports = {
     const composeFile = 'docker-compose.test.yml'
 
     environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .withWaitStrategy('surf-ooapi-gateway_ooapi-mock_1', Wait.forLogMessage('port:')).up()
+      .withWaitStrategy('surf-ooapi-gateway_ooapi-mock_1', Wait.forLogMessage('port:'))
+      .up()
     gwContainer = environment.getContainer('surf-ooapi-gateway_gw-test_1')
+
+    if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
+      const stream = await gwContainer.logs()
+      stream
+        .on('data', line => console.log(line))
+        .on('err', line => console.error(line))
+    }
   },
+
   down: async () => {
     if (skipTest) return
     await environment.down()
   },
+
   gwContainer: () => {
     if (!gwContainer) {
       throw new Error('Integration environment not initialized!')
     }
     return gwContainer
   },
+
   integrationContext: (description, callback) => {
     if (skipTest) {
       describe.skip(description, callback)
@@ -36,10 +46,19 @@ module.exports = {
       describe(description, callback)
     }
   },
+
   skipTest: skipTest,
+
   httpGet: (url, opts) => {
     return new Promise(
-      (resolve, reject) => http.get(url, opts, res => resolve(res))
+      (resolve, reject) => http.get(url, opts, res => {
+        let body = ''
+        res.on('data', (chunk) => { body += chunk })
+        res.on('end', () => {
+          res.body = body
+          resolve(res)
+        })
+      })
     )
   }
 }
