@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const httpcode = require('../lib/httpcode')
 const example = require('../policies/example')
 
 describe('example', () => {
@@ -18,18 +19,18 @@ describe('example', () => {
       calledNext = true
     }
 
-    it('with example header calls sendStatus(200)', () => {
+    it('with example header calls sendStatus(OK)', () => {
       calledNext = gotStatus = undefined
       middleware({ headers: { example: true } }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 200)
+      assert.strictEqual(gotStatus, httpcode.OK)
     })
 
-    it('without example header calls sendStatus(400)', () => {
+    it('without example header calls sendStatus(BadRequest)', () => {
       calledNext = gotStatus = undefined
       middleware({ headers: {} }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 400)
+      assert.strictEqual(gotStatus, httpcode.BadRequest)
     })
   })
 })

@@ -1,3 +1,4 @@
+const httpcode = require('../../lib/httpcode')
 const authentication = require('./authentication')
 const authorization = require('./authorization')
 const credentials = require('./credentials')
@@ -35,11 +36,11 @@ module.exports = (params, config) => {
       if (authorization.isAuthorized(app, acls, req)) {
         next()
       } else {
-        res.sendStatus(403)
+        res.sendStatus(httpcode.Forbidden)
       }
     } else {
       res.set({ 'WWW-Authenticate': `Basic realm="${realm}"` })
-      res.sendStatus(401)
+      res.sendStatus(httpcode.Unauthorized)
     }
   }
 }

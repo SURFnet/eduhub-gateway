@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const httpcode = require('../lib/httpcode')
 const { httpGet, gwContainer, integrationContext } = require('./integration.environment.js')
 
 // As reflected in config/credentials.json.test
@@ -10,30 +11,30 @@ const testCredentials = {
 }
 
 integrationContext('example policy', function () {
-  it('should respond with 401 without credentials', async () => {
+  it('should respond with Unauthorized without credentials', async () => {
     const port = gwContainer().getMappedPort(8080)
     const res = await httpGet(`http://localhost:${port}/example`)
-    assert.strictEqual(res.statusCode, 401)
+    assert.strictEqual(res.statusCode, httpcode.Unauthorized)
   })
 
-  it('should respond with 401 with bad credentials', async () => {
+  it('should respond with Unauthorized with bad credentials', async () => {
     const port = gwContainer().getMappedPort(8080)
     const res = await httpGet(`http://localhost:${port}/example`, {
       auth: 'bad:credentials'
     })
-    assert.strictEqual(res.statusCode, 401)
+    assert.strictEqual(res.statusCode, httpcode.Unauthorized)
   })
 
-  it('should respond with 400 with auth but without example header', async () => {
+  it('should respond with BadRequest with auth but without example header', async () => {
     const port = gwContainer().getMappedPort(8080)
     const res = await httpGet(`http://localhost:${port}/example`, {
       auth: testCredentials.fred,
       headers: { 'X-Route': 'endpoint=TestBackend' }
     })
-    assert.strictEqual(res.statusCode, 400)
+    assert.strictEqual(res.statusCode, httpcode.BadRequest)
   })
 
-  it('should respond with 200 with auth and example header', async () => {
+  it('should respond with OK with auth and example header', async () => {
     const port = gwContainer().getMappedPort(8080)
     const res = await httpGet(`http://localhost:${port}/example`, {
       auth: testCredentials.fred,
@@ -42,6 +43,6 @@ integrationContext('example policy', function () {
         Example: true
       }
     })
-    assert.strictEqual(res.statusCode, 200)
+    assert.strictEqual(res.statusCode, httpcode.OK)
   })
 })

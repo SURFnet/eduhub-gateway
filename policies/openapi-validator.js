@@ -1,3 +1,4 @@
+const httpcode = require('../lib/httpcode')
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
 const { OpenApiValidator, ValidationError } = require('express-openapi-validate')
 const bodyParser = require('body-parser')
@@ -42,11 +43,11 @@ module.exports = {
           handler(req, res, (err) => {
             if (err instanceof ValidationError) {
               res.setHeader('content-type', 'application/json')
-              res.status(400) // Bad Request
+              res.status(httpcode.BadRequest)
                 .send(JSON.stringify({ message: err.message, data: err.data }))
             } else if (err instanceof Error) {
               res.setHeader('content-type', 'text/plain')
-              res.status(500) // Internal error
+              res.status(httpcode.InternalServerError)
                 .send(err.message)
             } else {
               next(err)
@@ -83,14 +84,14 @@ module.exports = {
               }
             } catch (e) {
               if (e instanceof ValidationError) {
-                res.statusCode = 502 // Bad Gateway
+                res.statusCode = httpcode.BadGateway
                 res.setHeader('content-type', 'application/json')
                 return JSON.stringify({
                   message: e.message,
                   data: e.data
                 })
               } else {
-                res.statusCode = 500 // Internal error
+                res.statusCode = httpcode.InternalServerError
                 res.setHeader('content-type', 'text/plain')
                 return e.message
               }
