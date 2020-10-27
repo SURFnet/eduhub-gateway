@@ -8,8 +8,6 @@ const extractEndpoints = (req) => {
     const [, endpoints] = /^\s*endpoint\s*=([\w\s,]*)$/.exec(xroute) || []
     if (endpoints) {
       return endpoints.trim().split(/\s*,\s*/)
-    } else if (endpoints === '') {
-      return []
     } else {
       throw new MalformedXRouteHeader(xroute)
     }
