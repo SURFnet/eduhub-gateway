@@ -60,6 +60,7 @@ policies:
   - gatekeeper
   - request-transformer
   - response-transformer
+  - aggregation
 pipelines:
   test:
     apiEndpoints:
@@ -78,13 +79,13 @@ pipelines:
                 - app: fred
                   endpoints:
                     - endpoint: TestBackend
-                      paths: ['/example', '/example/:id']
+                      paths: ['/courses', '/courses/:id']
                     - endpoint: OtherTestBackend
-                      paths: ['/example']
+                      paths: ['/courses', '/courses/:id']
                 - app: barney
                   endpoints:
                     - endpoint: OtherTestBackend
-                      paths: ['/example', '/example/:id']
+                      paths: ['/courses', '/courses/:id']
       - request-transformer:
           - action:
               headers:

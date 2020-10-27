@@ -59,5 +59,11 @@ module.exports = {
         })
       })
     )
+  },
+
+  // As reflected in config/credentials.json.test
+  testCredentials: {
+    fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
+    barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
   }
 }

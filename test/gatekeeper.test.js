@@ -3,12 +3,7 @@
 const assert = require('assert')
 const httpcode = require('../lib/httpcode')
 const gatekeeper = require('../policies/gatekeeper')
-
-// As reflected in config/credentials.json.test
-const testCredentials = {
-  fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
-  barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
-}
+const { testCredentials } = require('./integration.environment.js')
 
 describe('gatekeeper', () => {
   it('has a policy', () => {
