@@ -60,6 +60,7 @@ policies:
   - example
   - openapi-validator
   - gatekeeper
+  - request-transformer
   - response-transformer
 pipelines:
   example:
@@ -84,6 +85,11 @@ pipelines:
     apiEndpoints:
       - api
     policies:
+      - request-transformer:
+          - action:
+              headers:
+                remove:
+                  - 'accept-encoding'
       - response-transformer:
           - action:
               headers:

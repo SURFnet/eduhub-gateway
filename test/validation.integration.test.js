@@ -37,7 +37,10 @@ integrationContext('validation policy', function () {
       const port = gwContainer().getMappedPort(8080)
 
       const res = await httpGet(`http://localhost:${port}/courses/900d900d-900d-900d-900d-900d900d900d`, {
-        headers: { 'X-Validate-Response': 'true' }
+        headers: {
+          'X-Validate-Response': 'true',
+          'Accept-Encoding': 'gzip'
+        }
       })
       assert.equal(res.statusCode, 200)
       assert.match(res.headers['content-type'], /^application\/json\b/)
@@ -50,7 +53,10 @@ integrationContext('validation policy', function () {
       const port = gwContainer().getMappedPort(8080)
 
       const res = await httpGet(`http://localhost:${port}/courses/badbadba-badb-badb-badb-badbadbadbad`, {
-        headers: { 'X-Validate-Response': 'true' }
+        headers: {
+          'X-Validate-Response': 'true',
+          'Accept-Encoding': 'gzip'
+        }
       })
       assert.equal(res.statusCode, 502)
       assert.match(res.headers['content-type'], /^application\/json\b/)
