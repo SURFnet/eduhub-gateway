@@ -1,21 +1,5 @@
-const lodash = require('lodash')
-
 const pathToRegexp = require('path-to-regexp')
-
-class MalformedXRouteHeader extends Error {}
-
-const extractEndpoints = (req) => {
-  const xroute = req.headers && req.headers['x-route']
-  if (xroute) {
-    const [, endpoints] = /^\s*endpoint\s*=([\w\s,]*)$/.exec(xroute) || []
-    if (endpoints) {
-      return lodash.uniq(endpoints.trim().split(/\s*,\s*/))
-    } else {
-      throw new MalformedXRouteHeader(xroute)
-    }
-  }
-  return null
-}
+const xroute = require('../../lib/xroute')
 
 const compileAcls = (acls) => (
   acls.reduce((m, { app, endpoints }) => {
@@ -34,7 +18,7 @@ const isAuthorized = (app, acls, req) => {
   if (!acl) return false
 
   try {
-    const endpoints = extractEndpoints(req) || Object.keys(acl)
+    const endpoints = xroute.decode(req.headers['x-route']) || Object.keys(acl)
 
     if (endpoints.length) {
       return endpoints.reduce(
@@ -45,7 +29,7 @@ const isAuthorized = (app, acls, req) => {
       return false
     }
   } catch (e) {
-    if (e instanceof MalformedXRouteHeader) {
+    if (e instanceof xroute.MalformedHeader) {
       return false
     } else {
       throw e
@@ -55,7 +39,5 @@ const isAuthorized = (app, acls, req) => {
 
 module.exports = {
   compileAcls,
-  extractEndpoints,
-  isAuthorized,
-  MalformedXRouteHeader
+  isAuthorized
 }

@@ -1,56 +1,9 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const {
-  extractEndpoints,
-  compileAcls,
-  isAuthorized,
-  MalformedXRouteHeader
-} = require('../../policies/gatekeeper/authorization')
+const { compileAcls, isAuthorized } = require('../../policies/gatekeeper/authorization')
 
 describe('gatekeeper/authorization', () => {
-  describe('extractEndpoints', () => {
-    it('returns null for missing x-route header', () => {
-      assert.deepStrictEqual(
-        extractEndpoints({}),
-        null
-      )
-    })
-
-    it('throws error on malformed x-route header', () => {
-      assert.throws(
-        () => { extractEndpoints({ headers: { 'x-route': 'dummy' } }) },
-        MalformedXRouteHeader
-      )
-      assert.throws(
-        () => { extractEndpoints({ headers: { 'x-route': 'endpoint=' } }) },
-        MalformedXRouteHeader
-      )
-      assert.throws(
-        () => { extractEndpoints({ headers: { 'x-route': 'endpoint=foo;bar' } }) },
-        MalformedXRouteHeader
-      )
-    })
-
-    it('returns list of endpoints', () => {
-      assert.deepStrictEqual(
-        extractEndpoints({ headers: { 'x-route': 'endpoint=foo,bar' } }),
-        ['foo', 'bar']
-      )
-      assert.deepStrictEqual(
-        extractEndpoints({ headers: { 'x-route': 'endpoint= foo , bar ' } }),
-        ['foo', 'bar']
-      )
-    })
-
-    it('deduplicates list of endpoints', () => {
-      assert.deepStrictEqual(
-        extractEndpoints({ headers: { 'x-route': 'endpoint=foo,bar,foo' } }),
-        ['foo', 'bar']
-      )
-    })
-  })
-
   const acls = compileAcls([
     {
       app: 'fred',
@@ -105,14 +58,14 @@ describe('gatekeeper/authorization', () => {
       it('return true when path matches all available endpoints', () => {
         assert.strictEqual(
           true,
-          isAuthorized('fred', acls, { path: '/foo' })
+          isAuthorized('fred', acls, { path: '/foo', headers: {} })
         )
       })
 
       it('return false when path does not match all available endpoints', () => {
         assert.strictEqual(
           false,
-          isAuthorized('fred', acls, { path: '/bar' })
+          isAuthorized('fred', acls, { path: '/bar', headers: {} })
         )
       })
     })
