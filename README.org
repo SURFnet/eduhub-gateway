@@ -45,6 +45,50 @@ Master branch status: [[https://github.com/persistent-services/surf-ooapi-gatewa
    Please note: only a hash of the password is stored, the password
    itself is not stored.
 
+** Client authorization
+
+   To determine which app can access which paths on which endpoints a
+   collection of ACLs is configured on the ~gatekeeper~ policy in
+   [[./config/gateway.config.yml]].
+
+   Per app the accessible endpoints are listed and the paths on that
+   endpoint.  The paths are formatted as path expressions like
+   ~/user/:name~ where ~:name~ is a variable path component.
+
+   In the following example, the app named ~fred~ has access to the
+   endpoints ~wilma~ and ~betty~.  On ~wilma~ it can access ~/~ and
+   any "dinner" resource like ~/dinner/tonight~ or ~/dinner/tomorrow~
+   but not ~/dinner~.  It can also access ~/visits~ on the ~betty~
+   endpoint but nothing else.
+
+   #+begin_example
+      - gatekeeper:
+          - action:
+              acls:
+                - app: fred
+                  endpoints:
+                  - endpoint: wilma
+                    paths: ['/', '/dinner/:date']
+                  - endpoint: betty
+                    paths: ['/visits']
+   #+end_example
+
+   The endpoint(s) an application tries to access is derived from the
+   ~X-Route~ header.  The ~gatekeeper~ policy expects this header to
+   have a directive which starts with ~endpoint=~ followed by a comma
+   separated list of endpoint identifiers.  The endpoint identifiers
+   may only contain alphanumeric characters.
+
+   In the following example access to both ~wilma~ and ~betty~ is
+   requested.
+
+   #+begin_example
+     X-Route: endpoint=wilma,betty
+   #+end_example
+
+   Only the ~endpoint~ directive is supported at this point, any value
+   for the ~X-Route~ header not starting with ~endpoint=~ is ignored.
+
 * Setting up development environment
 
   First, install [[https://nodejs.org/en/][NodeJS + NPM]]

@@ -3,35 +3,35 @@ const path = require('path')
 
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Credentials]')
 
-const credentialsFile = path.join(
-  __filename, '../../../config/credentials.json'
-)
+const configFile = (filename) => path.join(__filename, `../../../config/${filename}`)
+const defaultCredentialsFile = configFile('credentials.json')
 
 let credentials = null
 
 try {
-  fs.watch(credentialsFile, { persistent: false }, () => { credentials = null })
+  fs.watch(defaultCredentialsFile, { persistent: false }, () => { credentials = null })
   logger.debug('Watching credentials')
 
-  if (fs.statSync(credentialsFile).mode & 0o04) {
-    logger.warn(`Credentials file world readable: ${credentialsFile}`)
+  if (fs.statSync(defaultCredentialsFile).mode & 0o04) {
+    logger.warn(`Credentials file world readable: ${defaultCredentialsFile}`)
   }
 } catch (err) {
   if (err.code !== 'ENOENT') {
-    logger.warn(`Can't watch ${credentialsFile}: ${err}`)
+    logger.warn(`Can't watch ${defaultCredentialsFile}: ${err}`)
   }
 }
 
-const read = () => {
+const read = (filename) => {
   if (!credentials) {
+    const file = filename ? configFile(filename) : defaultCredentialsFile
     try {
       logger.debug('Loading credentials')
-      credentials = JSON.parse(fs.readFileSync(credentialsFile))
+      credentials = JSON.parse(fs.readFileSync(file))
     } catch (err) {
       if (err.code === 'ENOENT') {
         credentials = {}
       } else {
-        logger.error(`Can't read from ${credentialsFile}: ${err}`)
+        logger.error(`Can't read from ${file}: ${err}`)
         process.exit(1)
       }
     }
@@ -43,14 +43,14 @@ const read = () => {
 const write = (newCredentials) => {
   try {
     fs.writeFileSync(
-      credentialsFile,
+      defaultCredentialsFile,
       JSON.stringify(credentials, null, 2),
       { mode: 0o600 }
     )
 
     credentials = newCredentials
   } catch (err) {
-    logger.error(`Can't write to ${credentialsFile}: ${err}`)
+    logger.error(`Can't write to ${defaultCredentialsFile}: ${err}`)
     process.exit(1)
   }
 }
