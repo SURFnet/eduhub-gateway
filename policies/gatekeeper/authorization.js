@@ -13,12 +13,15 @@ const compileAcls = (acls) => (
   }, {})
 )
 
-const isAuthorized = (app, acls, req) => {
-  const acl = acls[app]
-  if (!acl) return false
+const prepareRequestHeaders = (acl, req) => {
+  if (!req.headers['x-route']) {
+    req.headers['x-route'] = xroute.encode(Object.keys(acl))
+  }
+}
 
+const isAuthorized = (acl, req) => {
   try {
-    const endpoints = xroute.decode(req.headers['x-route']) || Object.keys(acl)
+    const endpoints = xroute.decode(req.headers['x-route'])
 
     if (endpoints.length) {
       return endpoints.reduce(
@@ -39,5 +42,6 @@ const isAuthorized = (app, acls, req) => {
 
 module.exports = {
   compileAcls,
+  prepareRequestHeaders,
   isAuthorized
 }

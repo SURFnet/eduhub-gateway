@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 
-const assert = require('assert')
-const { compileAcls, isAuthorized } = require('../../policies/gatekeeper/authorization')
+const assert = require('assert').strict
+const { compileAcls, prepareRequestHeaders, isAuthorized } = require('../../policies/gatekeeper/authorization')
 
 describe('gatekeeper/authorization', () => {
   const acls = compileAcls([
@@ -31,7 +31,7 @@ describe('gatekeeper/authorization', () => {
 
   describe('compileAcls', () => {
     it('maps apps and endpoints to regexps', () => {
-      assert.deepStrictEqual(Object.keys(acls), ['fred', 'barney'])
+      assert.deepEqual(Object.keys(acls), ['fred', 'barney'])
       assert(acls.fred.wilma instanceof RegExp)
       assert(acls.fred.betty instanceof RegExp)
       assert(acls.barney.betty instanceof RegExp)
@@ -39,88 +39,85 @@ describe('gatekeeper/authorization', () => {
     })
   })
 
+  describe('prepareRequestHeaders', () => {
+    it('added x-route header when missing', () => {
+      const req = { headers: {} }
+      prepareRequestHeaders(acls.fred, req)
+      assert.equal('endpoint=wilma,betty', req.headers['x-route'])
+    })
+
+    it('does nothing when x-route header already exists', () => {
+      const req = { headers: { 'x-route': 'Yabba Dabba Doo!' } }
+      prepareRequestHeaders(acls.fred, req)
+      assert.equal('Yabba Dabba Doo!', req.headers['x-route'])
+    })
+  })
   describe('isAuthorized', () => {
     it('returns false without valid x-route header', () => {
-      assert.strictEqual(
+      assert.equal(
         false,
-        isAuthorized('fred', acls, { path: '/foo', headers: { 'x-route': 'dummy' } })
+        isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'dummy' } })
       )
     })
 
     it('returns false with valid but empty x-route header', () => {
-      assert.strictEqual(
+      assert.equal(
         false,
-        isAuthorized('fred', acls, { path: '/foo', headers: { 'x-route': 'endpoints=' } })
+        isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'endpoints=' } })
       )
-    })
-
-    describe('without x-route header', () => {
-      it('return true when path matches all available endpoints', () => {
-        assert.strictEqual(
-          true,
-          isAuthorized('fred', acls, { path: '/foo', headers: {} })
-        )
-      })
-
-      it('return false when path does not match all available endpoints', () => {
-        assert.strictEqual(
-          false,
-          isAuthorized('fred', acls, { path: '/bar', headers: {} })
-        )
-      })
     })
 
     describe('with x-route header', () => {
       it('returns true when all match', () => {
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo' })
         )
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/bar' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/bar' })
         )
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/1' })
         )
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo/1' })
         )
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('barney', acls, { headers: { 'x-route': 'endpoint=betty' }, path: '/bar' })
+          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty' }, path: '/bar' })
         )
-        assert.strictEqual(
+        assert.equal(
           true,
-          isAuthorized('barney', acls, { headers: { 'x-route': 'endpoint=betty' }, path: '/foo/1' })
+          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty' }, path: '/foo/1' })
         )
       })
 
       it('returns false when not supported on all endpoints', () => {
-        assert.strictEqual(
+        assert.equal(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma,betty,creepella' }, path: '/foo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty,creepella' }, path: '/foo' })
         )
-        assert.strictEqual(
+        assert.equal(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo/1' })
         )
-        assert.strictEqual(
+        assert.equal(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/bar' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/bar' })
         )
       })
 
       it('returns false when path does not match', () => {
-        assert.strictEqual(
+        assert.equal(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/bar/zoo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/bar/zoo' })
         )
-        assert.strictEqual(
+        assert.equal(
           false,
-          isAuthorized('fred', acls, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo' })
         )
       })
     })

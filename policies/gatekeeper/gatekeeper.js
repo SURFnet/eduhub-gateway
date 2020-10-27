@@ -33,11 +33,17 @@ module.exports = (params, config) => {
     delete req.headers.authorization
 
     if (app) {
-      if (authorization.isAuthorized(app, acls, req)) {
-        next()
-      } else {
-        res.sendStatus(httpcode.Forbidden)
+      const acl = acls[app]
+
+      if (acl) {
+        authorization.prepareRequestHeaders(acl, req)
+        if (authorization.isAuthorized(acl, req)) {
+          next()
+          return
+        }
       }
+
+      res.sendStatus(httpcode.Forbidden)
     } else {
       res.set({ 'WWW-Authenticate': `Basic realm="${realm}"` })
       res.sendStatus(httpcode.Unauthorized)
