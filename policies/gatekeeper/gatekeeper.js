@@ -6,7 +6,25 @@ const realm =
       process.env.SURFNET_OOAPI_GW_CLIENT_REALM ||
       'SURFnet OOAPI Gateway client access'
 
-module.exports = (params) => {
+function assertAllEndpointsDefined ({ acls }, { gatewayConfig: { serviceEndpoints } }) {
+  const available = Object.keys(serviceEndpoints)
+  const required = Object.keys(
+    acls.reduce((m, { endpoints }) =>
+      endpoints.reduce((m, { endpoint }) => {
+        m[endpoint] = true
+        return m
+      }, m), {})
+  )
+
+  required.forEach(endpoint => {
+    if (!available.includes(endpoint)) {
+      throw new Error(`required service endpoint '${endpoint}' not configured`)
+    }
+  })
+}
+
+module.exports = (params, config) => {
+  assertAllEndpointsDefined(params, config)
   const acls = authorization.compileAcls(params.acls)
 
   return (req, res, next) => {

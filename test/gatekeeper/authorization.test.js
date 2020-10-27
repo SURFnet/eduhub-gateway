@@ -16,6 +16,7 @@ describe('gatekeeper/authorization', () => {
         null
       )
     })
+
     it('throws error on malformed x-route header', () => {
       assert.throws(
         () => { extractEndpoints({ headers: { 'x-route': 'dummy' } }) },
@@ -30,6 +31,7 @@ describe('gatekeeper/authorization', () => {
         MalformedXRouteHeader
       )
     })
+
     it('returns list of endpoints', () => {
       assert.deepStrictEqual(
         extractEndpoints({ headers: { 'x-route': 'endpoint=foo,bar' } }),
@@ -37,6 +39,13 @@ describe('gatekeeper/authorization', () => {
       )
       assert.deepStrictEqual(
         extractEndpoints({ headers: { 'x-route': 'endpoint= foo , bar ' } }),
+        ['foo', 'bar']
+      )
+    })
+
+    it('deduplicates list of endpoints', () => {
+      assert.deepStrictEqual(
+        extractEndpoints({ headers: { 'x-route': 'endpoint=foo,bar,foo' } }),
         ['foo', 'bar']
       )
     })

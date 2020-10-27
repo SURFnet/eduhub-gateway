@@ -28,7 +28,7 @@ integrationContext('example policy', function () {
     const port = gwContainer().getMappedPort(8080)
     const res = await httpGet(`http://localhost:${port}/example`, {
       auth: testCredentials.fred,
-      headers: { 'X-Route': 'endpoint=wilma' }
+      headers: { 'X-Route': 'endpoint=TestBackend' }
     })
     assert.strictEqual(res.statusCode, 400)
   })
@@ -38,7 +38,7 @@ integrationContext('example policy', function () {
     const res = await httpGet(`http://localhost:${port}/example`, {
       auth: testCredentials.fred,
       headers: {
-        'X-Route': 'endpoint=wilma',
+        'X-Route': 'endpoint=TestBackend',
         Example: true
       }
     })

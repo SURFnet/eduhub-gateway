@@ -1,3 +1,5 @@
+const lodash = require('lodash')
+
 const pathToRegexp = require('path-to-regexp')
 
 class MalformedXRouteHeader extends Error {}
@@ -7,7 +9,7 @@ const extractEndpoints = (req) => {
   if (xroute) {
     const [, endpoints] = /^\s*endpoint\s*=([\w\s,]*)$/.exec(xroute) || []
     if (endpoints) {
-      return endpoints.trim().split(/\s*,\s*/)
+      return lodash.uniq(endpoints.trim().split(/\s*,\s*/))
     } else {
       throw new MalformedXRouteHeader(xroute)
     }

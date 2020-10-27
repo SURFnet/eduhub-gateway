@@ -28,7 +28,7 @@ describe('gatekeeper', () => {
           ]
         }
       ]
-    })
+    }, { gatewayConfig: { serviceEndpoints: { wilma: true } } })
 
     let calledNext, gotStatus, gotSet
     const res = { set: (v) => { gotSet = v }, sendStatus: (v) => { gotStatus = v } }

@@ -46,8 +46,10 @@ apiEndpoints:
     host: localhost
     paths: ['/example', '/example/:id']
 serviceEndpoints:
-  test-backend:
+  TestBackend:
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
+  OtherTestBackend:
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8083}'
 policies:
   - basic-auth
   - cors
@@ -72,13 +74,13 @@ pipelines:
               acls:
                 - app: fred
                   endpoints:
-                    - endpoint: wilma
+                    - endpoint: TestBackend
                       paths: ['/example', '/example/:id']
-                    - endpoint: betty
+                    - endpoint: OtherTestBackend
                       paths: ['/example']
                 - app: barney
                   endpoints:
-                    - endpoint: betty
+                    - endpoint: OtherTestBackend
                       paths: ['/example', '/example/:id']
       - example:
   default:
@@ -118,5 +120,5 @@ pipelines:
               validateRequests: true
       - proxy:
           - action:
-              serviceEndpoint: test-backend
+              serviceEndpoint: TestBackend
               changeOrigin: true
