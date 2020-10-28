@@ -47,7 +47,7 @@ apiEndpoints:
     paths: ['/example', '/example/:id']
 serviceEndpoints:
   test-backend:
-    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8083}'
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
 policies:
   - basic-auth
   - cors
