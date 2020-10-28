@@ -85,6 +85,9 @@ pipelines:
     apiEndpoints:
       - api
     policies:
+      - log:
+          - action:
+              message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
       - rate-limit:
           - action:
               max: 10
