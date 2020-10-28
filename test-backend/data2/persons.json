@@ -1,0 +1,246 @@
+{
+  "items": [
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "5aa599ac-1bdc-470f-9202-713aae5e8965",
+      "displayName": "Isabel Bluemink",
+      "mail": "isabel-bluemink@universiteit-van-striep.nl",
+      "surname": "Bluemink",
+      "title": "",
+      "telephoneNumber": "0634914919",
+      "dateOfBirth": "2002-06-12",
+      "office": "HNA 2.33",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Isabel",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/820913365"
+        }
+      },
+      "mobileNumber": "0621790394"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "9893851b-09c1-4c07-95f6-9c4a773ed96b",
+      "displayName": "Maria aan het Wolswijk",
+      "mail": "maria-aan-het-wolswijk@universiteit-van-striep.nl",
+      "surname": "Wolswijk",
+      "title": "",
+      "telephoneNumber": "0288790811",
+      "dateOfBirth": "2002-10-08",
+      "office": "AZH 1.63",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "aan het",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Maria",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/1308555765"
+        }
+      },
+      "mobileNumber": "0618297568"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "5c437396-f0c9-47a2-8fca-58300b46c2f9",
+      "displayName": "Dani Leuveren",
+      "mail": "dani-leuveren@universiteit-van-striep.nl",
+      "surname": "Leuveren",
+      "title": "",
+      "telephoneNumber": "0843369284",
+      "dateOfBirth": "1995-10-17",
+      "office": "TLA 1.54",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Dani",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/1088373437"
+        }
+      },
+      "mobileNumber": "0622794654"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "2a4f4029-65ee-440c-817f-a7e89756ce43",
+      "displayName": "David Christiaanse",
+      "mail": "david-christiaanse@universiteit-van-striep.nl",
+      "surname": "Christiaanse",
+      "title": "",
+      "telephoneNumber": "0254996143",
+      "dateOfBirth": "1996-03-03",
+      "office": "EQR 3.04",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "David",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/174781557"
+        }
+      },
+      "mobileNumber": "0695436031"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "9f47de20-753a-431a-82f0-a105db17e077",
+      "displayName": "Fay van de Breman",
+      "mail": "fay-van-de-breman@universiteit-van-striep.nl",
+      "surname": "Breman",
+      "title": "",
+      "telephoneNumber": "0628684643",
+      "dateOfBirth": "2002-11-25",
+      "office": "CZG 3.34",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "van de",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Fay",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/1739171506"
+        }
+      },
+      "mobileNumber": "0648697267"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "f4be85c2-4c81-4c29-a1b9-f90d64d3c109",
+      "displayName": "Bo Kuijvenhoven",
+      "mail": "bo-kuijvenhoven@universiteit-van-striep.nl",
+      "surname": "Kuijvenhoven",
+      "title": "",
+      "telephoneNumber": "0776152366",
+      "dateOfBirth": "2000-03-28",
+      "office": "FXF 7.54",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Bo",
+      "gender": "M",
+      "_links": {
+        "self": {
+          "href": "/persons/1871438672"
+        }
+      },
+      "mobileNumber": "0651853095"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "b3fd7489-3915-4b18-b332-3797a0744f22",
+      "displayName": "Jens Meeteren",
+      "mail": "jens-meeteren@universiteit-van-striep.nl",
+      "surname": "Meeteren",
+      "title": "dr.",
+      "telephoneNumber": "0613936313",
+      "dateOfBirth": "2002-09-29",
+      "office": "JTH 9.98",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Jens",
+      "gender": "M",
+      "_links": {
+        "self": {
+          "href": "/persons/1589244982"
+        }
+      },
+      "mobileNumber": "0616637378"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "828109b8-ace2-4949-8566-a622d6503f51",
+      "displayName": "Jasmijn Briels",
+      "mail": "jasmijn-briels@universiteit-van-striep.nl",
+      "surname": "Briels",
+      "title": "",
+      "telephoneNumber": "0622022396",
+      "dateOfBirth": "2002-05-31",
+      "office": "NOP 6.41",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Jasmijn",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/690762623"
+        }
+      },
+      "mobileNumber": "0689791374"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "93a43008-548f-48b8-9428-9df4cd52c70e",
+      "displayName": "Sophie Brattinga",
+      "mail": "sophie-brattinga@universiteit-van-striep.nl",
+      "surname": "Brattinga",
+      "title": "ir.",
+      "telephoneNumber": "0777258953",
+      "dateOfBirth": "1997-04-04",
+      "office": "BGJ 6.48",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Sophie",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/1270634591"
+        }
+      },
+      "mobileNumber": "0640485190"
+    },
+    {
+      "affiliations": [
+        "employee"
+      ],
+      "personId": "012c1135-a6cb-4208-b250-435fe9e9e0e5",
+      "displayName": "Damian van Tanis",
+      "mail": "damian-van-tanis@universiteit-van-striep.nl",
+      "surname": "Tanis",
+      "title": "",
+      "telephoneNumber": "0128276414",
+      "dateOfBirth": "1999-05-05",
+      "office": "HGC 9.24",
+      "photoOfficial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "surnamePrefix": "van",
+      "photoSocial": "https://docs.atlassian.com/aui/8.4.1/docs/images/avatar-person.svg",
+      "givenName": "Damian",
+      "gender": "F",
+      "_links": {
+        "self": {
+          "href": "/persons/827474884"
+        }
+      },
+      "mobileNumber": "0612711520"
+    }
+  ],
+  "pageSize": 10,
+  "pageNumber": 1
+}
