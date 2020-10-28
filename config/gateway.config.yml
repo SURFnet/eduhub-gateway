@@ -47,7 +47,7 @@ apiEndpoints:
     paths: ['/example', '/example/:id']
 serviceEndpoints:
   test-backend:
-    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8083}'
 policies:
   - basic-auth
   - cors
@@ -85,6 +85,10 @@ pipelines:
     apiEndpoints:
       - api
     policies:
+      - rate-limit:
+          - action:
+              max: 10
+              windowMs: 1000
       - request-transformer:
           - action:
               headers:
