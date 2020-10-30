@@ -2,7 +2,7 @@
 
 * Status
 
-Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
+  Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
 
 * Running tests
 
@@ -61,7 +61,7 @@ Master branch status: [[https://github.com/persistent-services/surf-ooapi-gatewa
    but not ~/dinner~.  It can also access ~/visits~ on the ~betty~
    endpoint but nothing else.
 
-   #+begin_example
+   #+begin_src yaml
       - gatekeeper:
           - action:
               acls:
@@ -71,7 +71,7 @@ Master branch status: [[https://github.com/persistent-services/surf-ooapi-gatewa
                     paths: ['/', '/dinner/:date']
                   - endpoint: betty
                     paths: ['/visits']
-   #+end_example
+   #+end_src
 
    The endpoint(s) an application tries to access is derived from the
    ~X-Route~ header.  The ~gatekeeper~ policy expects this header to
@@ -88,6 +88,35 @@ Master branch status: [[https://github.com/persistent-services/surf-ooapi-gatewa
 
    Only the ~endpoint~ directive is supported at this point, any value
    for the ~X-Route~ header not starting with ~endpoint=~ is ignored.
+
+* Configuration
+
+** Logging
+
+   Request logging is implemented using the standard [[https://www.express-gateway.io/docs/policies/log/][EG log policy]] in
+   [[./config/gateway.config.yml]]
+
+   #+begin_src yaml
+      - log:
+          - action:
+              message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
+   #+end_src
+
+
+** Rate limiting
+
+   Rate limiting is implemented using the standard [[https://www.express-gateway.io/docs/policies/rate-limiter/][EG rate limiter
+   policy]] in  [[./config/gateway.config.yml]]
+
+   #+begin_src yaml
+      - rate-limit:
+          - action:
+              max: 10
+              windowMs: 1000
+   #+end_src
+
+   This sample configuration limits requests to 10 per second per IP
+   address.
 
 * Setting up development environment
 
