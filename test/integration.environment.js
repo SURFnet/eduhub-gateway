@@ -2,7 +2,7 @@
 
 const http = require('http')
 const path = require('path')
-const { DockerComposeEnvironment, Wait } = require('testcontainers')
+const { DockerComposeEnvironment } = require('testcontainers')
 
 let environment, gwContainer
 const skipTest = process.env.MOCHA_SKIP === 'integration'
@@ -15,7 +15,6 @@ module.exports = {
     const composeFile = 'docker-compose.test.yml'
 
     environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .withWaitStrategy('surf-ooapi-gateway_ooapi-mock_1', Wait.forLogMessage('port:'))
       .up()
     gwContainer = environment.getContainer('surf-ooapi-gateway_gw-test_1')
 

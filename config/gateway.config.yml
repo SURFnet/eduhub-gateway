@@ -42,9 +42,6 @@ apiEndpoints:
        - '/programs/:programId/offerings'
        - '/rooms'
        - '/rooms/:roomId'
-  example:
-    host: localhost
-    paths: ['/example', '/example/:id']
 serviceEndpoints:
   TestBackend:
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
@@ -59,16 +56,22 @@ policies:
   - oauth2
   - proxy
   - rate-limit
-  - example
   - openapi-validator
   - gatekeeper
   - request-transformer
   - response-transformer
 pipelines:
-  example:
+  test:
     apiEndpoints:
-      - example
+      - api
     policies:
+      - log:
+          - action:
+              message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
+      - rate-limit:
+          - action:
+              max: 10
+              windowMs: 1000
       - gatekeeper:
           - action:
               acls:
@@ -82,18 +85,6 @@ pipelines:
                   endpoints:
                     - endpoint: OtherTestBackend
                       paths: ['/example', '/example/:id']
-      - example:
-  default:
-    apiEndpoints:
-      - api
-    policies:
-      - log:
-          - action:
-              message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
-      - rate-limit:
-          - action:
-              max: 10
-              windowMs: 1000
       - request-transformer:
           - action:
               headers:
@@ -118,7 +109,4 @@ pipelines:
               apiSpec: 'ooapiv4.json'
               validateResponses: true
               validateRequests: true
-      - proxy:
-          - action:
-              serviceEndpoint: TestBackend
-              changeOrigin: true
+      - aggregation:
