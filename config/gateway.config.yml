@@ -79,13 +79,13 @@ pipelines:
                 - app: fred
                   endpoints:
                     - endpoint: TestBackend
-                      paths: ['/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:id']
                     - endpoint: OtherTestBackend
-                      paths: ['/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:id']
                 - app: barney
                   endpoints:
                     - endpoint: OtherTestBackend
-                      paths: ['/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:id']
       - request-transformer:
           - action:
               headers:
@@ -108,6 +108,5 @@ pipelines:
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv4.json'
-              validateResponses: true
               validateRequests: true
       - aggregation:
