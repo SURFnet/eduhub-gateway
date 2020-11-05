@@ -3,15 +3,13 @@
 const assert = require('assert')
 const {
   httpGet,
-  gwContainer,
   integrationContext,
-  testCredentials
+  gatewayUrl
 } = require('./integration.environment.js')
 
 integrationContext('security headers', function () {
   it('should set required SURF headers', async () => {
-    const port = gwContainer().getMappedPort(8080)
-    const res = await httpGet(`http://${testCredentials.fred}@localhost:${port}/courses`)
+    const res = await httpGet(gatewayUrl('fred', '/courses'))
     const testHeaders = {
       'x-xss-protection': '1; mode-block',
       'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',

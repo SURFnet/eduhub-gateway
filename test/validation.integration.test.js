@@ -5,28 +5,23 @@ const httpcode = require('../lib/httpcode')
 
 const {
   httpGet,
-  gwContainer,
   integrationContext,
-  testCredentials
+  gatewayUrl
 } = require('./integration.environment.js')
 
 integrationContext('validation policy', function () {
-  const baseUrl = () => (
-    `http://${testCredentials.fred}@localhost:${gwContainer().getMappedPort(8080)}`
-  )
-
   it('should respond with OK for a correct request', async () => {
-    const res = await httpGet(`${baseUrl()}/courses`)
+    const res = await httpGet(gatewayUrl('fred', '/courses'))
     assert.equal(res.statusCode, httpcode.OK)
   })
 
   it('should respond with OK for a correct request with parameter', async () => {
-    const res = await httpGet(`${baseUrl()}/courses?pageNumber=1`)
+    const res = await httpGet(gatewayUrl('fred', '/courses?pageNumber=1'))
     assert.equal(res.statusCode, httpcode.OK)
   })
 
   it('should respond with BadRequest when specifying a parameter with the wrong format', async () => {
-    const res = await httpGet(`${baseUrl()}/courses?pageNumber=bar`)
+    const res = await httpGet(gatewayUrl('fred', '/courses?pageNumber=bar'))
     assert.equal(res.statusCode, httpcode.BadRequest)
     assert.match(res.headers['content-type'], /^application\/json\b/)
 
@@ -38,7 +33,7 @@ integrationContext('validation policy', function () {
 
   describe('with validation', () => {
     xit('should respond with OK for a correct response', async () => {
-      const res = await httpGet(`${baseUrl()}/courses/900d900d-900d-900d-900d-900d900d900d`, {
+      const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'), {
         headers: {
           'X-Validate-Response': 'true',
           'Accept-Encoding': 'gzip'
@@ -52,7 +47,7 @@ integrationContext('validation policy', function () {
     })
 
     xit('should respond with BadGateway for an incorrect response', async () => {
-      const res = await httpGet(`${baseUrl()}/courses/badbadba-badb-badb-badb-badbadbadbad`, {
+      const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
         headers: {
           'X-Validate-Response': 'true',
           'Accept-Encoding': 'gzip'
@@ -69,7 +64,7 @@ integrationContext('validation policy', function () {
 
   describe('without validation', () => {
     it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(`${baseUrl()}/courses/900d900d-900d-900d-900d-900d900d900d`)
+      const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'))
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
@@ -78,7 +73,7 @@ integrationContext('validation policy', function () {
     })
 
     it('should respond with OK for an incorrect response', async () => {
-      const res = await httpGet(`${baseUrl()}/courses/badbadba-badb-badb-badb-badbadbadbad`)
+      const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'))
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
