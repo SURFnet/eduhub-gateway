@@ -42,12 +42,11 @@ apiEndpoints:
        - '/programs/:programId/offerings'
        - '/rooms'
        - '/rooms/:roomId'
-  example:
-    host: localhost
-    paths: ['/example', '/example/:id']
 serviceEndpoints:
-  test-backend:
+  TestBackend:
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
+  OtherTestBackend:
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083}/ooapi/'
 policies:
   - basic-auth
   - cors
@@ -57,31 +56,13 @@ policies:
   - oauth2
   - proxy
   - rate-limit
-  - example
   - openapi-validator
   - gatekeeper
   - request-transformer
   - response-transformer
+  - aggregation
 pipelines:
-  example:
-    apiEndpoints:
-      - example
-    policies:
-      - gatekeeper:
-          - action:
-              acls:
-                - app: fred
-                  endpoints:
-                    - endpoint: wilma
-                      paths: ['/example', '/example/:id']
-                    - endpoint: betty
-                      paths: ['/example']
-                - app: barney
-                  endpoints:
-                    - endpoint: betty
-                      paths: ['/example', '/example/:id']
-      - example:
-  default:
+  test:
     apiEndpoints:
       - api
     policies:
@@ -92,6 +73,19 @@ pipelines:
           - action:
               max: 10
               windowMs: 1000
+      - gatekeeper:
+          - action:
+              acls:
+                - app: fred
+                  endpoints:
+                    - endpoint: TestBackend
+                      paths: ['/', '/courses', '/courses/:id']
+                    - endpoint: OtherTestBackend
+                      paths: ['/', '/courses', '/courses/:id']
+                - app: barney
+                  endpoints:
+                    - endpoint: OtherTestBackend
+                      paths: ['/', '/courses', '/courses/:id']
       - request-transformer:
           - action:
               headers:
@@ -114,9 +108,5 @@ pipelines:
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv4.json'
-              validateResponses: true
               validateRequests: true
-      - proxy:
-          - action:
-              serviceEndpoint: test-backend
-              changeOrigin: true
+      - aggregation:

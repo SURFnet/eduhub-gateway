@@ -2,10 +2,23 @@
 
 const http = require('http')
 const path = require('path')
-const { DockerComposeEnvironment, Wait } = require('testcontainers')
+const { DockerComposeEnvironment } = require('testcontainers')
 
 let environment, gwContainer
 const skipTest = process.env.MOCHA_SKIP === 'integration'
+
+// As reflected in config/credentials.json.test
+const testCredentials = {
+  fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
+  barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
+}
+
+const getGatewayContainer = () => {
+  if (!gwContainer) {
+    throw new Error('Integration environment not initialized!')
+  }
+  return gwContainer
+}
 
 module.exports = {
   up: async () => {
@@ -15,7 +28,6 @@ module.exports = {
     const composeFile = 'docker-compose.test.yml'
 
     environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .withWaitStrategy('surf-ooapi-gateway_ooapi-mock_1', Wait.forLogMessage('port:'))
       .up()
     gwContainer = environment.getContainer('surf-ooapi-gateway_gw-test_1')
 
@@ -30,13 +42,6 @@ module.exports = {
   down: async () => {
     if (skipTest) return
     await environment.down()
-  },
-
-  gwContainer: () => {
-    if (!gwContainer) {
-      throw new Error('Integration environment not initialized!')
-    }
-    return gwContainer
   },
 
   integrationContext: (description, callback) => {
@@ -60,5 +65,12 @@ module.exports = {
         })
       })
     )
+  },
+
+  testCredentials,
+
+  gatewayUrl: (app, path) => {
+    const auth = app ? testCredentials[app] + '@' : ''
+    return `http://${auth}localhost:${getGatewayContainer().getMappedPort(8080)}${path || ''}`
   }
 }

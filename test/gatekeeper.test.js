@@ -1,13 +1,9 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const httpcode = require('../lib/httpcode')
 const gatekeeper = require('../policies/gatekeeper')
-
-// As reflected in config/credentials.json.test
-const testCredentials = {
-  fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
-  barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
-}
+const { testCredentials } = require('./integration.environment.js')
 
 describe('gatekeeper', () => {
   it('has a policy', () => {
@@ -28,7 +24,7 @@ describe('gatekeeper', () => {
           ]
         }
       ]
-    })
+    }, { gatewayConfig: { serviceEndpoints: { wilma: true } } })
 
     let calledNext, gotStatus, gotSet
     const res = { set: (v) => { gotSet = v }, sendStatus: (v) => { gotStatus = v } }
@@ -39,21 +35,21 @@ describe('gatekeeper', () => {
       calledNext = gotStatus = gotSet = undefined
     })
 
-    it('returns 401 unauthorized without basic auth credentials', () => {
+    it('returns Unauthorized without basic auth credentials', () => {
       middleware({ headers: {} }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 401)
+      assert.strictEqual(gotStatus, httpcode.Unauthorized)
       assert(gotSet['WWW-Authenticate'])
     })
 
-    it('returns 401 unauthorized without known auth credentials', () => {
+    it('returns Unauthorized without known auth credentials', () => {
       middleware({ headers: { authorization: auth('foo:bar') } }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 401)
+      assert.strictEqual(gotStatus, httpcode.Unauthorized)
       assert(gotSet['WWW-Authenticate'])
     })
 
-    it('returns 403 forbidden with known auth credentials but bad endpoint', () => {
+    it('returns Forbidden with known auth credentials but bad endpoint', () => {
       middleware({
         headers: {
           authorization: auth(testCredentials.fred),
@@ -62,10 +58,10 @@ describe('gatekeeper', () => {
         path: '/'
       }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 403)
+      assert.strictEqual(gotStatus, httpcode.Forbidden)
     })
 
-    it('returns 403 forbidden with known auth credentials but bad path', () => {
+    it('returns Forbidden with known auth credentials but bad path', () => {
       middleware({
         headers: {
           authorization: auth(testCredentials.fred),
@@ -74,7 +70,7 @@ describe('gatekeeper', () => {
         path: '/tv'
       }, res, next)
       assert(!calledNext)
-      assert.strictEqual(gotStatus, 403)
+      assert.strictEqual(gotStatus, httpcode.Forbidden)
     })
 
     it('calls next with known auth credentials, endpoint and path', () => {
