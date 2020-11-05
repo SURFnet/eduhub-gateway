@@ -1,6 +1,5 @@
 const fs = require('fs')
 const jsYaml = require('js-yaml')
-const bodyParser = require('body-parser')
 
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
 const { OpenApiValidator } = require('express-openapi-validate')
@@ -15,11 +14,7 @@ module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
   const openApiDocument = jsYaml.safeLoad(fs.readFileSync(apiSpec, 'utf-8'))
   const validator = new OpenApiValidator(openApiDocument, { ajvOptions: { coerceTypes: true } })
 
-  const middlewareStack = [
-    bodyParser.json(),
-    bodyParser.text(),
-    bodyParser.urlencoded({ extended: false })
-  ]
+  const middlewareStack = []
 
   if (validateRequests) {
     middlewareStack.push(makeValidateRequestMiddleware(validator))
