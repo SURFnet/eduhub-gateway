@@ -3,7 +3,7 @@ services:
   gw-test:
     environment:
       - "OOAPI_TEST_BACKEND_URL=http://test-backend/"
-      - "OOAPI_TEST_BACKEND2_URL=http://test-backend2/"
+      - "OOAPI_OTHER_TEST_BACKEND_URL=http://test-backend2/"
     build:
       context: .
       dockerfile: Dockerfile.test
