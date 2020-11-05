@@ -1,8 +1,8 @@
 const { URL } = require('url')
 const httpcode = require('../../lib/httpcode')
 
-const packageResponses = (req, responses) => {
-  const gateway = {
+const packageResponses = (req, responses) => ({
+  gateway: {
     requestId: req.egContext.requestID,
     request: req.url,
     numberOfEndpoints: responses.length,
@@ -14,9 +14,9 @@ const packageResponses = (req, responses) => {
         responseCode: res.statusCode || 0
       }
     ))
-  }
+  },
 
-  const endpoint = responses.filter(
+  endpoint: responses.filter(
     ([, res]) => res.statusCode === httpcode.OK
   ).reduce(
     (m, [{ id }, { body }]) => {
@@ -24,7 +24,6 @@ const packageResponses = (req, responses) => {
       return m
     }, {}
   )
-  return { gateway, endpoint }
-}
+})
 
 module.exports = { packageResponses }
