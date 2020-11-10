@@ -1,6 +1,7 @@
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Gatekeeper]')
 
 const httpcode = require('../../lib/httpcode')
+const xroute = require('../../lib/xroute')
 const authentication = require('./authentication')
 const authorization = require('./authorization')
 const credentials = require('./credentials')
@@ -42,9 +43,18 @@ module.exports = (params, config) => {
 
       if (acl) {
         authorization.prepareRequestHeaders(acl, req)
-        if (authorization.isAuthorized(acl, req)) {
-          next()
-          return
+        try {
+          if (authorization.isAuthorized(acl, req)) {
+            next()
+            return
+          }
+        } catch (e) {
+          if (e instanceof xroute.MalformedHeader) {
+            res.sendStatus(httpcode.BadRequest)
+            return
+          } else {
+            throw e
+          }
         }
       }
 

@@ -20,23 +20,15 @@ const prepareRequestHeaders = (acl, req) => {
 }
 
 const isAuthorized = (acl, req) => {
-  try {
-    const endpoints = xroute.decode(req.headers['x-route'])
+  const endpoints = xroute.decode(req.headers['x-route'])
 
-    if (endpoints.length) {
-      return endpoints.reduce(
-        (m, endpoint) => m && !!acl[endpoint] && !!acl[endpoint].exec(req.path),
-        true
-      )
-    } else {
-      return false
-    }
-  } catch (e) {
-    if (e instanceof xroute.MalformedHeader) {
-      return false
-    } else {
-      throw e
-    }
+  if (endpoints.length) {
+    return endpoints.reduce(
+      (m, endpoint) => m && !!acl[endpoint] && !!acl[endpoint].exec(req.path),
+      true
+    )
+  } else {
+    return false
   }
 }
 

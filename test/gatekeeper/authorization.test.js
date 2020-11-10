@@ -2,6 +2,7 @@
 
 const assert = require('assert').strict
 const { compileAcls, prepareRequestHeaders, isAuthorized } = require('../../policies/gatekeeper/authorization')
+const { MalformedHeader } = require('../../lib/xroute')
 
 describe('gatekeeper/authorization', () => {
   const acls = compileAcls([
@@ -53,17 +54,19 @@ describe('gatekeeper/authorization', () => {
     })
   })
   describe('isAuthorized', () => {
-    it('returns false without valid x-route header', () => {
-      assert.equal(
-        false,
-        isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'dummy' } })
+    it('throws exception with invalid x-route header', () => {
+      assert.throws(
+        () => {
+          isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'dummy' } })
+        }, MalformedHeader
       )
     })
 
-    it('returns false with valid but empty x-route header', () => {
-      assert.equal(
-        false,
-        isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'endpoints=' } })
+    it('throws exception with empty endpoints on x-route header', () => {
+      assert.throws(
+        () => {
+          isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'endpoint=' } })
+        }, MalformedHeader
       )
     })
 

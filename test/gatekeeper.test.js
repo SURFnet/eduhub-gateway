@@ -83,5 +83,17 @@ describe('gatekeeper', () => {
       }, res, next)
       assert(calledNext)
     })
+
+    it('returns BadRequest with bad malformed x-route header', () => {
+      middleware({
+        headers: {
+          authorization: auth(testCredentials.fred),
+          'x-route': 'endpoints=wilma' // it should "endpoint" without "s"
+        },
+        path: '/'
+      }, res, next)
+      assert(!calledNext)
+      assert.strictEqual(gotStatus, httpcode.BadRequest)
+    })
   })
 })
