@@ -1,10 +1,14 @@
 const httpProxy = require('http-proxy')
 
+const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
+
 const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const envelop = require('./envelop')
 
 module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints } }) => {
+  logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
+
   const isEnvelopRequest = (req) => {
     if (noEnvelopIfAnyHeaders) {
       for (const header in noEnvelopIfAnyHeaders) {

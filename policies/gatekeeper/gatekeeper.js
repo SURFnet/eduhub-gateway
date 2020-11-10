@@ -1,3 +1,5 @@
+const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Gatekeeper]')
+
 const httpcode = require('../../lib/httpcode')
 const authentication = require('./authentication')
 const authorization = require('./authorization')
@@ -25,8 +27,11 @@ function assertAllEndpointsDefined ({ acls }, { gatewayConfig: { serviceEndpoint
 }
 
 module.exports = (params, config) => {
+  logger.info('initializing gatekeeper policy')
+
   assertAllEndpointsDefined(params, config)
   const acls = authorization.compileAcls(params.acls)
+  logger.debug(`known apps: ${Object.keys(acls)}`)
 
   return (req, res, next) => {
     const app = authentication.appFromRequest(req, credentials.read(params.credentials))
