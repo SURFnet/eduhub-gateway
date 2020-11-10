@@ -9,6 +9,15 @@ const {
   gatewayUrl
 } = require('../integration.environment.js')
 
+// the quickest response gets listed first, sorting stabilizes tests
+const sortListOfEndpoints = (listOfEndpoints) => (
+  listOfEndpoints.sort((a, b) => {
+    if (a.id < b.id) return -1
+    if (a.id > b.id) return 1
+    return 0
+  })
+)
+
 integrationContext('aggregation policy', function () {
   it('should respond with an envelop', async () => {
     const res = await httpGet(gatewayUrl('fred', '/'))
@@ -21,17 +30,24 @@ integrationContext('aggregation policy', function () {
 
     assert.equal(body.gateway.numberOfEndpoints, 2)
     assert.equal(body.gateway.request, '/')
-    assert.deepEqual(body.gateway.listOfEndpoints, [
-      {
-        id: 'TestBackend',
-        url: 'http://test-backend/',
-        responseCode: httpcode.OK
-      }, {
-        id: 'OtherTestBackend',
-        url: 'http://test-backend2/',
-        responseCode: httpcode.OK
-      }
-    ])
+
+    assert.deepEqual(
+      sortListOfEndpoints(
+        body.gateway.listOfEndpoints
+      ),
+      [ // sorted!
+        {
+          id: 'OtherTestBackend',
+          url: 'http://test-backend2/',
+          responseCode: httpcode.OK
+        },
+        {
+          id: 'TestBackend',
+          url: 'http://test-backend/',
+          responseCode: httpcode.OK
+        }
+      ]
+    )
 
     assert.deepEqual(body.endpoint, {
       TestBackend: {
