@@ -69,10 +69,12 @@ pipelines:
       - log:
           - action:
               message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
+
       - rate-limit:
           - action:
               max: 10
               windowMs: 1000
+
       - gatekeeper:
           - action:
               acls:
@@ -86,11 +88,13 @@ pipelines:
                   endpoints:
                     - endpoint: OtherTestBackend
                       paths: ['/', '/courses', '/courses/:id']
+
       - request-transformer:
           - action:
               headers:
                 remove:
                   - 'accept-encoding'
+
       - response-transformer:
           - action:
               headers:
@@ -105,8 +109,14 @@ pipelines:
                   'Content-Security-Policy': "'default-src \\'self\\''"
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
+
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv4.json'
               validateRequests: true
+              validateResponses: true
+
       - aggregation:
+          - action:
+              noEnvelopIfAnyHeaders:
+                'X-Validate-Response': 'true'

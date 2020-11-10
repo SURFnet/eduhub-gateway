@@ -57,7 +57,7 @@ const makeValidateResponseMiddleware = (validator) => {
   return modifyResponse(
     (req, res) => {
       // This should return true if the response body is to be validated
-      return req.headers['x-validate-response'] === 'true'
+      return res.statusCode === httpcode.OK && req.headers['x-validate-response'] === 'true'
     },
     makeValidator(validator)
   )

@@ -4,12 +4,29 @@ const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const envelop = require('./envelop')
 
-module.exports = (params, { gatewayConfig: { serviceEndpoints } }) => {
+module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints } }) => {
+  const isEnvelopRequest = (req) => {
+    if (noEnvelopIfAnyHeaders) {
+      for (const header in noEnvelopIfAnyHeaders) {
+        if (req.headers[header.toLowerCase()] === noEnvelopIfAnyHeaders[header]) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   return (req, res, next) => {
+    const envelopRequest = isEnvelopRequest(req)
     const endpoints = xroute.decode(req.headers['x-route'])
 
     if (!endpoints) {
       throw new Error('no endpoints selected, make sure gatekeeper policy configured')
+    }
+
+    if (endpoints.length > 1 && !envelopRequest) {
+      res.sendStatus(httpcode.BadRequest)
+      return
     }
 
     const responses = []
@@ -29,20 +46,24 @@ module.exports = (params, { gatewayConfig: { serviceEndpoints } }) => {
       }
       const proxy = httpProxy.createProxyServer()
 
-      proxy.on('proxyRes', (proxyRes, req, res) => {
-        const body = []
-        proxyRes.on('data', chunk => body.push(chunk))
-        proxyRes.on('end', () => {
-          proxyRes.body = Buffer.concat(body).toString()
-          endpointDone(endpoint, proxyRes)
+      if (envelopRequest) {
+        proxy.on('proxyRes', (proxyRes, req, res) => {
+          const body = []
+          proxyRes.on('data', chunk => body.push(chunk))
+          proxyRes.on('end', () => {
+            proxyRes.body = Buffer.concat(body).toString()
+            endpointDone(endpoint, proxyRes)
+          })
         })
-      })
-      proxy.on('error', (e) => endpointDone(endpoint, e))
+        proxy.on('error', (e) => endpointDone(endpoint, e))
+      } else {
+        proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
+      }
 
       proxy.web(req, res, {
         target: endpoint.url,
         changeOrigin: true,
-        selfHandleResponse: true
+        selfHandleResponse: envelopRequest
       })
     })
   }

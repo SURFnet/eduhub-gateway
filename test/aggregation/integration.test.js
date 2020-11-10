@@ -46,4 +46,31 @@ integrationContext('aggregation policy', function () {
       }
     })
   })
+
+  describe('combined with validation', () => {
+    it('should not respond with an envelop with one endpoint', async () => {
+      const res = await httpGet(gatewayUrl('fred', '/'), {
+        headers: {
+          'X-Validate-Response': 'true',
+          'X-Route': 'endpoint=TestBackend'
+        }
+      })
+      assert.equal(res.statusCode, httpcode.OK)
+      assert.match(res.headers['content-type'], /^application\/json\b/)
+
+      const body = JSON.parse(res.body)
+      assert(!body.gateway)
+      assert(!body.endpoint)
+    })
+
+    it('should respond with bad request for multiple endpoints', async () => {
+      const res = await httpGet(gatewayUrl('fred', '/'), {
+        headers: {
+          'X-Validate-Response': 'true',
+          'X-Route': 'endpoint=TestBackend,OtherTestBackend'
+        }
+      })
+      assert.equal(res.statusCode, httpcode.BadRequest)
+    })
+  })
 })

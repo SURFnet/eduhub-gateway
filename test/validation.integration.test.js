@@ -32,10 +32,11 @@ integrationContext('validation policy', function () {
   })
 
   describe('with validation', () => {
-    xit('should respond with OK for a correct response', async () => {
+    it('should respond with OK for a correct response', async () => {
       const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'), {
         headers: {
           'X-Validate-Response': 'true',
+          'X-Route': 'endpoint=TestBackend',
           'Accept-Encoding': 'gzip'
         }
       })
@@ -46,10 +47,11 @@ integrationContext('validation policy', function () {
       assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
     })
 
-    xit('should respond with BadGateway for an incorrect response', async () => {
+    it('should respond with BadGateway for an incorrect response', async () => {
       const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
         headers: {
           'X-Validate-Response': 'true',
+          'X-Route': 'endpoint=TestBackend',
           'Accept-Encoding': 'gzip'
         }
       })
