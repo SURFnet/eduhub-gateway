@@ -1,5 +1,11 @@
-http:
+http: # remove http section in production environmennt
   port: 8080
+https:
+  port: 4444
+  tls:
+    default: # replace with real certificate in prod environment
+      key: "config/testServer.key"
+      cert: "config/testServer.crt"
 admin:
   port: 9876
   host: localhost

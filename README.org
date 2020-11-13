@@ -118,6 +118,38 @@
    This sample configuration limits requests to 10 per second per IP
    address.
 
+** TLS
+
+*** Setting server certificates
+
+    To serve https requests, you need to specify your private key and
+    the signed certificate as follows
+
+    #+begin_src yaml
+      https:
+        port: 4444
+        tls:
+          default: # replace with real certificate in prod environment
+            key: "config/testServer.key"
+            cert: "config/testServer.crt"
+    #+end_src
+
+*** Generating self-signed certificates
+
+    The integration tests allow self-signed certificates, which you
+    can generate as follows:
+
+    #+begin_src sh
+      # create root certificate authority for signing our own certs
+      cd config
+      openssl genrsa -out testRootCA.key 2048
+      openssl req -x509 -new -nodes -key testRootCA.key -sha256 -days 1024 -out testRootCA.pem
+
+      # create server certificate
+      openssl req -nodes -newkey rsa:2048 -keyout testServer.key -out testServer.csr
+      openssl x509 -req -days 365 -in testServer.csr -CA testRootCA.pem -CAkey testRootCA.key -set_serial 01 -out testServer.crt
+    #+end_src
+
 * Setting up development environment
 
   First, install [[https://nodejs.org/en/][NodeJS + NPM]]

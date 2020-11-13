@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 
+const https = require('https')
 const http = require('http')
 const path = require('path')
 const { DockerComposeEnvironment } = require('testcontainers')
@@ -55,8 +56,13 @@ module.exports = {
   skipTest: skipTest,
 
   httpGet: (url, opts) => {
+    const lib = url.startsWith('https://') ? https : http
+    opts = Object.assign({
+      agent: false, // allow self-signed certificates
+      rejectUnauthorized: false
+    }, opts)
     return new Promise(
-      (resolve, reject) => http.get(url, opts, res => {
+      (resolve, reject) => lib.get(url, opts, res => {
         let body = ''
         res.on('data', (chunk) => { body += chunk })
         res.on('end', () => {
@@ -71,6 +77,6 @@ module.exports = {
 
   gatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
-    return `http://${auth}localhost:${getGatewayContainer().getMappedPort(8080)}${path || ''}`
+    return `https://${auth}localhost:${getGatewayContainer().getMappedPort(4444)}${path || ''}`
   }
 }
