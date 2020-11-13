@@ -9,7 +9,7 @@
   Run all tests with:
 
   #+begin_src sh
-    docker-compose -f docker-compose.test.yml build
+    npm run-script build-test # builds docker images
     npm test
   #+end_src
 

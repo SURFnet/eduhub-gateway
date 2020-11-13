@@ -14,5 +14,5 @@ jobs:
       with:
         node-version: 12
     - run: npm ci
-    - run: docker-compose -f docker-compose.test.yml build
+    - run: npm run-script build-test
     - run: npm test

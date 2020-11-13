@@ -6,7 +6,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "standard --env mocha && mocha --require test/integration.hook.js -t 60000 test/*.test.js test/**/*.test.js"
+    "test": "standard --env mocha && mocha --require test/integration.hook.js -t 60000 test/*.test.js test/**/*.test.js",
+    "build-test": "docker-compose -f docker-compose.test.yml build"
   },
   "devDependencies": {
     "mocha": "^8.1.3",
