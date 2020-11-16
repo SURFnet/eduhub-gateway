@@ -4,7 +4,11 @@ module.exports = {
   schema: {
     $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-aggregation.json',
     type: 'object',
-    properties: {},
+    properties: {
+      noEnvelopIfHeaders: {
+        type: 'object'
+      }
+    },
     required: []
   },
 

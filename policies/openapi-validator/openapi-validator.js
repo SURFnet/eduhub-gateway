@@ -9,7 +9,7 @@ const { makeValidateRequestMiddleware } = require('./request-validator')
 const { makeValidateResponseMiddleware } = require('./response-validator')
 
 module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
-  logger.info(`Initializing validator for ${apiSpec}`)
+  logger.info(`initializing validator for ${apiSpec}`)
 
   const openApiDocument = jsYaml.safeLoad(fs.readFileSync(apiSpec, 'utf-8'))
   const validator = new OpenApiValidator(openApiDocument, { ajvOptions: { coerceTypes: true } })
