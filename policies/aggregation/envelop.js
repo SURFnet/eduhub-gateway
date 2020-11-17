@@ -5,18 +5,17 @@ const packageResponses = (req, responses) => ({
   gateway: {
     requestId: req.egContext.requestID,
     request: req.url,
-    numberOfEndpoints: responses.length,
-    listOfEndpoints: responses.map(([endpoint, res]) => (
-      {
-        id: endpoint.id,
+    endpoints: responses.reduce((m, [endpoint, res]) => {
+      m[endpoint.id] = {
         name: endpoint.name,
         url: new URL(req.url, endpoint.url).toString(),
         responseCode: res.statusCode || 0
       }
-    ))
+      return m
+    }, {})
   },
 
-  endpoint: responses.filter(
+  responses: responses.filter(
     ([, res]) => res.statusCode === httpcode.OK
   ).reduce(
     (m, [{ id }, { body }]) => {
