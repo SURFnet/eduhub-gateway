@@ -26,25 +26,25 @@ describe('envelop', () => {
         {
           requestId: 'test-request-id',
           request: '/test-url?foo=bar',
-          numberOfEndpoints: 2,
-          listOfEndpoints: [{
-            id: 'endpoint-1',
-            name: 'endpoint-1-name',
-            url: 'http://endpoint-1.org/test-url?foo=bar',
-            responseCode: httpcode.OK
-          }, {
-            id: 'endpoint-2',
-            name: 'endpoint-2-name',
-            url: 'http://endpoint-2.org/test-url?foo=bar',
-            responseCode: httpcode.BadRequest
-          }]
+          endpoints: {
+            'endpoint-1': {
+              name: 'endpoint-1-name',
+              url: 'http://endpoint-1.org/test-url?foo=bar',
+              responseCode: httpcode.OK
+            },
+            'endpoint-2': {
+              name: 'endpoint-2-name',
+              url: 'http://endpoint-2.org/test-url?foo=bar',
+              responseCode: httpcode.BadRequest
+            }
+          }
         }
       )
     })
 
-    it('has an endpoint property', () => {
+    it('has an responses property', () => {
       assert.deepEqual(
-        resp.endpoint,
+        resp.responses,
         { 'endpoint-1': { foo: 'bar' } }
       )
     })

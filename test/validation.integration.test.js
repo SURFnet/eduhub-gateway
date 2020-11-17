@@ -70,7 +70,7 @@ integrationContext('validation policy', function () {
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
-      const course = JSON.parse(res.body).endpoint.TestBackend
+      const course = JSON.parse(res.body).responses.TestBackend
       assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
     })
 
@@ -79,7 +79,7 @@ integrationContext('validation policy', function () {
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
-      const course = JSON.parse(res.body).endpoint.TestBackend
+      const course = JSON.parse(res.body).responses.TestBackend
       assert.equal(course.courseId, 'badbadba-badb-badb-badb-badbadbadbad')
     })
   })
