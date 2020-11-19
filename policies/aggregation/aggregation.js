@@ -81,6 +81,7 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
       }
 
       proxy.web(req, res, {
+        ...endpoint.proxyOptions,
         target: endpoint.url,
         changeOrigin: true,
         selfHandleResponse: envelopRequest
