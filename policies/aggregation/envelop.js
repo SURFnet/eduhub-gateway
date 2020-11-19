@@ -14,8 +14,11 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const { URL } = require('url')
 const httpcode = require('../../lib/httpcode')
+
+const urlJoin = (...parts) => (
+  parts.map(part => part.replace(/^\/+/, '').replace(/\/$/, '')).join('/')
+)
 
 const packageResponses = (req, responses) => ({
   gateway: {
@@ -24,7 +27,7 @@ const packageResponses = (req, responses) => ({
     endpoints: responses.reduce((m, [endpoint, res]) => {
       m[endpoint.id] = {
         name: endpoint.name,
-        url: new URL(req.url, endpoint.url).toString(),
+        url: urlJoin(endpoint.url, req.url),
         responseCode: res.statusCode || 0
       }
       return m
