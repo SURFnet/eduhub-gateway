@@ -89,6 +89,21 @@
    Only the ~endpoint~ directive is supported at this point, any value
    for the ~X-Route~ header not starting with ~endpoint=~ is ignored.
 
+** Server authentication
+
+*** Basic authentication
+
+    Service endpoints can be secured using basic authentication by
+    adding ~proxyOptions.auth~ options.  Here's an example:
+
+    #+begin_src yaml
+      serviceEndpoints:
+        BoulderCollege:
+          url: https://bould-college.co/ooapi/
+          proxyOptions:
+            auth: fred:wilma
+    #+end_src
+
 * Configuration
 
 ** Logging
@@ -101,7 +116,6 @@
           - action:
               message: ${req.egContext.requestID} ${req.method} ${req.originalUrl}
    #+end_src
-
 
 ** Rate limiting
 

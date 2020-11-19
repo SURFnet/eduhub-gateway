@@ -24,5 +24,6 @@ services:
       dockerfile: Dockerfile
       args:
         WWW_DATA_DIR: data2/
+        SITE_CONFIG: default.with-basic-auth
     ports:
       - "8083:80"

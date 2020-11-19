@@ -53,6 +53,8 @@ serviceEndpoints:
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
   OtherTestBackend:
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083}/ooapi/'
+    proxyOptions:
+      auth: fred:wilma
 policies:
   - basic-auth
   - cors
