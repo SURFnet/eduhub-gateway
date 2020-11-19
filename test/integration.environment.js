@@ -19,9 +19,9 @@
 const https = require('https')
 const http = require('http')
 const path = require('path')
-const { DockerComposeEnvironment } = require('testcontainers')
+const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 
-let environment, gwContainer
+let container, testBackend, otherTestBackend
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 // As reflected in config/credentials.json.test
@@ -30,35 +30,35 @@ const testCredentials = {
   barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
 }
 
-const getGatewayContainer = () => {
-  if (!gwContainer) {
-    throw new Error('Integration environment not initialized!')
-  }
-  return gwContainer
-}
-
 module.exports = {
   up: async () => {
     if (skipTest) return
 
+    testBackend = require('../scripts/test-backend.js')
+    otherTestBackend = require('../scripts/other-test-backend.js')
+
+    await TestContainers.exposeHostPorts(8082, 8083)
+
     const composeFilePath = path.resolve(__dirname, '..')
-    const composeFile = 'docker-compose.test.yml'
+    const composeFile = 'Dockerfile.test'
+    const image = await GenericContainer
+      .fromDockerfile(composeFilePath, composeFile)
+      .build()
 
-    environment = await new DockerComposeEnvironment(composeFilePath, composeFile)
-      .up()
-    gwContainer = environment.getContainer('surf-ooapi-gateway_gw-test_1')
-
-    if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
-      const stream = await gwContainer.logs()
-      stream
-        .on('data', line => console.log(line))
-        .on('err', line => console.error(line))
-    }
+    container = await image
+      .withEnv('OOAPI_TEST_BACKEND_URL', 'http://host.testcontainers.internal:8082')
+      .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', 'http://host.testcontainers.internal:8083')
+      .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
+      .withExposedPorts(8080, 4444)
+      .start()
   },
 
   down: async () => {
     if (skipTest) return
-    await environment.down()
+    await container.stop()
+
+    testBackend.close()
+    otherTestBackend.close()
   },
 
   integrationContext: (description, callback) => {
@@ -93,6 +93,6 @@ module.exports = {
 
   gatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
-    return `https://${auth}localhost:${getGatewayContainer().getMappedPort(4444)}${path || ''}`
+    return `https://${auth}localhost:${container.getMappedPort(4444)}${path || ''}`
   }
 }

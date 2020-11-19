@@ -41,11 +41,11 @@ integrationContext('aggregation policy', function () {
       body.gateway.endpoints,
       {
         TestBackend: {
-          url: 'http://test-backend/',
+          url: 'http://host.testcontainers.internal:8082/',
           responseCode: httpcode.OK
         },
         OtherTestBackend: {
-          url: 'http://test-backend2/',
+          url: 'http://host.testcontainers.internal:8083/ooapi/',
           responseCode: httpcode.OK
         }
       }

@@ -9,7 +9,6 @@
   Run all tests with:
 
   #+begin_src sh
-    npm run-script build-test # builds docker images
     npm test
   #+end_src
 
@@ -17,6 +16,14 @@
 
   #+begin_src sh
     MOCHA_SKIP=integration npm test
+  #+end_src
+
+  For development and tests the default gateway configuration points
+  at two test backends.  These can be started locally with:
+
+  #+begin_src sh
+    npm run test-backend &
+    npm run other-test-backend &
   #+end_src
 
 * Security
