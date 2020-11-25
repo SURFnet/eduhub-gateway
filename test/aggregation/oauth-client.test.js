@@ -14,13 +14,26 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const express = require('express')
+/* eslint-env mocha */
 
-module.exports = {
-  start: (data, port, ...middleware) => {
-    const app = express()
-    middleware && middleware.forEach(v => app.use(v))
-    app.use(express.static(data, { index: 'index.json', extensions: 'json' }))
-    return app.listen(port)
-  }
-}
+const assert = require('assert').strict
+
+const oauthClient = require('../../policies/aggregation/oauth-client')
+
+describe('oauth-client', () => {
+  describe('tokenKey', () => {
+    it('produces a unique value', () => {
+      assert.notEqual(
+        oauthClient.tokenKey({ url: 'x', params: { x: 1 } }),
+        oauthClient.tokenKey({ url: 'x', params: { x: 2 } })
+      )
+    })
+
+    it('produces same key on same value', () => {
+      assert.equal(
+        oauthClient.tokenKey({ url: 'x', params: { x: 1, y: 2 } }),
+        oauthClient.tokenKey({ url: 'x', params: { y: 2, x: 1 } })
+      )
+    })
+  })
+})

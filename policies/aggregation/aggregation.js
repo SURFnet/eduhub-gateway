@@ -21,9 +21,14 @@ const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAG
 const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const envelop = require('./envelop')
+const { proxyOptionsForEndpoint } = require('./proxy-extras')
 
 module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints } }) => {
   logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
+
+  // Note: can not require db earlier because EG configuration might
+  // not be fully loaded yet causing a deadlock.
+  const db = require('express-gateway/lib/db')
 
   const isEnvelopRequest = (req) => {
     if (noEnvelopIfAnyHeaders) {
@@ -51,6 +56,7 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
 
     const responses = []
     const endpointDone = (endpoint, proxyRes) => {
+      if (res.writableEnded) return
       responses.push([endpoint, proxyRes])
 
       if (responses.length === endpoints.length) {
@@ -59,33 +65,40 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
       }
     }
 
-    endpoints.forEach((endpointId) => {
-      const endpoint = {
-        ...serviceEndpoints[endpointId],
-        id: endpointId
-      }
-      const proxy = httpProxy.createProxyServer()
+    endpoints.forEach(async (endpointId) => {
+      if (res.writableEnded) return
 
-      if (envelopRequest) {
-        proxy.on('proxyRes', (proxyRes, req, res) => {
-          const body = []
-          proxyRes.on('data', chunk => body.push(chunk))
-          proxyRes.on('end', () => {
-            proxyRes.body = Buffer.concat(body).toString()
-            endpointDone(endpoint, proxyRes)
+      try {
+        const endpoint = {
+          ...serviceEndpoints[endpointId],
+          id: endpointId
+        }
+        const proxy = httpProxy.createProxyServer()
+
+        if (envelopRequest) {
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            const body = []
+            proxyRes.on('data', chunk => body.push(chunk))
+            proxyRes.on('end', () => {
+              proxyRes.body = Buffer.concat(body).toString()
+              endpointDone(endpoint, proxyRes)
+            })
           })
-        })
-        proxy.on('error', (e) => endpointDone(endpoint, e))
-      } else {
-        proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
-      }
+          proxy.on('error', (e) => endpointDone(endpoint, e))
+        } else {
+          proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
+        }
 
-      proxy.web(req, res, {
-        ...endpoint.proxyOptions,
-        target: endpoint.url,
-        changeOrigin: true,
-        selfHandleResponse: envelopRequest
-      })
+        proxy.web(req, res, {
+          ...await proxyOptionsForEndpoint({ db, endpoint }),
+          target: endpoint.url,
+          changeOrigin: true,
+          selfHandleResponse: envelopRequest
+        })
+      } catch (err) {
+        logger.warn(err)
+        res.sendStatus(httpcode.InternalServerError).end()
+      }
     })
   }
 }

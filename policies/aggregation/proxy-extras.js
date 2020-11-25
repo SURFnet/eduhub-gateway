@@ -14,13 +14,17 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const express = require('express')
+const oauthClient = require('./oauth-client')
 
 module.exports = {
-  start: (data, port, ...middleware) => {
-    const app = express()
-    middleware && middleware.forEach(v => app.use(v))
-    app.use(express.static(data, { index: 'index.json', extensions: 'json' }))
-    return app.listen(port)
+  proxyOptionsForEndpoint: async ({ db, endpoint: { proxyOptions } }) => {
+    const { oauth2, ...opts } = proxyOptions || {}
+    if (oauth2) {
+      const auth = await oauthClient.authorizationHeader({ db, ...oauth2 })
+      opts.headers = opts.headers || {}
+      opts.headers.authorization = auth
+    }
+
+    return opts
   }
 }

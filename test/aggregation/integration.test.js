@@ -21,8 +21,14 @@ const httpcode = require('../../lib/httpcode')
 
 const {
   httpGet,
+  httpPost,
   integrationContext,
-  gatewayUrl
+  gatewayUrl,
+  sleep,
+  TEST_BACKEND_CONTAINER_URL,
+  OTHER_TEST_BACKEND_CONTAINER_URL,
+  OTHER_TEST_BACKEND_URL,
+  MOCK_OAUTH_TOKEN_URL
 } = require('../integration.environment.js')
 
 integrationContext('aggregation policy', function () {
@@ -41,11 +47,11 @@ integrationContext('aggregation policy', function () {
       body.gateway.endpoints,
       {
         TestBackend: {
-          url: 'http://host.testcontainers.internal:8082/',
+          url: TEST_BACKEND_CONTAINER_URL,
           responseCode: httpcode.OK
         },
         OtherTestBackend: {
-          url: 'http://host.testcontainers.internal:8083/ooapi/',
+          url: OTHER_TEST_BACKEND_CONTAINER_URL,
           responseCode: httpcode.OK
         }
       }
@@ -89,6 +95,97 @@ integrationContext('aggregation policy', function () {
         }
       })
       assert.equal(res.statusCode, httpcode.BadRequest)
+    })
+  })
+
+  describe('oauth', () => {
+    describe('mock auth setup', () => {
+      const params = {
+        grant_type: 'client_credentials',
+        client_id: 'fred',
+        client_secret: 'wilma'
+      }
+      const postToken = async () => {
+        const res = await httpPost(MOCK_OAUTH_TOKEN_URL, { params })
+        return JSON.parse(res.body)
+      }
+      const otherBackendGet = (accessToken) => (
+        httpGet(OTHER_TEST_BACKEND_URL, {
+          headers: { authorization: `Bearer ${accessToken}` }
+        })
+      )
+
+      it('returns a bearer token which expires in 5 seconds', async () => {
+        const data = await postToken()
+        assert.equal(data.token_type, 'Bearer')
+        assert.equal(data.expires_in, 5)
+        assert.match(data.access_token, /.+/)
+      })
+
+      it('can not make unauthorized request to other-test-backend', async () => {
+        const res = await httpGet(OTHER_TEST_BACKEND_URL)
+        assert.equal(res.statusCode, httpcode.Unauthorized)
+      })
+
+      it('can make request to other-test-backend with bearer token', async () => {
+        const token = (await postToken()).access_token
+        const res = await otherBackendGet(token)
+        assert.equal(res.statusCode, httpcode.OK)
+      })
+
+      it('can not make request to other-test-backend with expired bearer token', async () => {
+        const token = (await postToken()).access_token
+        await sleep(5000)
+        const res = await otherBackendGet(token)
+        assert.equal(res.statusCode, httpcode.Unauthorized)
+      })
+    })
+
+    describe('caching of tokens', () => {
+      it('handles other-test-backend without tripping over expired tokens', async () => {
+        const get = async () => httpGet(gatewayUrl('fred', '/'), {
+          headers: {
+            'X-Route': 'endpoint=OtherTestBackend'
+          }
+        })
+        assert.equal((await get()).statusCode, httpcode.OK)
+        await sleep(2000)
+        assert.equal((await get()).statusCode, httpcode.OK)
+        await sleep(2000)
+        assert.equal((await get()).statusCode, httpcode.OK)
+        await sleep(2000)
+        assert.equal((await get()).statusCode, httpcode.OK)
+        await sleep(2000)
+        assert.equal((await get()).statusCode, httpcode.OK)
+      })
+    })
+
+    describe('bad oauth2 backend configuration', () => {
+      it('responds with internal server error for endpoint with bad credentials', async () => {
+        let res
+        const bad = { headers: { 'X-Route': 'endpoint=BadCredentialsOathTestBackend' } }
+        const good = { headers: { 'X-Route': 'endpoint=OtherTestBackend' } }
+
+        res = await httpGet(gatewayUrl('barney', '/'), bad)
+        assert.equal(res.statusCode, httpcode.InternalServerError)
+
+        res = await httpGet(gatewayUrl('barney', '/'), good)
+        assert.equal(res.statusCode, httpcode.OK)
+
+        res = await httpGet(gatewayUrl('barney', '/'), bad)
+        assert.equal(res.statusCode, httpcode.InternalServerError)
+
+        res = await httpGet(gatewayUrl('barney', '/'), good)
+        assert.equal(res.statusCode, httpcode.OK)
+      })
+      it('responds with internal server error for endpoint with unreachable token url', async () => {
+        const res = await httpGet(gatewayUrl('barney', '/'), {
+          headers: {
+            'X-Route': 'endpoint=BadUrlOathTestBackend'
+          }
+        })
+        assert.equal(res.statusCode, httpcode.InternalServerError)
+      })
     })
   })
 })
