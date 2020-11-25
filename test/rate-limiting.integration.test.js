@@ -17,6 +17,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert').strict
+const httpcode = require('../lib/httpcode')
 
 const { httpGet, integrationContext, gatewayUrl } = require('./integration.environment.js')
 
@@ -27,6 +28,6 @@ integrationContext('rate limiting', function () {
       promises.push(httpGet(gatewayUrl(null, '/courses')))
     }
     const results = await Promise.all(promises)
-    assert.ok(results.some((r) => r.statusCode === 429)) // Too many requests
+    assert.ok(results.some((r) => r.statusCode === httpcode.TooManyRequests))
   })
 })
