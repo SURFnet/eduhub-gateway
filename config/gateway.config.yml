@@ -51,10 +51,40 @@ apiEndpoints:
 serviceEndpoints:
   TestBackend:
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
-  OtherTestBackend:
-    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083}/ooapi/'
     proxyOptions:
       auth: fred:wilma
+  OtherTestBackend:
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
+  BadCredentialsOathTestBackend:
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: dino
+  BadUrlOathTestBackend:
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: 'http://dummy:9999/'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
 policies:
   - basic-auth
   - cors
@@ -96,6 +126,10 @@ pipelines:
                   endpoints:
                     - endpoint: OtherTestBackend
                       paths: ['/', '/courses', '/courses/:id']
+                    - endpoint: BadCredentialsOathTestBackend
+                      paths: ['/']
+                    - endpoint: BadUrlOathTestBackend
+                      paths: ['/']
 
       - request-transformer:
           - action:

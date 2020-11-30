@@ -1,11 +1,19 @@
 FROM node:lts
 
-COPY . /app
+# copy to least likely to change files first to allow caching
+
+COPY node_modules /app/node_modules
+COPY *.json /app/
 WORKDIR /app
+RUN npm install --production
+
+COPY *.js /app/
+COPY config /app/config
 COPY config/credentials.json.test config/credentials.json
+COPY lib /app/lib
+COPY policies /app/policies
 
-
-RUN npm install
 CMD npm start
 
 EXPOSE 8080
+EXPOSE 4444

@@ -30,7 +30,7 @@ describe('envelop', () => {
       { id: 'endpoint-1', name: 'endpoint-1-name', url: 'http://endpoint-1.org' },
       { statusCode: httpcode.OK, body: '{"foo": "bar"}' }
     ], [
-      { id: 'endpoint-2', name: 'endpoint-2-name', url: 'http://endpoint-2.org' },
+      { id: 'endpoint-2', name: 'endpoint-2-name', url: 'http://endpoint-2.org/test/' },
       { statusCode: httpcode.BadRequest, body: '{"foo": "bar"}' }
     ]]
 
@@ -50,7 +50,7 @@ describe('envelop', () => {
             },
             'endpoint-2': {
               name: 'endpoint-2-name',
-              url: 'http://endpoint-2.org/test-url?foo=bar',
+              url: 'http://endpoint-2.org/test/test-url?foo=bar',
               responseCode: httpcode.BadRequest
             }
           }

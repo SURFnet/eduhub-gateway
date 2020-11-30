@@ -14,20 +14,17 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-/* eslint-env mocha */
+const oauthClient = require('./oauth-client')
 
-const assert = require('assert').strict
-const httpcode = require('../lib/httpcode')
-
-const { httpGet, integrationContext, gatewayUrl } = require('./integration.environment.js')
-
-integrationContext('rate limiting', function () {
-  it('should be able to get no more than 10 requests/second', async () => {
-    const promises = []
-    for (var i = 0; i < 20; i++) {
-      promises.push(httpGet(gatewayUrl(null, '/courses')))
+module.exports = {
+  proxyOptionsForEndpoint: async ({ db, endpoint: { proxyOptions } }) => {
+    const { oauth2, ...opts } = proxyOptions || {}
+    if (oauth2) {
+      const auth = await oauthClient.authorizationHeader({ db, ...oauth2 })
+      opts.headers = opts.headers || {}
+      opts.headers.authorization = auth
     }
-    const results = await Promise.all(promises)
-    assert.ok(results.some((r) => r.statusCode === httpcode.TooManyRequests))
-  })
-})
+
+    return opts
+  }
+}

@@ -9,14 +9,27 @@
   Run all tests with:
 
   #+begin_src sh
-    npm run-script build-test # builds docker images
     npm test
+  #+end_src
+
+  Run all tests and see docker output:
+
+  #+begin_src sh
+    DEBUG='testcontainers*' npm test
   #+end_src
 
   Run all but the integration tests with:
 
   #+begin_src sh
     MOCHA_SKIP=integration npm test
+  #+end_src
+
+  For development and tests the default gateway configuration points
+  at two test backends.  These can be started locally with:
+
+  #+begin_src sh
+    npm run test-backend &
+    npm run other-test-backend &
   #+end_src
 
 * Security
@@ -103,6 +116,37 @@
           proxyOptions:
             auth: fred:wilma
     #+end_src
+
+*** OAuth2 Client Credentials
+
+    Service endpoints can be secured using the OAuth2 client
+    credentials grant type [fn:oauth2-ccg:See also RFC 6749 section
+    4.4].  Here's an example:
+
+    #+begin_src yaml
+      serviceEndpoints:
+        BoulderCollege:
+          url: https://bould-college.co/ooapi/
+          proxyOptions:
+            oauth2:
+              clientCredentials:
+                tokenEndpoint:
+                  url: https://college-oauth.co/token
+                  params:
+                    grant_type: client_credentials
+                    client_id: fred
+                    client_secret: wilma
+    #+end_src
+
+    Notes:
+
+    - ~params~ are the /exact/ request parameters for the token
+      endpoint, this is also the location to add ~scope~ when needed
+
+    - only passing credentials through ~params~ is supported at this
+      time although RFC mentions basic
+      authentication[fn:oauth2-ccg-atr:See also RFC 6749 section
+      4.4.2].
 
 * Configuration
 

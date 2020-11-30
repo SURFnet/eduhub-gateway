@@ -17,17 +17,23 @@
 /* eslint-env mocha */
 
 const assert = require('assert').strict
-const httpcode = require('../lib/httpcode')
 
-const { httpGet, integrationContext, gatewayUrl } = require('./integration.environment.js')
+const oauthClient = require('../../policies/aggregation/oauth-client')
 
-integrationContext('rate limiting', function () {
-  it('should be able to get no more than 10 requests/second', async () => {
-    const promises = []
-    for (var i = 0; i < 20; i++) {
-      promises.push(httpGet(gatewayUrl(null, '/courses')))
-    }
-    const results = await Promise.all(promises)
-    assert.ok(results.some((r) => r.statusCode === httpcode.TooManyRequests))
+describe('oauth-client', () => {
+  describe('tokenKey', () => {
+    it('produces a unique value', () => {
+      assert.notEqual(
+        oauthClient.tokenKey({ url: 'x', params: { x: 1 } }),
+        oauthClient.tokenKey({ url: 'x', params: { x: 2 } })
+      )
+    })
+
+    it('produces same key on same value', () => {
+      assert.equal(
+        oauthClient.tokenKey({ url: 'x', params: { x: 1, y: 2 } }),
+        oauthClient.tokenKey({ url: 'x', params: { y: 2, x: 1 } })
+      )
+    })
   })
 })

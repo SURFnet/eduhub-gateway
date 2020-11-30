@@ -6,14 +6,16 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "standard --env mocha && mocha --require test/integration.hook.js -t 60000 test/*.test.js test/**/*.test.js",
-    "build-test": "docker-compose -f docker-compose.test.yml build",
-    "build-dev": "docker-compose -f docker-compose.test.yml build && docker-compose -f docker-compose.test.yml up --no-start"
+    "test": "standard --env mocha && mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
+    "test-backend": "scripts/test-backend.js",
+    "other-test-backend": "scripts/other-test-backend.js",
+    "mock-oauth": "scripts/mock-oauth.js"
   },
   "devDependencies": {
+    "express-basic-auth": "^1.2.0",
     "mocha": "^8.1.3",
-    "testcontainers": "^3.4.11",
-    "standard": "*"
+    "standard": "*",
+    "testcontainers": "^6.2.0"
   },
   "dependencies": {
     "express-gateway": "^1.16.10",
