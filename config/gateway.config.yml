@@ -11,7 +11,6 @@ admin:
   host: localhost
 apiEndpoints:
   api:
-    host: localhost
     # all matching paths should be specified including any template
     # params as used in the ooapi spec
     paths:
