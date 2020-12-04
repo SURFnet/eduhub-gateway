@@ -47,6 +47,14 @@ integrationContext('validation policy', function () {
     assert.equal(data[0].params.type, 'integer')
   })
 
+  it('should accept array params in the querystring correctly', async () => {
+    const resMultiple = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator'))
+    assert.equal(resMultiple.statusCode, httpcode.OK, resMultiple.body)
+
+    const resSingle = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs'))
+    assert.equal(resSingle.statusCode, httpcode.OK, resSingle.body)
+  })
+
   describe('with validation', () => {
     it('should respond with OK for a correct response', async () => {
       const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'), {
