@@ -59,6 +59,7 @@
    itself is not stored.
 
 ** Client authorization
+   <<client-auth>>
 
    To determine which app can access which paths on which endpoints a
    collection of ACLs is configured on the ~gatekeeper~ policy in
@@ -208,14 +209,103 @@
       openssl x509 -req -days 365 -in testServer.csr -CA testRootCA.pem -CAkey testRootCA.key -set_serial 01 -out testServer.crt
     #+end_src
 
+** Request/response validation
+
+   Requests and responses can be validated against the [[./ooapiv4.json][OOAPI
+   specification]] using the ~openapi-validator~ policy.
+
+   #+begin_src yaml
+     - openapi-validator:
+        - action:
+            apiSpec: 'ooapiv4.json'
+            validateRequests: true
+            validateResponses: true
+   #+end_src
+
+   When ~validateRequests~ is ~true~, all incoming requests are
+   validated.
+
+   When ~validateResponses~ is ~true~, responses are validated when
+   the request has an ~X-Validate-Response: true~ header.
+
+** Aggregation
+
+   The ~aggregation~ policy will send requests to a number of
+   endpoints in parallel and return an envelope containing the
+   individual responses.
+
+   The endpoints are determined by the the ~X-Route~ header, which
+   contains a list of ~serviceEndpoint~ identifiers. If no ~X-Route~
+   header is provided, all enabled endpoints in the client's ACL are
+   used.
+
+   #+begin_example
+   X-Route: endpoint=tue,wur
+   #+end_example
+
+   See also [[client-auth][Client Authorization]].
+
+** Aggregation and response validation
+
+   When responses from multiple backends are aggregated, they are
+   wrapped in an envelope.
+
+   Aggregation has a single config option ~noEnvelopIfAnyHeaders~
+
+   #+begin_src yaml
+     - aggregation:
+         - action:
+             noEnvelopIfAnyHeaders:
+               'X-Validate-Response': 'true'
+   #+end_src
+
+   Since aggregated responses are never valid against the OOAPI spec,
+   the gateway will not aggregate when ~X-Validate-Response: true~ is
+   specified. In this case, the request must specify an ~X-Route~
+   header with exactly one backend, or a ~BAD REQUEST~ response is
+   returned.
+
+
+* Building deployable images
+
+  The repository includes a [[./Dockerfile][Dockerfile]] that can be used to build a
+  deployable docker image, including the configuration provided in the
+  [[./config][./config]] directory.
+
+  Ensure [[https://www.docker.com/][Docker]] is installed and do the usual
+
+  #+begin_src sh
+  docker build .
+  #+end_src
+
+  To build the image
+
 * Setting up development environment
 
-  First, install [[https://nodejs.org/en/][NodeJS + NPM]]
+
+  The OOAPI Gateway runs on NodeJS. For an ergonomic development
+  environment you need [[https://www.docker.com/get-started][Docker]] and  [[https://nodejs.org/en/][NodeJS + NPM]].
+
+** Installing node dependencies
+
+   Install the JS dependencies in the ~./node_modules~ local
+   directory. You do not need to install any modules globally.
+
+   #+begin_src sh
+     npm install
+   #+end_src
+
+** Running the gateway in development
 
   #+BEGIN_SRC sh
-    npm install # install js dependencies
-    npm start # run the gateway
+    npm start
   #+END_SRC
+
+** Running tests
+
+   #+begin_src sh
+   npm test
+   #+end_src
 
 * License
 
