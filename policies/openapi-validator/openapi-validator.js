@@ -33,36 +33,6 @@ module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
   const middlewareStack = []
 
   if (validateRequests) {
-    middlewareStack.push((req, res, next) => {
-      // HACK!
-      //
-      // The ooapi v4 specifies an `expand` query parameter that
-      // should be an array.
-      //
-      // You pass multiple values for `expand` in the standard HTML form way by
-      // specifying the parameter multiple times:
-      //
-      // /courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator
-      //
-      // This is then parsed as an array ["programs","coordinator"] by the
-      // gateway middleware and validated correctly.
-      //
-      // When only a single value is passed you should provide a single
-      // parameter:
-      //
-      // /courses/900d900d-900d-900d-900d-900d900d900d?expand=programs
-      //
-      // The standard middleware will turn this in a single string "programs"
-      // and the validator will complain.
-      //
-      // Since there is only a single array query parameter in the openapi spec
-      // we work around the issue by turning any non-array "expand" parameter
-      // into an array right before validating the request.
-      if (req.query.expand && !Array.isArray(req.query.expand)) {
-        req.query.expand = [req.query.expand]
-      }
-      next()
-    })
     middlewareStack.push(makeValidateRequestMiddleware(validator))
   }
   if (validateResponses) {
