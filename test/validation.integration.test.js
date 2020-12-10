@@ -64,7 +64,7 @@ integrationContext('validation policy', function () {
           'Accept-Encoding': 'gzip'
         }
       })
-      assert.equal(res.statusCode, httpcode.OK)
+      assert.equal(res.statusCode, httpcode.OK, res.body)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
       const course = JSON.parse(res.body)

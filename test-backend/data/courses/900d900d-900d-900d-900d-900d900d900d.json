@@ -8,7 +8,7 @@
     "string"
   ],
   "requirements": "string",
-  "level": "mbo 3",
+  "level": "secondary vocational education 3",
   "modeOfDelivery": [
     "distance-learning"
   ],
@@ -29,7 +29,7 @@
     "qualificationAwarded": "AD",
     "lengthOfProgram": 0,
     "levelOfQualification": "1",
-    "sector": "mbo",
+    "sector": "secondary vocational education",
     "fieldsOfStudy": "0732",
     "profileOfProgram": "string",
     "learningOutcomes": [
