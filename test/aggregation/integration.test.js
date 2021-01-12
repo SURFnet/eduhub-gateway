@@ -18,6 +18,7 @@
 
 const assert = require('assert').strict
 const httpcode = require('../../lib/httpcode')
+const mockOauth = require('../../scripts/mock-oauth.js')
 
 const {
   httpGet,
@@ -148,15 +149,28 @@ integrationContext('aggregation policy', function () {
             'X-Route': 'endpoint=OtherTestBackend'
           }
         })
+        const tokensIssued = mockOauth.tokens.length
+
         assert.equal((await get()).statusCode, httpcode.OK)
+        assert.equal((await get()).statusCode, httpcode.OK)
+        assert.equal((await get()).statusCode, httpcode.OK)
+
+        assert(
+          (mockOauth.tokens.length - tokensIssued) <= 1,
+          'maximum 1 token issued'
+        )
+
         await sleep(2000)
         assert.equal((await get()).statusCode, httpcode.OK)
         await sleep(2000)
         assert.equal((await get()).statusCode, httpcode.OK)
         await sleep(2000)
         assert.equal((await get()).statusCode, httpcode.OK)
-        await sleep(2000)
-        assert.equal((await get()).statusCode, httpcode.OK)
+
+        assert(
+          (mockOauth.tokens.length - tokensIssued) >= 2,
+          'at least 2 tokens issued due to expiry in 5 seconds'
+        )
       })
     })
 

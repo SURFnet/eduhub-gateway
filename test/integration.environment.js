@@ -22,7 +22,7 @@ const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 
-let container, testBackend, otherTestBackend, mockOauth
+let gw, testBackend, otherTestBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 const TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8082/'
@@ -31,6 +31,8 @@ const OTHER_TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:80
 const OTHER_TEST_BACKEND_URL = 'http://localhost:8083/ooapi/'
 const MOCK_OAUTH_TOKEN_CONTAINER_URL = 'http://host.testcontainers.internal:8084/mock/token'
 const MOCK_OAUTH_TOKEN_URL = 'http://localhost:8084/mock/token'
+const REDIS_HOST = 'host.testcontainers.internal'
+const REDIS_PORT = 6379
 
 // As reflected in config/credentials.json.test
 const testCredentials = {
@@ -82,11 +84,17 @@ module.exports = {
   up: async () => {
     if (skipTest) return
 
-    testBackend = require('../scripts/test-backend')
-    otherTestBackend = require('../scripts/other-test-backend')
-    mockOauth = require('../scripts/mock-oauth')
+    testBackend = require('../scripts/test-backend').run()
+    otherTestBackend = require('../scripts/other-test-backend').run()
+    mockOauth = require('../scripts/mock-oauth').run()
 
-    await TestContainers.exposeHostPorts(8082, 8083, 8084)
+    redis = await new GenericContainer('redis')
+      .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
+      .withExposedPorts(REDIS_PORT)
+      .start()
+
+    const redisPort = redis.getMappedPort(REDIS_PORT)
+    await TestContainers.exposeHostPorts(8082, 8083, 8084, redisPort)
 
     const dockerFilePath = path.resolve(__dirname, '..')
     const dockerFile = 'Dockerfile.test'
@@ -94,17 +102,19 @@ module.exports = {
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
 
-    container = await image
+    gw = await image
       .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
       .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
       .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
       .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
+      .withEnv('REDIS_HOST', REDIS_HOST)
+      .withEnv('REDIS_PORT', redisPort)
       .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
       .withExposedPorts(8080, 4444)
       .start()
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
-      const stream = await container.logs()
+      const stream = await gw.logs()
       stream
         .on('data', line => console.log(line))
         .on('err', line => console.error(line))
@@ -113,7 +123,8 @@ module.exports = {
 
   down: async () => {
     if (skipTest) return
-    await container.stop()
+    await gw.stop()
+    await redis.stop()
 
     testBackend.close()
     otherTestBackend.close()
@@ -136,7 +147,7 @@ module.exports = {
 
   gatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
-    return `https://${auth}localhost:${container.getMappedPort(4444)}${path || ''}`
+    return `https://${auth}localhost:${gw.getMappedPort(4444)}${path || ''}`
   },
 
   TEST_BACKEND_CONTAINER_URL,

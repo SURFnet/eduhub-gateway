@@ -88,7 +88,10 @@ const authorizationHeader = async ({
 
     logger.debug('Caching token')
     db.set(key, token)
-    db.expire(key, (res.expires_in || 0) / 0.75) // 75% of ttl just to be safe
+
+    // 75% of ttl just to be safe
+    const expire = Math.floor((JSON.parse(token).expires_in || 0) * 0.75)
+    db.expire(key, expire)
   } else {
     logger.debug('Cache hit')
   }
