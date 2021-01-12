@@ -102,6 +102,13 @@ module.exports = {
       .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
       .withExposedPorts(8080, 4444)
       .start()
+
+    if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
+      const stream = await container.logs()
+      stream
+        .on('data', line => console.log(line))
+        .on('err', line => console.error(line))
+    }
   },
 
   down: async () => {
