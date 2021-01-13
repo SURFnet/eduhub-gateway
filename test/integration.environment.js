@@ -88,10 +88,10 @@ module.exports = {
 
     await TestContainers.exposeHostPorts(8082, 8083, 8084)
 
-    const composeFilePath = path.resolve(__dirname, '..')
-    const composeFile = 'Dockerfile.test'
+    const dockerFilePath = path.resolve(__dirname, '..')
+    const dockerFile = 'Dockerfile.test'
     const image = await GenericContainer
-      .fromDockerfile(composeFilePath, composeFile)
+      .fromDockerfile(dockerFilePath, dockerFile)
       .build()
 
     container = await image
