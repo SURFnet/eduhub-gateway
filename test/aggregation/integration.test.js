@@ -25,6 +25,7 @@ const {
   httpPost,
   integrationContext,
   gatewayUrl,
+  otherGatewayUrl,
   sleep,
   TEST_BACKEND_CONTAINER_URL,
   OTHER_TEST_BACKEND_CONTAINER_URL,
@@ -171,6 +172,26 @@ integrationContext('aggregation policy', function () {
           (mockOauth.tokens.length - tokensIssued) >= 2,
           'at least 2 tokens issued due to expiry in 5 seconds'
         )
+      })
+
+      it('uses one cache among different gateway instances', async () => {
+        const get = async () => httpGet(gatewayUrl('fred', '/'), {
+          headers: {
+            'X-Route': 'endpoint=OtherTestBackend'
+          }
+        })
+        const otherGet = async () => httpGet(otherGatewayUrl('fred', '/'), {
+          headers: {
+            'X-Route': 'endpoint=OtherTestBackend'
+          }
+        })
+
+        assert.equal((await get()).statusCode, httpcode.OK)
+        const tokensIssued = mockOauth.tokens.length
+
+        assert.equal((await get()).statusCode, httpcode.OK)
+        assert.equal((await otherGet()).statusCode, httpcode.OK)
+        assert.equal(mockOauth.tokens.length, tokensIssued)
       })
     })
 

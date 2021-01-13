@@ -22,7 +22,7 @@ const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 
-let gw, testBackend, otherTestBackend, mockOauth, redis
+let gw, otherGw, testBackend, otherTestBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 const TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8082/'
@@ -102,16 +102,21 @@ module.exports = {
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
 
-    gw = await image
-      .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
-      .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
-      .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
-      .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
-      .withEnv('REDIS_HOST', REDIS_HOST)
-      .withEnv('REDIS_PORT', redisPort)
-      .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
-      .withExposedPorts(8080, 4444)
-      .start()
+    const startGw = async () => (
+      image
+        .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
+        .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
+        .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
+        .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
+        .withEnv('REDIS_HOST', REDIS_HOST)
+        .withEnv('REDIS_PORT', redisPort)
+        .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
+        .withExposedPorts(8080, 4444)
+        .start()
+    )
+
+    gw = await startGw()
+    otherGw = await startGw()
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
@@ -124,6 +129,7 @@ module.exports = {
   down: async () => {
     if (skipTest) return
     await gw.stop()
+    await otherGw.stop()
     await redis.stop()
 
     testBackend.close()
@@ -148,6 +154,10 @@ module.exports = {
   gatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
     return `https://${auth}localhost:${gw.getMappedPort(4444)}${path || ''}`
+  },
+  otherGatewayUrl: (app, path) => {
+    const auth = app ? testCredentials[app] + '@' : ''
+    return `https://${auth}localhost:${otherGw.getMappedPort(4444)}${path || ''}`
   },
 
   TEST_BACKEND_CONTAINER_URL,
