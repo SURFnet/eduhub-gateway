@@ -102,8 +102,9 @@ module.exports = {
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
 
-    const startGw = async () => (
+    const startGw = async (name) => (
       image
+        .withName(name)
         .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
         .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
@@ -115,8 +116,8 @@ module.exports = {
         .start()
     )
 
-    gw = await startGw()
-    otherGw = await startGw()
+    gw = await startGw('ooapi-gateway')
+    otherGw = await startGw('ooapi-othergateway')
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
