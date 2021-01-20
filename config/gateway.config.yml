@@ -109,8 +109,11 @@ pipelines:
 
       - rate-limit:
           - action:
-              max: 10
-              windowMs: 1000
+              max: ${RATE_LIMIT_MAX:-10}
+              windowMs: ${RATE_LIMIT_WINDOW_MS:-1000}
+              delayAfter: ${RATE_LIMIT_DELAY_AFTER:-5}
+              delayMs: ${RATE_LIMIT_DELAY_MS:-500}
+
 
       - gatekeeper:
           - action:
