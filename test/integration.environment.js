@@ -169,6 +169,10 @@ module.exports = {
     const auth = app ? testCredentials[app] + '@' : ''
     return `https://${auth}localhost:${otherGw.getMappedPort(4444)}${path || ''}`
   },
+  gatewayInsecureUrl: (app, path) => {
+    const auth = app ? testCredentials[app] + '@' : ''
+    return `http://${auth}localhost:${gw.getMappedPort(8080)}${path || ''}`
+  },
 
   TEST_BACKEND_CONTAINER_URL,
   TEST_BACKEND_URL,

@@ -5,33 +5,59 @@
   Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
 
 * Running tests
+** Functional tests
 
-  Run all tests with:
+   Run all tests with:
 
-  #+begin_src sh
-    npm test
-  #+end_src
+   #+begin_src sh
+     npm test
+   #+end_src
 
-  Run all tests and see docker output:
+   Run all tests and see docker output:
 
-  #+begin_src sh
-    DEBUG='testcontainers*' npm test
-  #+end_src
+   #+begin_src sh
+     DEBUG='testcontainers*' npm test
+   #+end_src
 
-  Run all but the integration tests with:
+   Run all but the integration tests with:
 
-  #+begin_src sh
-    MOCHA_SKIP=integration npm test
-  #+end_src
+   #+begin_src sh
+     MOCHA_SKIP=integration npm test
+   #+end_src
 
-  For development and tests the default gateway configuration points
-  at two test backends.  These can be started locally with:
+   For development and tests the default gateway configuration points
+   at two test backends.  These can be started locally with:
 
-  #+begin_src sh
-    npm run test-backend &
-    npm run other-test-backend &
-  #+end_src
+   #+begin_src sh
+     npm run test-backend &
+     npm run other-test-backend &
+   #+end_src
 
+** Performance/stress tests
+
+   The performance test scripts use [[https://httpd.apache.org/docs/2.4/programs/ab.html][apachebench]], so make sure ~ab~
+   is installed on your PATH.
+
+   On MacOs it may already be available at ~/usr/sbin/ab~
+
+   On debian:
+   #+begin_src sh
+     apt-get install apache2-utils
+   #+end_src
+
+   To run the tests do
+
+   #+begin_src sh
+   ./scripts/perf-test.js --verbose=2
+   #+end_src
+
+   This will attempt to run 1000 requests, first sequentially, and
+   then with increasing concurrency (up to 250 concurrent requests).
+
+   So see the available options do
+   #+begin_src sh
+   ./scripts/perf-test.js --help
+   #+end_src
 * Security
 
   See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
@@ -167,15 +193,25 @@
    Rate limiting is implemented using the standard [[https://www.express-gateway.io/docs/policies/rate-limiter/][EG rate limiter
    policy]] in  [[./config/gateway.config.yml]]
 
+   A very aggressive example is
+
    #+begin_src yaml
       - rate-limit:
           - action:
               max: 10
               windowMs: 1000
+              delayAfter: 5
+              delayMs: 1000
    #+end_src
 
    This sample configuration limits requests to 10 per second per IP
-   address.
+   address, and will start delaying requests for a second when more
+   than 5 requests arrive per windowMs.
+
+   Note that the defaults for ~delayAfter~ and ~delayMs~ are 1 and
+   1000, respectively, so *you should always provide your own values
+   for delayAfter and delayMs* if you want to have reasonable request
+   rates.
 
 ** TLS
 
@@ -297,9 +333,9 @@
 
 ** Running the gateway in development
 
-  #+BEGIN_SRC sh
+   #+BEGIN_SRC sh
     npm start
-  #+END_SRC
+   #+END_SRC
 
 ** Running tests
 
