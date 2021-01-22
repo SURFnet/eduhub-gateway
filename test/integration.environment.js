@@ -81,7 +81,12 @@ const httpPost = (url, { params, ...opts }) => {
 }
 
 module.exports = {
-  up: async () => {
+  up: async ({
+    rateLimitMax = 10,
+    rateLimitWindowMs = 1000,
+    rateLimitDelayAfter = 5,
+    rateLimitDelayMs = 500
+  }) => {
     if (skipTest) return
 
     testBackend = require('../scripts/test-backend').run()
@@ -102,11 +107,16 @@ module.exports = {
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
 
-    const startGw = async () => (
+    const startGw = async (name) => (
       image
+        .withName(name)
         .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
         .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
+        .withEnv('RATE_LIMIT_MAX', rateLimitMax)
+        .withEnv('RATE_LIMIT_WINDOW_MS', rateLimitWindowMs)
+        .withEnv('RATE_LIMIT_DELAY_AFTER', rateLimitDelayAfter)
+        .withEnv('RATE_LIMIT_DELAY_MS', rateLimitDelayMs)
         .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
         .withEnv('REDIS_HOST', REDIS_HOST)
         .withEnv('REDIS_PORT', redisPort)
@@ -115,8 +125,8 @@ module.exports = {
         .start()
     )
 
-    gw = await startGw()
-    otherGw = await startGw()
+    gw = await startGw('ooapi-gateway')
+    otherGw = await startGw('ooapi-othergateway')
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
@@ -158,6 +168,10 @@ module.exports = {
   otherGatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
     return `https://${auth}localhost:${otherGw.getMappedPort(4444)}${path || ''}`
+  },
+  gatewayInsecureUrl: (app, path) => {
+    const auth = app ? testCredentials[app] + '@' : ''
+    return `http://${auth}localhost:${gw.getMappedPort(8080)}${path || ''}`
   },
 
   TEST_BACKEND_CONTAINER_URL,

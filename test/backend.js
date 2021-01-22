@@ -20,7 +20,7 @@ module.exports = {
   start: (data, port, ...middleware) => {
     const app = express()
     middleware && middleware.forEach(v => app.use(v))
-    app.use(express.static(data, { index: 'index.json', extensions: 'json' }))
+    app.use(express.static(data, { index: 'index.json', extensions: 'json', forwardError: true }))
     return app.listen(port)
   }
 }

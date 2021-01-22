@@ -9,17 +9,19 @@
     "test": "standard --env mocha && mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
     "test-backend": "scripts/test-backend.js",
     "other-test-backend": "scripts/other-test-backend.js",
-    "mock-oauth": "scripts/mock-oauth.js"
+    "mock-oauth": "scripts/mock-oauth.js",
+    "perf-test": "scripts/perf-test.js"
   },
   "devDependencies": {
     "express-basic-auth": "^1.2.0",
     "mocha": "^8.1.3",
     "standard": "*",
-    "testcontainers": "^6.2.0"
+    "testcontainers": "^6.2.0",
+    "yargs": "^16.2.0"
   },
   "dependencies": {
     "express-gateway": "^1.16.10",
-    "express-openapi-validate": "0.5.1",
-    "express-modify-response": "1.0.2"
+    "express-modify-response": "1.0.2",
+    "express-openapi-validate": "0.5.1"
   }
 }

@@ -78,6 +78,9 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
         if (envelopRequest) {
           proxy.on('proxyRes', (proxyRes, req, res) => {
             const body = []
+            proxyRes.on('error', (e) => {
+              logger.warn(e)
+            })
             proxyRes.on('data', chunk => body.push(chunk))
             proxyRes.on('end', () => {
               proxyRes.body = Buffer.concat(body).toString()
