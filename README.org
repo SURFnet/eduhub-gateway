@@ -175,6 +175,24 @@
       authentication[fn:oauth2-ccg-atr:See also RFC 6749 section
       4.4.2].
 
+*** Special API key headers
+
+    Service endpoints depending on special API key headers to
+    authorize use can be configured through ~proxyOptions.headers~.
+    In the following example a "Authorization" is expected with a
+    bearer token:
+
+    #+begin_src yaml
+      serviceEndpoints:
+        BoulderCollege:
+          url: https://bould-college.co/ooapi/
+          proxyOptions:
+            headers:
+              Authorization: "Bearer <myverysecrettoken>"
+    #+end_src
+
+    Note: any header can be added here.
+
 * Configuration
 
 ** Logging
