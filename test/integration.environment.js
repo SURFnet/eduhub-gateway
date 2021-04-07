@@ -22,7 +22,7 @@ const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 
-let gw, otherGw, testBackend, otherTestBackend, mockOauth, redis
+let gw, otherGw, testBackend, otherTestBackend, echoBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 const TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8082/'
@@ -31,13 +31,16 @@ const OTHER_TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:80
 const OTHER_TEST_BACKEND_URL = 'http://localhost:8083/ooapi/'
 const MOCK_OAUTH_TOKEN_CONTAINER_URL = 'http://host.testcontainers.internal:8084/mock/token'
 const MOCK_OAUTH_TOKEN_URL = 'http://localhost:8084/mock/token'
+const TEST_ECHO_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8085/'
+const TEST_ECHO_BACKEND_URL = 'http://localhost:8085/'
 const REDIS_HOST = 'host.testcontainers.internal'
 const REDIS_PORT = 6379
 
 // As reflected in config/credentials.json.test
 const testCredentials = {
   fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
-  barney: 'barney:df9b24c6f9f412f73b70579b049ff993'
+  barney: 'barney:df9b24c6f9f412f73b70579b049ff993',
+  bubbles: 'bubbles:06864d9f7974969d9c7af0f729f0129a'
 }
 
 const httpRequest = (url, { data, ...opts }) => {
@@ -92,6 +95,7 @@ module.exports = {
     testBackend = require('../scripts/test-backend').run()
     otherTestBackend = require('../scripts/other-test-backend').run()
     mockOauth = require('../scripts/mock-oauth').run()
+    echoBackend = require('../scripts/echo-backend').run(8085)
 
     redis = await new GenericContainer('redis')
       .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
@@ -99,7 +103,7 @@ module.exports = {
       .start()
 
     const redisPort = redis.getMappedPort(REDIS_PORT)
-    await TestContainers.exposeHostPorts(8082, 8083, 8084, redisPort)
+    await TestContainers.exposeHostPorts(8082, 8083, 8084, 8085, redisPort)
 
     const dockerFilePath = path.resolve(__dirname, '..')
     const dockerFile = 'Dockerfile.test'
@@ -113,6 +117,7 @@ module.exports = {
         .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
         .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
+        .withEnv('OOAPI_ECHO_BACKEND_URL', TEST_ECHO_BACKEND_CONTAINER_URL)
         .withEnv('RATE_LIMIT_MAX', rateLimitMax)
         .withEnv('RATE_LIMIT_WINDOW_MS', rateLimitWindowMs)
         .withEnv('RATE_LIMIT_DELAY_AFTER', rateLimitDelayAfter)
@@ -142,6 +147,7 @@ module.exports = {
     await otherGw.stop()
     await redis.stop()
 
+    echoBackend.close()
     testBackend.close()
     otherTestBackend.close()
     mockOauth.close()
@@ -174,6 +180,8 @@ module.exports = {
     return `http://${auth}localhost:${gw.getMappedPort(8080)}${path || ''}`
   },
 
+  TEST_ECHO_BACKEND_URL,
+  TEST_ECHO_BACKEND_CONTAINER_URL,
   TEST_BACKEND_CONTAINER_URL,
   TEST_BACKEND_URL,
   OTHER_TEST_BACKEND_CONTAINER_URL,

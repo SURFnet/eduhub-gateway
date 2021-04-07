@@ -16,7 +16,9 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert')
+const assert = require('assert').strict
+const httpcode = require('../lib/httpcode')
+
 const {
   httpGet,
   integrationContext,
@@ -36,7 +38,20 @@ integrationContext('security headers', function () {
       'referrer-policy': 'no-referrer-when-downgrade'
     }
     Object.entries(testHeaders).forEach(([header, v]) => {
-      assert.strictEqual(res.headers[header], v)
+      assert.equal(res.headers[header], v)
+    })
+  })
+
+  describe('echo backend', () => {
+    it('responds with the request headers in the response body', async () => {
+      const res = await httpGet(gatewayUrl('bubbles', '/'), {
+        headers: {
+          'X-Route': 'endpoint=EchoBackend'
+        }
+      })
+      assert.equal(res.statusCode, httpcode.OK)
+
+      assert.equal(JSON.parse(res.body).responses.EchoBackend['x-route'], 'endpoint=EchoBackend')
     })
   })
 })

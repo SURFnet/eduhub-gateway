@@ -84,6 +84,8 @@ serviceEndpoints:
               grant_type: client_credentials
               client_id: fred
               client_secret: wilma
+  EchoBackend:
+    url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
 policies:
   - basic-auth
   - cors
@@ -131,6 +133,10 @@ pipelines:
                     - endpoint: BadCredentialsOathTestBackend
                       paths: ['/']
                     - endpoint: BadUrlOathTestBackend
+                      paths: ['/']
+                - app: bubbles
+                  endpoints:
+                    - endpoint: EchoBackend
                       paths: ['/']
 
       - request-transformer:
