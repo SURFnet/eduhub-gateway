@@ -22,8 +22,9 @@ const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const envelop = require('./envelop')
 const { proxyOptionsForEndpoint } = require('./proxy-extras')
+const { keepHeadersFilter } = require('./keep-headers')
 
-module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints } }) => {
+module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
 
   // Note: can not require db earlier because EG configuration might
@@ -31,15 +32,18 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
   const db = require('express-gateway/lib/db')
 
   const isEnvelopRequest = (req) => {
-    if (noEnvelopIfAnyHeaders) {
-      for (const header in noEnvelopIfAnyHeaders) {
-        if (req.headers[header.toLowerCase()] === noEnvelopIfAnyHeaders[header]) {
+    if (config.noEnvelopIfAnyHeaders) {
+      for (const header in config.noEnvelopIfAnyHeaders) {
+        if (req.headers[header.toLowerCase()] === config.noEnvelopIfAnyHeaders[header]) {
           return false
         }
       }
     }
     return true
   }
+
+  const keepRequestHeaders = keepHeadersFilter(config.keepRequestHeaders)
+  const keepResponseHeaders = keepHeadersFilter(config.keepResponseHeaders)
 
   return (req, res, next) => {
     const envelopRequest = isEnvelopRequest(req)
@@ -52,6 +56,10 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
     if (endpoints.length > 1 && !envelopRequest) {
       res.sendStatus(httpcode.BadRequest)
       return
+    }
+
+    if (config.keepRequestHeaders) {
+      keepRequestHeaders(req.headers)
     }
 
     const responses = []
@@ -77,6 +85,10 @@ module.exports = ({ noEnvelopIfAnyHeaders }, { gatewayConfig: { serviceEndpoints
 
         if (envelopRequest) {
           proxy.on('proxyRes', (proxyRes, req, res) => {
+            if (config.keepResponseHeaders) {
+              keepResponseHeaders(proxyRes.headers)
+            }
+
             const body = []
             proxyRes.on('error', (e) => {
               logger.warn(e)

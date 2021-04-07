@@ -28,7 +28,8 @@ const packageResponses = (req, responses) => ({
       m[endpoint.id] = {
         name: endpoint.name,
         url: urlJoin(endpoint.url, req.url),
-        responseCode: res.statusCode || 0
+        responseCode: res.statusCode || 0,
+        headers: res.headers
       }
       return m
     }, {})

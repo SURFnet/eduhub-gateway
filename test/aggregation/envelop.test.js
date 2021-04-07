@@ -28,10 +28,18 @@ describe('envelop', () => {
     }
     const responses = [[
       { id: 'endpoint-1', name: 'endpoint-1-name', url: 'http://endpoint-1.org' },
-      { statusCode: httpcode.OK, body: '{"foo": "bar"}' }
+      {
+        statusCode: httpcode.OK,
+        body: '{"foo": "bar"}',
+        headers: { 'content-type': 'application/json' }
+      }
     ], [
       { id: 'endpoint-2', name: 'endpoint-2-name', url: 'http://endpoint-2.org/test/' },
-      { statusCode: httpcode.BadRequest, body: '{"foo": "bar"}' }
+      {
+        statusCode: httpcode.BadRequest,
+        body: '{"foo": "bar"}',
+        headers: { 'content-type': 'application/json' }
+      }
     ]]
 
     const resp = envelop.packageResponses(req, responses)
@@ -46,12 +54,14 @@ describe('envelop', () => {
             'endpoint-1': {
               name: 'endpoint-1-name',
               url: 'http://endpoint-1.org/test-url?foo=bar',
-              responseCode: httpcode.OK
+              responseCode: httpcode.OK,
+              headers: { 'content-type': 'application/json' }
             },
             'endpoint-2': {
               name: 'endpoint-2-name',
               url: 'http://endpoint-2.org/test/test-url?foo=bar',
-              responseCode: httpcode.BadRequest
+              responseCode: httpcode.BadRequest,
+              headers: { 'content-type': 'application/json' }
             }
           }
         }

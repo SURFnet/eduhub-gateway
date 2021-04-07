@@ -304,7 +304,9 @@
    When responses from multiple backends are aggregated, they are
    wrapped in an envelope.
 
-   Aggregation has a single config option ~noEnvelopIfAnyHeaders~
+   Aggregation has the following config options
+
+*** ~noEnvelopIfAnyHeaders~
 
    #+begin_src yaml
      - aggregation:
@@ -319,6 +321,37 @@
    header with exactly one backend, or a ~BAD REQUEST~ response is
    returned.
 
+*** ~keepRequestHeaders~
+
+   #+begin_src yaml
+     - aggregation:
+         - action:
+             keepRequestHeaders:
+               - 'accept'
+               - 'accept-language'
+   #+end_src
+
+   When keepRequestHeaders is specified it lists all headers from the
+   client that will be forwarded to the backends.
+
+   If keepRequestHeaders is not specified all headers will be
+   forwarded.
+
+*** ~keepResponseHeaders~
+
+   #+begin_src yaml
+     - aggregation:
+         - action:
+             keepResponseHeaders:
+               - 'content-type'
+               - 'content-length'
+   #+end_src
+
+   When keepResponseHeaders is specified it lists all headers from the
+   endpoints that will be returned to the backends.
+
+   If keepResponseHeaders is not specified all headers will be
+   returned.
 
 * Building deployable images
 

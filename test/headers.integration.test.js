@@ -46,12 +46,12 @@ integrationContext('security headers', function () {
     it('responds with the request headers in the response body', async () => {
       const res = await httpGet(gatewayUrl('bubbles', '/'), {
         headers: {
-          'X-Route': 'endpoint=EchoBackend'
+          'X-Route': 'endpoint=EchoBackend',
+          'Accept-Language': 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5'
         }
       })
       assert.equal(res.statusCode, httpcode.OK)
-
-      assert.equal(JSON.parse(res.body).responses.EchoBackend['x-route'], 'endpoint=EchoBackend')
+      assert.equal(JSON.parse(res.body).responses.EchoBackend['accept-language'], 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5')
     })
   })
 })

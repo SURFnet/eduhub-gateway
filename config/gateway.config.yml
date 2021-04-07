@@ -139,12 +139,6 @@ pipelines:
                     - endpoint: EchoBackend
                       paths: ['/']
 
-      - request-transformer:
-          - action:
-              headers:
-                remove:
-                  - 'accept-encoding'
-
       - response-transformer:
           - action:
               headers:
@@ -170,3 +164,10 @@ pipelines:
           - action:
               noEnvelopIfAnyHeaders:
                 'X-Validate-Response': 'true'
+              keepRequestHeaders:
+                - 'accept-language'
+                - 'accept'
+                - 'x-validate-response' # needed for resp validation
+              keepResponseHeaders:
+                - 'content-type'
+                - 'content-length'

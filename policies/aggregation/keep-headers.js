@@ -14,28 +14,18 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-module.exports = {
-  name: 'aggregation',
+// Given a collection of headerNames, returns a function
+// that removes all non listed headers from a header map
 
-  schema: {
-    $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-aggregation.json',
-    type: 'object',
-    properties: {
-      noEnvelopIfHeaders: {
-        type: 'object'
-      },
-      allowRequestHeaders: {
-        type: 'array',
-        items: { type: 'string' }
-      },
-      allowResponseHeaders: {
-        type: 'array',
-        items: { type: 'string' }
+const keepHeadersFilter = (headerNames) => {
+  const keepSet = new Set(headerNames.map(s => s.toLowerCase()))
+  return (headers) => {
+    Object.keys(headers).forEach(h => {
+      if (!keepSet.has(h.toLowerCase())) {
+        delete headers[h]
       }
-
-    },
-    required: []
-  },
-
-  policy: require('./aggregation.js')
+    })
+  }
 }
+
+module.exports = { keepHeadersFilter }

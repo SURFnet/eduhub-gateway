@@ -50,11 +50,19 @@ integrationContext('aggregation policy', function () {
       {
         TestBackend: {
           url: TEST_BACKEND_CONTAINER_URL,
-          responseCode: httpcode.OK
+          responseCode: httpcode.OK,
+          headers: {
+            'content-length': '123',
+            'content-type': 'application/json; charset=UTF-8'
+          }
         },
         OtherTestBackend: {
           url: OTHER_TEST_BACKEND_CONTAINER_URL,
-          responseCode: httpcode.OK
+          responseCode: httpcode.OK,
+          headers: {
+            'content-length': '136',
+            'content-type': 'application/json; charset=UTF-8'
+          }
         }
       }
     )
