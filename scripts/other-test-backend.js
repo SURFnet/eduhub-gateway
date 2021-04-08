@@ -3,10 +3,10 @@
 const fs = require('fs')
 const httpcode = require('../lib/httpcode')
 
-const run = () => (
+const run = (port) => (
   require('../test/backend').start(
     'test-backend/data2',
-    8083,
+    port,
     (req, res, next) => {
       if (req.headers.authorization) {
         const token = req.headers.authorization.match(/Bearer (.*)\/(.*)/)
@@ -23,7 +23,7 @@ const run = () => (
 
 if (fs.realpathSync(process.argv[1]) === fs.realpathSync(__filename)) {
   console.log('Starting OtherTestBackend..')
-  run()
+  run(8083)
 }
 
 module.exports = { run }

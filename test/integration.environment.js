@@ -25,16 +25,21 @@ const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 let gw, otherGw, testBackend, otherTestBackend, echoBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
-const TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8082/'
-const TEST_BACKEND_URL = 'http://localhost:8082/'
-const OTHER_TEST_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8083/ooapi/'
-const OTHER_TEST_BACKEND_URL = 'http://localhost:8083/ooapi/'
-const MOCK_OAUTH_TOKEN_CONTAINER_URL = 'http://host.testcontainers.internal:8084/mock/token'
-const MOCK_OAUTH_TOKEN_URL = 'http://localhost:8084/mock/token'
-const TEST_ECHO_BACKEND_CONTAINER_URL = 'http://host.testcontainers.internal:8085/'
-const TEST_ECHO_BACKEND_URL = 'http://localhost:8085/'
-const REDIS_HOST = 'host.testcontainers.internal'
+const TEST_BACKEND_PORT = 9082
+const OTHER_TEST_BACKEND_PORT = 9083
+const MOCK_OAUTH_TOKEN_PORT = 9084
+const TEST_ECHO_BACKEND_PORT = 9085
 const REDIS_PORT = 6379
+
+const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
+const TEST_BACKEND_URL = `http://localhost:${TEST_BACKEND_PORT}/`
+const OTHER_TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${OTHER_TEST_BACKEND_PORT}/ooapi/`
+const OTHER_TEST_BACKEND_URL = `http://localhost:${OTHER_TEST_BACKEND_PORT}/ooapi/`
+const MOCK_OAUTH_TOKEN_CONTAINER_URL = `http://host.testcontainers.internal:${MOCK_OAUTH_TOKEN_PORT}/mock/token`
+const MOCK_OAUTH_TOKEN_URL = `http://localhost:${MOCK_OAUTH_TOKEN_PORT}/mock/token`
+const TEST_ECHO_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_ECHO_BACKEND_PORT}/`
+const TEST_ECHO_BACKEND_URL = `http://localhost:${TEST_ECHO_BACKEND_PORT}/`
+const REDIS_HOST = 'host.testcontainers.internal'
 
 // As reflected in config/credentials.json.test
 const testCredentials = {
@@ -92,10 +97,10 @@ module.exports = {
   }) => {
     if (skipTest) return
 
-    testBackend = require('../scripts/test-backend').run()
-    otherTestBackend = require('../scripts/other-test-backend').run()
-    mockOauth = require('../scripts/mock-oauth').run()
-    echoBackend = require('../scripts/echo-backend').run(8085)
+    testBackend = require('../scripts/test-backend').run(TEST_BACKEND_PORT)
+    otherTestBackend = require('../scripts/other-test-backend').run(OTHER_TEST_BACKEND_PORT)
+    mockOauth = require('../scripts/mock-oauth').run(MOCK_OAUTH_TOKEN_PORT)
+    echoBackend = require('../scripts/echo-backend').run(TEST_ECHO_BACKEND_PORT)
 
     redis = await new GenericContainer('redis')
       .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
@@ -103,7 +108,13 @@ module.exports = {
       .start()
 
     const redisPort = redis.getMappedPort(REDIS_PORT)
-    await TestContainers.exposeHostPorts(8082, 8083, 8084, 8085, redisPort)
+    await TestContainers.exposeHostPorts(
+      TEST_BACKEND_PORT,
+      OTHER_TEST_BACKEND_PORT,
+      MOCK_OAUTH_TOKEN_PORT,
+      TEST_ECHO_BACKEND_PORT,
+      redisPort
+    )
 
     const dockerFilePath = path.resolve(__dirname, '..')
     const dockerFile = 'Dockerfile.test'

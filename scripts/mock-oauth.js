@@ -32,11 +32,11 @@ app.post('/mock/token', (req, res) => {
   }
 })
 
-const run = () => app.listen(8084)
+const run = (port) => app.listen(port)
 
 if (fs.realpathSync(process.argv[1]) === fs.realpathSync(__filename)) {
   console.log('Starting MockOAUTH..')
-  run()
+  run(8084)
 }
 
 module.exports = { run, tokens }
