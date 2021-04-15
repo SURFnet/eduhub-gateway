@@ -5,6 +5,9 @@
   "license": "UNLICENSED",
   "version": "1.0.0",
   "main": "server.js",
+  "engines": {
+    "node": "^14"
+  },
   "scripts": {
     "test": "standard --env mocha && mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
     "test-backend": "scripts/test-backend.js",
@@ -21,7 +24,7 @@
   },
   "dependencies": {
     "axios": ">=0.21.1",
-    "express-gateway": "^1.16.10",
+    "express-gateway": "github:ExpressGateway/express-gateway",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.5.1",
     "yeoman-environment": "^2.9.6"
