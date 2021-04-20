@@ -27,6 +27,6 @@
     "express-gateway": "github:ExpressGateway/express-gateway",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.5.1",
-    "yeoman-environment": "^2.9.6"
+    "yeoman-environment": "^3.2.0"
   }
 }
