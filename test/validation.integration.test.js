@@ -43,7 +43,7 @@ integrationContext('validation policy', function () {
 
     const data = JSON.parse(res.body).data
     assert.equal(data[0].keyword, 'type')
-    assert.equal(data[0].dataPath, '.query.pageNumber')
+    assert.equal(data[0].instancePath, '/query/pageNumber')
     assert.equal(data[0].params.type, 'integer')
   })
 

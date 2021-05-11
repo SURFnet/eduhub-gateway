@@ -28,7 +28,19 @@ module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
   logger.info(`initializing validator for ${apiSpec}`)
 
   const openApiDocument = jsYaml.safeLoad(fs.readFileSync(apiSpec, 'utf-8'))
-  const validator = new OpenApiValidator(openApiDocument, { ajvOptions: { coerceTypes: true } })
+  const validator = new OpenApiValidator(
+    openApiDocument,
+    {
+      ajvOptions: {
+        coerceTypes: 'array',
+        formats: {
+          uuid: true,
+          uri: true,
+          email: true
+        }
+      }
+    }
+  )
 
   const middlewareStack = []
 
