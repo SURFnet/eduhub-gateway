@@ -28,7 +28,7 @@ describe('gatekeeper', () => {
 
   describe('policy', () => {
     const middleware = gatekeeper.policy({
-      credentials: 'credentials.json.test',
+      credentials: 'config/credentials.json.test',
       acls: [
         {
           app: 'fred',

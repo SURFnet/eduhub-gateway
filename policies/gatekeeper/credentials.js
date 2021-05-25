@@ -24,22 +24,26 @@ const defaultCredentialsFile = configFile('credentials.json')
 
 let credentials = null
 
-try {
-  fs.watch(defaultCredentialsFile, { persistent: false }, () => { credentials = null })
-  logger.debug('watching credentials')
+const watch = (filename) => {
+  const file = filename ?? defaultCredentialsFile
 
-  if (fs.statSync(defaultCredentialsFile).mode & 0o04) {
-    logger.warn(`credentials file world readable: ${defaultCredentialsFile}`)
-  }
-} catch (err) {
-  if (err.code !== 'ENOENT') {
-    logger.warn(`can't watch ${defaultCredentialsFile}: ${err}`)
+  try {
+    fs.watch(file, { persistent: false }, () => { credentials = null })
+    logger.info(`watching credentials: ${file}`)
+
+    if (fs.statSync(file).mode & 0o004) {
+      logger.warn(`credentials file world readable: ${file}`)
+    }
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      logger.warn(`can't watch ${file}: ${err}`)
+    }
   }
 }
 
 const read = (filename) => {
   if (!credentials) {
-    const file = filename ? configFile(filename) : defaultCredentialsFile
+    const file = filename ?? defaultCredentialsFile
     try {
       logger.debug('loading credentials')
       credentials = JSON.parse(fs.readFileSync(file))
@@ -71,4 +75,4 @@ const write = (newCredentials) => {
   }
 }
 
-module.exports = { read, write }
+module.exports = { watch, read, write }

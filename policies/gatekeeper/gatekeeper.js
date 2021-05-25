@@ -50,6 +50,8 @@ module.exports = (params, config) => {
   const acls = authorization.compileAcls(params.acls)
   logger.debug(`known apps: ${Object.keys(acls)}`)
 
+  credentials.watch(params.credentials)
+
   return (req, res, next) => {
     const app = authentication.appFromRequest(req, credentials.read(params.credentials))
     delete req.headers.authorization
