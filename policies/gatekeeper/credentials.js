@@ -15,64 +15,67 @@
  */
 
 const fs = require('fs')
-const path = require('path')
 
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Credentials]')
 
-const configFile = (filename) => path.join(__filename, `../../../config/${filename}`)
-const defaultCredentialsFile = configFile('credentials.json')
+const defaultCredentialsFile = 'config/credentials.json'
 
-let credentials = null
-
-const watch = (filename) => {
-  const file = filename ?? defaultCredentialsFile
-
-  try {
-    fs.watch(file, { persistent: false }, () => { credentials = null })
-    logger.info(`watching credentials: ${file}`)
-
-    if (fs.statSync(file).mode & 0o004) {
-      logger.warn(`credentials file world readable: ${file}`)
-    }
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      logger.warn(`can't watch ${file}: ${err}`)
-    }
+class Store {
+  constructor (filename) {
+    this.file = filename ?? defaultCredentialsFile
   }
-}
 
-const read = (filename) => {
-  if (!credentials) {
-    const file = filename ?? defaultCredentialsFile
+  watch () {
     try {
-      logger.debug('loading credentials')
-      credentials = JSON.parse(fs.readFileSync(file))
+      fs.watch(this.file, {
+        persistent: false
+      }, () => {
+        this.credentials = null
+      })
+      logger.info(`watching credentials: ${this.file}`)
+
+      if (fs.statSync(this.file).mode & 0o004) {
+        logger.warn(`credentials file world readable: ${this.file}`)
+      }
     } catch (err) {
-      if (err.code === 'ENOENT') {
-        credentials = {}
-      } else {
-        logger.error(`can't read from ${file}: ${err}`)
-        process.exit(1)
+      if (err.code !== 'ENOENT') {
+        logger.warn(`can't watch ${this.file}: ${err}`)
       }
     }
   }
 
-  return credentials
-}
+  read () {
+    if (!this.credentials) {
+      try {
+        logger.debug('loading credentials')
+        this.credentials = JSON.parse(fs.readFileSync(this.file))
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          this.credentials = {}
+        } else {
+          logger.error(`can't read from ${this.file}: ${err}`)
+          process.exit(1)
+        }
+      }
+    }
 
-const write = (newCredentials) => {
-  try {
-    fs.writeFileSync(
-      defaultCredentialsFile,
-      JSON.stringify(credentials, null, 2),
-      { mode: 0o600 }
-    )
+    return ({ ...this.credentials })
+  }
 
-    credentials = newCredentials
-  } catch (err) {
-    logger.error(`can't write to ${defaultCredentialsFile}: ${err}`)
-    process.exit(1)
+  write (creds) {
+    try {
+      fs.writeFileSync(
+        this.file,
+        JSON.stringify(creds, null, 2),
+        { mode: 0o600 }
+      )
+
+      this.credentials = creds
+    } catch (err) {
+      logger.error(`can't write to ${this.file}: ${err}`)
+      process.exit(1)
+    }
   }
 }
 
-module.exports = { watch, read, write }
+module.exports = { Store }

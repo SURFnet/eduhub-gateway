@@ -37,12 +37,18 @@ describe('gatekeeper/credentials', () => {
   })
 
   it('reads from the credentials file', () => {
-    const cred = credentials.read(credentialsFile)
-    assert(cred.fred && cred.barney && cred.bubbles, 'all present')
+    const creds = new credentials.Store(credentialsFile)
+    const c = creds.read()
+
+    assert(c.fred && c.barney && c.bubbles, 'all present')
   })
 
   it('reads new version of the credentials file when changed', async () => {
-    credentials.watch(credentialsFile)
+    const creds = new credentials.Store(credentialsFile)
+    creds.watch(credentialsFile)
+
+    let c = creds.read()
+    assert(c.fred && c.barney && c.bubbles, 'original crew')
 
     // overwrite file with new data
     fs.writeFileSync(credentialsFile, '{"betty": {}}', { mode: 0o600 })
@@ -50,7 +56,7 @@ describe('gatekeeper/credentials', () => {
     // give watcher some time to react
     await new Promise(resolve => setTimeout(resolve, 500))
 
-    const cred = credentials.read(credentialsFile)
-    assert(cred.betty && !cred.fred && !cred.barney && !cred.bubbles, 'only Betty')
+    c = creds.read()
+    assert(c.betty && !c.fred && !c.barney && !c.bubbles, 'only Betty')
   })
 })
