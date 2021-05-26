@@ -16,7 +16,7 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert')
+const assert = require('assert').strict
 const crypto = require('crypto')
 
 const authentication = require('../../policies/gatekeeper/authentication')
@@ -30,18 +30,32 @@ describe('gatekeeper/authentication', () => {
     const salt = randomString()
     const otherSalt = randomString()
 
-    assert.strictEqual(
-      authentication.hashPassword(pass, salt),
-      authentication.hashPassword(pass, salt)
-    )
-    assert.notStrictEqual(
-      authentication.hashPassword(pass, salt),
-      authentication.hashPassword(pass, otherSalt)
-    )
-    assert.notStrictEqual(
-      authentication.hashPassword(otherPass, salt),
-      authentication.hashPassword(pass, salt)
-    )
+    it('matches with same input', () => {
+      assert.equal(
+        authentication.hashPassword(pass, salt),
+        authentication.hashPassword(pass, salt)
+      )
+    })
+
+    it('does not match with other salt', () => {
+      assert.notEqual(
+        authentication.hashPassword(pass, salt),
+        authentication.hashPassword(pass, otherSalt)
+      )
+    })
+    it('does not match with other password', () => {
+      assert.notEqual(
+        authentication.hashPassword(otherPass, salt),
+        authentication.hashPassword(pass, salt)
+      )
+    })
+
+    it('matches reference values', () => {
+      assert.equal(
+        '8a8c6f4ad3d53a19d8847abfc693fd0331d22fa2cbab0e1eea34e39bad8be3b9',
+        authentication.hashPassword('pass', 'salt')
+      )
+    })
   })
 
   describe('appFromRequest', () => {
@@ -66,7 +80,7 @@ describe('gatekeeper/authentication', () => {
     )
 
     it('should return app from basic authentication', () => {
-      assert.strictEqual(
+      assert.equal(
         authentication.appFromRequest({
           headers: { authorization: authorizationHeader('fred', 'wilma') }
         }, apps),
@@ -75,7 +89,7 @@ describe('gatekeeper/authentication', () => {
     })
 
     it('should allow colon in password', () => {
-      assert.strictEqual(
+      assert.equal(
         authentication.appFromRequest({
           headers: { authorization: authorizationHeader('with-colon', 'with:colon') }
         }, apps),
@@ -84,7 +98,7 @@ describe('gatekeeper/authentication', () => {
     })
 
     it('should return nothing with bad basic authentication credentials', () => {
-      assert.strictEqual(
+      assert.equal(
         authentication.appFromRequest({
           headers: { authorization: authorizationHeader('fred', 'betty') }
         }, apps),
@@ -93,14 +107,14 @@ describe('gatekeeper/authentication', () => {
     })
 
     it('should return nothing without basic authentication header', () => {
-      assert.strictEqual(
+      assert.equal(
         authentication.appFromRequest({ headers: {} }, apps),
         null
       )
     })
 
     it('should return nothing with bad basic authentication header', () => {
-      assert.strictEqual(
+      assert.equal(
         authentication.appFromRequest({
           headers: { authorization: 'Basic bamm-bamm' }
         }, apps),
