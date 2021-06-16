@@ -21,7 +21,17 @@ module.exports = {
     $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-gatekeeper.json',
     type: 'object',
     properties: {
-      credentials: { type: 'string' },
+      apps: {
+        type: 'object',
+        additionalProperties: {
+          type: 'object',
+          required: ['passwordSalt', 'passwordHash'],
+          properties: {
+            passwordSalt: { type: 'string' },
+            passwordHash: { type: 'string' }
+          }
+        }
+      },
       acls: {
         type: 'array',
         items: {
@@ -47,7 +57,7 @@ module.exports = {
         }
       }
     },
-    required: ['acls']
+    required: ['acls', 'apps']
   },
 
   policy: require('./gatekeeper.js')

@@ -20,7 +20,6 @@ const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const authentication = require('./authentication')
 const authorization = require('./authorization')
-const credentials = require('./credentials')
 
 const realm =
       process.env.SURFNET_OOAPI_GW_CLIENT_REALM ||
@@ -50,11 +49,8 @@ module.exports = (params, config) => {
   const acls = authorization.compileAcls(params.acls)
   logger.debug(`known apps: ${Object.keys(acls)}`)
 
-  const credsStore = new credentials.Store(params.credentials)
-  credsStore.watch()
-
   return (req, res, next) => {
-    const app = authentication.appFromRequest(req, credsStore.read())
+    const app = authentication.appFromRequest(req, params.apps)
     delete req.headers.authorization
 
     if (app) {

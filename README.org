@@ -65,14 +65,28 @@
 
 ** Client authentication
 
-   Use the [[./bin/credentials]] command line tool to /create/, /update/
-   and /delete/ client credentials.
+   Use the [[./bin/credentials]] command line tool to create
+   client credentials in the correct encoding.
 
    #+begin_src sh
      ./bin/credentials create myapp
    #+end_src
 
-   Will update [[./config/credentials.json]] file and output credentials
+   Will output something like
+
+   #+begin_example
+   Config entry:
+	myapp: {
+          "passwordSalt":"f2c6d54c0aa39cde114702920b84a753",
+           "passwordHash":"eaaeaf91f8e5df9daa88c6980d057eb980757632ebea33b4c2060fef33a31ba2"
+        }
+
+   Basic Auth token:
+	myapp:64be12c92c1d49ba12d5279e3b444705
+   #+end_example
+
+   You will then need to update the [[./config/gateway.config.yml]] file
+   and put the given config entry in the ~gatekeeper~ ~apps~ section
    to be used with basic authentication.  In the following example
    ~myapp~ is the username part and ~0123456789abcdef0123456789abcdef~
    is the password.
