@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:16
 
 # copy to least likely to change files first to allow caching
 
