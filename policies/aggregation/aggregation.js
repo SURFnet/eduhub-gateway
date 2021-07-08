@@ -17,6 +17,7 @@
 const httpProxy = require('http-proxy')
 
 const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
+const jsonLog = require('../../lib/json_log')
 
 const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
@@ -48,7 +49,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   return (req, res, next) => {
     const envelopRequest = isEnvelopRequest(req)
     const endpoints = xroute.decode(req.headers['x-route'])
-
+    const requestId = req.egContext.requestID
     if (!endpoints) {
       throw new Error('no endpoints selected, make sure gatekeeper policy configured')
     }
@@ -82,6 +83,34 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           id: endpointId
         }
         const proxy = httpProxy.createProxyServer()
+        const reqTimerStart = new Date()
+        // setup logging
+        proxy.on('proxyRes', (proxyRes, req, res) => {
+          const remoteUrl = endpoint.url.replace(/\/$/, '') + req.url
+          const statusCode = res.statusCode
+          const method = req.method
+          proxy.on('end', () => {
+            const reqTimerEnd = new Date()
+            jsonLog.info({
+              short_message: method,
+              trace_id: requestId,
+              client: 'PROXY',
+              http_status: statusCode,
+              request_method: method,
+              url: remoteUrl,
+              time_ms: reqTimerEnd - reqTimerStart
+            })
+          })
+        })
+        proxy.on('error', (e) => {
+          jsonLog.error({
+            short_message: 'error',
+            trace_id: requestId,
+            client: 'PROXY',
+            error_msg: e.toString(),
+            http_status: httpcode.InternalServerError
+          })
+        })
 
         if (envelopRequest) {
           proxy.on('proxyRes', (proxyRes, req, res) => {
@@ -103,7 +132,6 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         } else {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
-
         proxy.web(req, res, {
           ...await proxyOptionsForEndpoint({ db, endpoint }),
           target: endpoint.url,

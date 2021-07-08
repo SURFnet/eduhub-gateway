@@ -7,7 +7,7 @@ const backend = require('../test/backend')
 
 const run = (port) => (
   backend.start(
-    'test-backend/data',
+    'dev/test-backend/data',
     port,
     basicAuth({ users: { fred: 'wilma' } })
   )

@@ -5,7 +5,7 @@ const httpcode = require('../lib/httpcode')
 
 const run = (port) => (
   require('../test/backend').start(
-    'test-backend/data2',
+    'dev/test-backend/data2',
     port,
     (req, res, next) => {
       if (req.headers.authorization) {

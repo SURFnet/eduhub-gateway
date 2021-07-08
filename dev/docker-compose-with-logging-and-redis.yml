@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  # Example gateway with logging to fluentd/graylog and real Redis.
+  #
+  # Enables us to test features that need the services that will be
+  # available in the production environment.
+  #
+  # This assumes that the observability stack is already running
+  # see `observability/README.md` and `observability/docker-compose.yml`
+  gateway:
+    build:
+      context: '..'
+      dockerfile: 'Dockerfile'
+    ports:
+      - "8081:8080"
+    environment:
+      OOAPI_TEST_BACKEND_URL: http://test-backend/
+    links:
+      - redis
+      - test-backend
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: docker.gateway
+
+  # Just a single backend with dummy content
+  test-backend:
+    build:
+      context: test-backend
+    ports:
+      - "8888:80"
+
+  redis:
+    image: redis

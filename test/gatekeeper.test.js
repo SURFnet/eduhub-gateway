@@ -65,14 +65,20 @@ describe('gatekeeper', () => {
     })
 
     it('returns Unauthorized without basic auth credentials', () => {
-      middleware({ headers: {} }, res, next)
+      middleware({
+        headers: {},
+        egContext: {}
+      }, res, next)
       assert(!calledNext)
       assert.strictEqual(gotStatus, httpcode.Unauthorized)
       assert(gotSet['WWW-Authenticate'])
     })
 
     it('returns Unauthorized without known auth credentials', () => {
-      middleware({ headers: { authorization: auth('foo:bar') } }, res, next)
+      middleware({
+        headers: { authorization: auth('foo:bar') },
+        egContext: {}
+      }, res, next)
       assert(!calledNext)
       assert.strictEqual(gotStatus, httpcode.Unauthorized)
       assert(gotSet['WWW-Authenticate'])
@@ -84,7 +90,8 @@ describe('gatekeeper', () => {
           authorization: auth(testCredentials.fred),
           'x-route': 'endpoint=betty'
         },
-        path: '/'
+        path: '/',
+        egContext: {}
       }, res, next)
       assert(!calledNext)
       assert.strictEqual(gotStatus, httpcode.Forbidden)
@@ -96,7 +103,8 @@ describe('gatekeeper', () => {
           authorization: auth(testCredentials.fred),
           'x-route': 'endpoint=wilma'
         },
-        path: '/tv'
+        path: '/tv',
+        egContext: {}
       }, res, next)
       assert(!calledNext)
       assert.strictEqual(gotStatus, httpcode.Forbidden)
@@ -108,7 +116,8 @@ describe('gatekeeper', () => {
           authorization: auth(testCredentials.fred),
           'x-route': 'endpoint=wilma'
         },
-        path: '/'
+        path: '/',
+        egContext: {}
       }, res, next)
       assert(calledNext)
     })
@@ -119,7 +128,8 @@ describe('gatekeeper', () => {
           authorization: auth(testCredentials.fred),
           'x-route': 'endpoints=wilma' // it should "endpoint" without "s"
         },
-        path: '/'
+        path: '/',
+        egContext: {}
       }, res, next)
       assert(!calledNext)
       assert.strictEqual(gotStatus, httpcode.BadRequest)
