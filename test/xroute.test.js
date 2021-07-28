@@ -33,7 +33,7 @@ describe('xroute', () => {
 
     it('returns list of endpoints', () => {
       assert.deepStrictEqual(decode('endpoint=foo,bar'), ['foo', 'bar'])
-      assert.deepStrictEqual(decode('endpoint=f.o.o,b-a-r'), ['f.o.o', 'b-a-r'])
+      assert.deepStrictEqual(decode('endpoint=f.0.o,b-8-r'), ['f.0.o', 'b-8-r'])
       assert.deepStrictEqual(decode('endpoint= foo , bar '), ['foo', 'bar'])
     })
 
