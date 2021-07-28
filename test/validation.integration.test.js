@@ -60,7 +60,7 @@ integrationContext('validation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=TestBackend',
+          'X-Route': 'endpoint=Test.Backend',
           'Accept-Encoding': 'gzip'
         }
       })
@@ -75,7 +75,7 @@ integrationContext('validation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=TestBackend',
+          'X-Route': 'endpoint=Test.Backend',
           'Accept-Encoding': 'gzip'
         }
       })
@@ -94,7 +94,7 @@ integrationContext('validation policy', function () {
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
-      const course = JSON.parse(res.body).responses.TestBackend
+      const course = JSON.parse(res.body).responses['Test.Backend']
       assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
     })
 
@@ -103,7 +103,7 @@ integrationContext('validation policy', function () {
       assert.equal(res.statusCode, httpcode.OK)
       assert.match(res.headers['content-type'], /^application\/json\b/)
 
-      const course = JSON.parse(res.body).responses.TestBackend
+      const course = JSON.parse(res.body).responses['Test.Backend']
       assert.equal(course.courseId, 'badbadba-badb-badb-badb-badbadbadbad')
     })
   })

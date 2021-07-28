@@ -48,7 +48,7 @@ integrationContext('aggregation policy', function () {
     assert.deepEqual(
       body.gateway.endpoints,
       {
-        TestBackend: {
+        'Test.Backend': {
           url: TEST_BACKEND_CONTAINER_URL,
           responseCode: httpcode.OK,
           headers: {
@@ -56,7 +56,7 @@ integrationContext('aggregation policy', function () {
             'content-type': 'application/json; charset=UTF-8'
           }
         },
-        OtherTestBackend: {
+        'Other-Test.Backend': {
           url: OTHER_TEST_BACKEND_CONTAINER_URL,
           responseCode: httpcode.OK,
           headers: {
@@ -68,12 +68,12 @@ integrationContext('aggregation policy', function () {
     )
 
     assert.deepEqual(body.responses, {
-      TestBackend: {
+      'Test.Backend': {
         contactEmail: 'user@example.com',
         specification: 'http://example.com',
         documentation: 'http://example.com'
       },
-      OtherTestBackend: {
+      'Other-Test.Backend': {
         contactEmail: 'admin@example.com',
         specification: 'http://data2.example.com',
         documentation: 'http://data2.example.com'
@@ -86,7 +86,7 @@ integrationContext('aggregation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=TestBackend'
+          'X-Route': 'endpoint=Test.Backend'
         }
       })
       assert.equal(res.statusCode, httpcode.OK)
@@ -101,7 +101,7 @@ integrationContext('aggregation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=TestBackend,OtherTestBackend'
+          'X-Route': 'endpoint=Test.Backend,Other-Test.Backend'
         }
       })
       assert.equal(res.statusCode, httpcode.BadRequest)
@@ -155,7 +155,7 @@ integrationContext('aggregation policy', function () {
       it('handles other-test-backend without tripping over expired tokens', async () => {
         const get = async () => httpGet(gatewayUrl('fred', '/'), {
           headers: {
-            'X-Route': 'endpoint=OtherTestBackend'
+            'X-Route': 'endpoint=Other-Test.Backend'
           }
         })
         const tokensIssued = mockOauth.tokens.length
@@ -185,12 +185,12 @@ integrationContext('aggregation policy', function () {
       it('uses one cache among different gateway instances', async () => {
         const get = async () => httpGet(gatewayUrl('fred', '/'), {
           headers: {
-            'X-Route': 'endpoint=OtherTestBackend'
+            'X-Route': 'endpoint=Other-Test.Backend'
           }
         })
         const otherGet = async () => httpGet(otherGatewayUrl('fred', '/'), {
           headers: {
-            'X-Route': 'endpoint=OtherTestBackend'
+            'X-Route': 'endpoint=Other-Test.Backend'
           }
         })
 
@@ -206,8 +206,8 @@ integrationContext('aggregation policy', function () {
     describe('bad oauth2 backend configuration', () => {
       it('responds with internal server error for endpoint with bad credentials', async () => {
         let res
-        const bad = { headers: { 'X-Route': 'endpoint=BadCredentialsOathTestBackend' } }
-        const good = { headers: { 'X-Route': 'endpoint=OtherTestBackend' } }
+        const bad = { headers: { 'X-Route': 'endpoint=Bad-Credentials-Oath-Test.Backend' } }
+        const good = { headers: { 'X-Route': 'endpoint=Other-Test.Backend' } }
 
         res = await httpGet(gatewayUrl('barney', '/'), bad)
         assert.equal(res.statusCode, httpcode.InternalServerError)
@@ -224,7 +224,7 @@ integrationContext('aggregation policy', function () {
       it('responds with internal server error for endpoint with unreachable token url', async () => {
         const res = await httpGet(gatewayUrl('barney', '/'), {
           headers: {
-            'X-Route': 'endpoint=BadUrlOathTestBackend'
+            'X-Route': 'endpoint=Bad-Url-Oath-Test.Backend'
           }
         })
         assert.equal(res.statusCode, httpcode.InternalServerError)

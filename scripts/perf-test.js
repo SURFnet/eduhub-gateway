@@ -91,7 +91,7 @@ const performanceTest = async () => {
   do {
     const concurrency = tests.shift()
     await exec(
-      `ab -A ${testCredentials.fred} -v ${argv.verbose} -c ${concurrency} -n 1000 -H "X-Route: endpoint=TestBackend,OtherTestBackend" -r -s 300 ${url}`
+      `ab -A ${testCredentials.fred} -v ${argv.verbose} -c ${concurrency} -n 1000 -H "X-Route: endpoint=Test.Backend,Other-Test.Backend" -r -s 300 ${url}`
     ).catch(logException)
   } while (tests.length > 0)
   await down().catch(logException)

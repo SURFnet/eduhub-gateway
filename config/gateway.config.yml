@@ -48,11 +48,11 @@ apiEndpoints:
        - '/rooms'
        - '/rooms/:roomId'
 serviceEndpoints:
-  TestBackend:
+  'Test.Backend':
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
     proxyOptions:
       auth: fred:wilma
-  OtherTestBackend:
+  'Other-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
     proxyOptions:
       oauth2:
@@ -63,7 +63,7 @@ serviceEndpoints:
               grant_type: client_credentials
               client_id: fred
               client_secret: wilma
-  BadCredentialsOathTestBackend:
+  'Bad-Credentials-Oath-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
     proxyOptions:
       oauth2:
@@ -73,7 +73,7 @@ serviceEndpoints:
             params:
               grant_type: client_credentials
               client_id: dino
-  BadUrlOathTestBackend:
+  'Bad-Url-Oath-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
     proxyOptions:
       oauth2:
@@ -84,7 +84,7 @@ serviceEndpoints:
               grant_type: client_credentials
               client_id: fred
               client_secret: wilma
-  EchoBackend:
+  'Echo.Backend':
     url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
 policies:
   - basic-auth
@@ -132,21 +132,21 @@ pipelines:
               acls:
                 - app: fred
                   endpoints:
-                    - endpoint: TestBackend
+                    - endpoint: 'Test.Backend'
                       paths: ['/', '/courses', '/courses/:id']
-                    - endpoint: OtherTestBackend
+                    - endpoint: 'Other-Test.Backend'
                       paths: ['/', '/courses', '/courses/:id']
                 - app: barney
                   endpoints:
-                    - endpoint: OtherTestBackend
+                    - endpoint: 'Other-Test.Backend'
                       paths: ['/', '/courses', '/courses/:id']
-                    - endpoint: BadCredentialsOathTestBackend
+                    - endpoint: 'Bad-Credentials-Oath-Test.Backend'
                       paths: ['/']
-                    - endpoint: BadUrlOathTestBackend
+                    - endpoint: 'Bad-Url-Oath-Test.Backend'
                       paths: ['/']
                 - app: bubbles
                   endpoints:
-                    - endpoint: EchoBackend
+                    - endpoint: 'Echo.Backend'
                       paths: ['/']
 
       - response-transformer:
