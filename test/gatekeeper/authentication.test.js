@@ -52,8 +52,10 @@ describe('gatekeeper/authentication', () => {
 
     it('matches reference values', () => {
       assert.equal(
-        '8a8c6f4ad3d53a19d8847abfc693fd0331d22fa2cbab0e1eea34e39bad8be3b9',
-        authentication.hashPassword('pass', 'salt')
+        '083aa7e8c594c639ca378dce248174d5e74bb6d64ad695ccb69ebda1d7278cf6',
+        authentication.hashPassword(
+          'fredfredfredfredfredfredfredfred',
+          'wilmawilmawilmawilmawilmawilmawi')
       )
     })
   })

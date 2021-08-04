@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2020, 2021 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,9 +16,45 @@
 
 const crypto = require('crypto')
 
-const hashPassword = (pass, salt) => (
-  crypto.createHash('sha256').update(`${pass}-${salt}`).digest('hex')
+// Returns hex digest of password hashed using SHA256 with salt.
+//
+// This is a timing safe function because the password and salt are
+// set to be 32 character strings by either truncating to or repeating
+// up until a length of 32 characters.  The process of truncation and
+// repetition assumes no interference by the runtime JIT.
+const hashPassword = (pass, salt) => {
+  let data = ''
+  for (let i = 0; i < 32; i++) {
+    data += pass.charAt(i % pass.length)
+  }
+  data += '-'
+  for (let i = 0; i < 32; i++) {
+    data += salt.charAt(i % salt.length)
+  }
+  return crypto.createHash('sha256').update(data).digest('hex')
+}
+
+// Returns a DataView on a 64 characters ASCII string (SHA256 hash hex
+// digest).
+const hashToDataView = (s) => {
+  const buffer = new ArrayBuffer(64)
+  const view = new DataView(buffer)
+  for (let i = 0; i < 64; i++) {
+    view.setUint8(i, s.charCodeAt(i % s.length))
+  }
+  return view
+}
+
+// Timing safe equals on two 64 character ASCII strings (SHA256 hash
+// hex digests).
+const timingSafeHashEqual = (s1, s2) => (
+  crypto.timingSafeEqual(hashToDataView(s1), hashToDataView(s2))
 )
+
+// Dummy values to do work on when no matching date is provided.
+const dummyPass = '0123456789abcdef0123456789abcdef'
+const dummySalt = '0123456789abcdef0123456789abcdef'
+const dummyHash = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
 
 const appFromRequest = (req, apps) => {
   const { headers: { authorization } } = req
@@ -26,11 +62,14 @@ const appFromRequest = (req, apps) => {
 
   if (credEncoded) {
     const cred = Buffer.from(credEncoded, 'base64').toString('utf-8')
-    const [, user, pass] = cred.match(/^([^:]+):(.*)/) || []
+    const [, user, password] = cred.match(/^([^:]+):(.*)/) || []
     const app = apps[user]
 
-    if (app && hashPassword(pass, app.passwordSalt) === app.passwordHash) {
-      return user
+    const pass = password || dummyPass
+    const salt = app ? app.passwordSalt : dummySalt
+    const hash = app ? app.passwordHash : dummyHash
+    if (timingSafeHashEqual(hashPassword(pass, salt), hash)) {
+      return app ? user : null
     }
   }
 
