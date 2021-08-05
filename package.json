@@ -20,7 +20,7 @@
     "mocha": "^9.0.3",
     "standard": "*",
     "testcontainers": "^7.18.2",
-    "yargs": "^17.0.1"
+    "yargs": "^17.1.0"
   },
   "dependencies": {
     "axios": ">=0.21.1",
