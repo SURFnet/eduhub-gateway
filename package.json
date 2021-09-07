@@ -23,7 +23,7 @@
     "yargs": "^17.1.1"
   },
   "dependencies": {
-    "axios": ">=0.21.3",
+    "axios": ">=0.21.4",
     "express-gateway": "^1.16.11",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.6.1",
