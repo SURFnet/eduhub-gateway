@@ -47,6 +47,20 @@ integrationContext('validation policy', function () {
     assert.equal(data[0].params.type, 'integer')
   })
 
+  it('should respond with a full set of errors', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/courses?pageNumber=bar&level=bar'))
+    assert.equal(res.statusCode, httpcode.BadRequest)
+    assert.match(res.headers['content-type'], /^application\/json\b/)
+
+    const data = JSON.parse(res.body).data
+    assert.equal(data.length, 2)
+    assert.equal(data[0].keyword, 'type')
+    assert.equal(data[0].instancePath, '/query/pageNumber')
+    assert.equal(data[0].params.type, 'integer')
+    assert.equal(data[1].keyword, 'enum')
+    assert.equal(data[1].instancePath, '/query/level')
+  })
+
   it('should accept array params in the querystring correctly', async () => {
     const resMultiple = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator'))
     assert.equal(resMultiple.statusCode, httpcode.OK, resMultiple.body)

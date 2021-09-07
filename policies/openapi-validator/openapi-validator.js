@@ -37,7 +37,8 @@ module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
           uuid: true,
           uri: true,
           email: true
-        }
+        },
+        allErrors: true
       }
     }
   )
