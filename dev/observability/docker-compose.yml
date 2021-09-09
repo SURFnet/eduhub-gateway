@@ -82,6 +82,17 @@ services:
     links:
       - graylog
 
+#
+# Prometheus will be scraping metrics
+#
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheusconfig:/etc/prometheus
+
 volumes:
   elasticsearch_data:
   mongo_data:

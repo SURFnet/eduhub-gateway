@@ -39,3 +39,16 @@ stack and removing its state (removing the associated volumes):
 
     docker-compose down -v  # note the -v option
 
+## Prometheus metrics
+
+The prometheus interface will be available at http://localhost:9090/
+and should attempt to scrape the gateway metrics.
+
+You can query what's going on with the metrics by executing the
+following query in the prometheus UI:
+
+    {service="ooapi-gateway"}
+
+To see the metrics from prometheus itself, do
+
+    {service="prometheus"}
