@@ -10,6 +10,9 @@ admin:
   port: 9876
   host: localhost
 apiEndpoints:
+  metrics-reporter:
+    paths:
+      - '/metrics'
   api:
     # all matching paths should be specified including any template
     # params as used in the ooapi spec
@@ -47,6 +50,9 @@ apiEndpoints:
        - '/programs/:programId/offerings'
        - '/rooms'
        - '/rooms/:roomId'
+  not_found: # fallback: needed to track non-matching requests
+    paths:
+       - '/*'
 serviceEndpoints:
   'Test.Backend':
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
@@ -100,13 +106,28 @@ policies:
   - request-transformer
   - response-transformer
   - aggregation
+  - metrics-collector
+  - metrics-reporter
+  - terminate
 pipelines:
+  metrics:
+    apiEndpoints:
+      - metrics-reporter
+    policies:
+      - metrics-reporter:
+          - action:
+              url: "/metrics"
+              labels:
+                testLabel: "test"
+                otherLabel: "foo"
+              defaultMetricsLabels:
+                def: "something"
   test:
     apiEndpoints:
       - api
     policies:
+      - metrics-collector:
       - lifecycle-logger:
-
       - rate-limit:
           - action:
               max: ${RATE_LIMIT_MAX:-10}
@@ -178,4 +199,19 @@ pipelines:
               keepResponseHeaders:
                 - 'content-type'
                 - 'content-length'
-
+  not_found:
+    apiEndpoints:
+      - not_found
+    policies:
+      - metrics-collector:
+      - lifecycle-logger:
+      - rate-limit:
+          - action:
+              max: ${RATE_LIMIT_MAX:-10}
+              windowMs: ${RATE_LIMIT_WINDOW_MS:-1000}
+              delayAfter: ${RATE_LIMIT_DELAY_AFTER:-5}
+              delayMs: ${RATE_LIMIT_DELAY_MS:-500}
+      - terminate:
+          - action:
+              statusCode: 404
+              message: "Not found"

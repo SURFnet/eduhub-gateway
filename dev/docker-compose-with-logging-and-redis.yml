@@ -23,6 +23,10 @@ services:
       options:
         fluentd-address: localhost:24224
         tag: docker.gateway
+    # make sure the prometheus server can access our metrics endpoint
+    networks:
+      - observability
+      - default
 
   # Just a single backend with dummy content
   test-backend:
@@ -33,3 +37,11 @@ services:
 
   redis:
     image: redis
+
+networks:
+  observability:
+    external: true  # join existing network
+    # network is defined in
+    # observability/docker-compose.yml, which needs to be started first!
+    name: "observability_default"
+

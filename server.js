@@ -22,6 +22,8 @@ policies.register(require('./policies/lifecycle-logger'))
 policies.register(require('./policies/gatekeeper'))
 policies.register(require('./policies/openapi-validator'))
 policies.register(require('./policies/aggregation'))
+policies.register(require('./policies/metrics-collector'))
+policies.register(require('./policies/metrics-reporter'))
 
 gateway()
   .load(path.join(__dirname, 'config'))

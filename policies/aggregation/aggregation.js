@@ -24,6 +24,7 @@ const xroute = require('../../lib/xroute')
 const envelop = require('./envelop')
 const { proxyOptionsForEndpoint } = require('./proxy-extras')
 const { keepHeadersFilter } = require('./keep-headers')
+const collector = require('../metrics-collector/metrics-collector')
 
 module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
@@ -45,6 +46,34 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
 
   const keepRequestHeaders = keepHeadersFilter(config.keepRequestHeaders)
   const keepResponseHeaders = keepHeadersFilter(config.keepResponseHeaders)
+
+  const prefix = config.metricsPrefix || 'gateway_'
+
+  // Metrics need to be functions because the registry will be cleared
+  // when the configuration is reloaded (when the metrics-reporter is
+  // re-initialized) which may be after this policy is initialized
+  const requestsTotalMetric = collector.metric(
+    prefix + 'outgoing_http_requests_total',
+    'Counter', {
+      help: 'Number of outgoing HTTP requests',
+      labelNames: ['code', 'path', 'method', 'endpoint', 'client']
+    }
+  )
+  const concurrentRequestsMetric = collector.metric(
+    prefix + 'outgoing_concurrent_http_requests_total',
+    'Gauge', {
+      help: 'Number of concurrent outgoing HTTP requests',
+      labelNames: ['path', 'method', 'endpoint', 'client']
+    }
+  )
+  const requestDurationSecondsMetric = collector.metric(
+    prefix + 'outgoing_http_request_duration_seconds',
+    'Histogram',
+    {
+      help: 'Histogram of latencies for incoming HTTP requests',
+      labelNames: ['path', 'method', 'code', 'client']
+    }
+  )
 
   return (req, res, next) => {
     const envelopRequest = isEnvelopRequest(req)
@@ -84,10 +113,19 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         }
         const proxy = httpProxy.createProxyServer()
         const reqTimerStart = new Date()
-        // setup logging
+        // setup logging and metrics
+        const app = req.egContext.app
+        const labels = {
+          method: req.method,
+          path: req.route.path,
+          endpoint: endpointId,
+          client: app
+        }
+        concurrentRequestsMetric.labels(labels).inc()
+
         proxy.on('proxyRes', (proxyRes, req, res) => {
           const remoteUrl = endpoint.url.replace(/\/$/, '') + req.url
-          const statusCode = res.statusCode
+          const statusCode = proxyRes.statusCode
           const method = req.method
           proxy.on('end', () => {
             const reqTimerEnd = new Date()
@@ -100,16 +138,24 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
               url: remoteUrl,
               time_ms: reqTimerEnd - reqTimerStart
             })
+            requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
+            concurrentRequestsMetric.labels(labels).dec()
+            requestDurationSecondsMetric.observe((reqTimerEnd - reqTimerStart) / 1000)
           })
         })
+        // Error here means we got no HTTP response (timeout or
+        // service not available), meaning we have no HTTP status. We
+        // log status code "0" in this case.
         proxy.on('error', (e) => {
           jsonLog.error({
             short_message: 'error',
             trace_id: requestId,
             client: 'PROXY',
             error_msg: e.toString(),
-            http_status: httpcode.InternalServerError
+            http_status: 0
           })
+          requestsTotalMetric.labels({ ...labels, code: 0 }).inc()
+          concurrentRequestsMetric.labels(labels).dec()
         })
 
         if (envelopRequest) {

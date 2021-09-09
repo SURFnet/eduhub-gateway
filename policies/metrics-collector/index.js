@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2021 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -15,31 +15,23 @@
  */
 
 module.exports = {
-  name: 'aggregation',
+  name: 'metrics-collector',
 
   schema: {
-    $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-aggregation.json',
+    $id: 'http://express-gateway.io/schemas/policies/metrics.json',
     type: 'object',
+    required: [],
     properties: {
-      noEnvelopIfHeaders: {
-        type: 'object'
+      labels: {
+        type: 'object',
+        description: 'Additional labels to include for incoming request metrics'
       },
-      allowRequestHeaders: {
-        type: 'array',
-        items: { type: 'string' }
-      },
-      allowResponseHeaders: {
-        type: 'array',
-        items: { type: 'string' }
-      },
-      metricsPrefix: {
+      prefix: {
         type: 'string',
-        description: 'Prefix for metrics for outgoing HTTP requests'
+        description: 'Prefix for incoming request metrics. Default is "gateway_"'
       }
-
-    },
-    required: []
+    }
   },
 
-  policy: require('./aggregation.js')
+  policy: require('./metrics-collector').policy
 }
