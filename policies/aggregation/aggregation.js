@@ -71,7 +71,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
     'Histogram',
     {
       help: 'Histogram of latencies for outgoing HTTP requests',
-      labelNames: ['path', 'method', 'code', 'client'],
+      labelNames: ['path', 'method', 'code', 'endpoint', 'client'],
       buckets: collector.latencyBuckets
     }
   )
@@ -141,13 +141,14 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
             })
             requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
             concurrentRequestsMetric.labels(labels).dec()
-            requestDurationSecondsMetric.observe((reqTimerEnd - reqTimerStart) / 1000)
+            requestDurationSecondsMetric.labels({ ...labels, code: statusCode }).observe((reqTimerEnd - reqTimerStart) / 1000)
           })
         })
         // Error here means we got no HTTP response (timeout or
         // service not available), meaning we have no HTTP status. We
         // log status code "0" in this case.
         proxy.on('error', (e) => {
+          const reqTimerEnd = new Date()
           jsonLog.error({
             short_message: 'error',
             trace_id: requestId,
@@ -157,6 +158,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           })
           requestsTotalMetric.labels({ ...labels, code: 0 }).inc()
           concurrentRequestsMetric.labels(labels).dec()
+          requestDurationSecondsMetric.labels({ ...labels, code: 0 }).observe((reqTimerEnd - reqTimerStart) / 1000)
         })
 
         if (envelopRequest) {
