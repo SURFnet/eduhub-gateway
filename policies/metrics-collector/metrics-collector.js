@@ -18,6 +18,13 @@ const prom = require('prom-client')
 
 const collector = {}
 
+// these are the default prom-client buckets, extended up till 5
+// minutes. The default buckets go up to 10 seconds
+collector.latencyBuckets = [
+  0.005, 0.01, 0.025, 0.1, 0.25, 0.5, 1,
+  2.5, 5, 10, 30, 60, 120, 240, 300
+]
+
 collector.policy = ({
   prefix = 'gateway_',
   labels = null
@@ -41,7 +48,8 @@ collector.policy = ({
     'Histogram',
     {
       help: 'Histogram of latencies for incoming HTTP requests',
-      labelNames: ['path', 'method', 'code', 'client']
+      labelNames: ['path', 'method', 'code', 'client'],
+      buckets: collector.latencyBuckets
     }
   )
 

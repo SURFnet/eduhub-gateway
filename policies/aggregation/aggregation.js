@@ -70,8 +70,9 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
     prefix + 'outgoing_http_request_duration_seconds',
     'Histogram',
     {
-      help: 'Histogram of latencies for incoming HTTP requests',
-      labelNames: ['path', 'method', 'code', 'client']
+      help: 'Histogram of latencies for outgoing HTTP requests',
+      labelNames: ['path', 'method', 'code', 'client'],
+      buckets: collector.latencyBuckets
     }
   )
 
