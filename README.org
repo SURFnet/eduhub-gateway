@@ -153,7 +153,7 @@
     #+begin_src yaml
       serviceEndpoints:
         BoulderCollege:
-          url: https://bould-college.co/ooapi/
+          url: https://boulder-college.co/ooapi/
           proxyOptions:
             auth: fred:wilma
     #+end_src
@@ -167,7 +167,7 @@
     #+begin_src yaml
       serviceEndpoints:
         BoulderCollege:
-          url: https://bould-college.co/ooapi/
+          url: https://boulder-college.co/ooapi/
           proxyOptions:
             oauth2:
               clientCredentials:
@@ -199,7 +199,7 @@
     #+begin_src yaml
       serviceEndpoints:
         BoulderCollege:
-          url: https://bould-college.co/ooapi/
+          url: https://boulder-college.co/ooapi/
           proxyOptions:
             headers:
               Authorization: "Bearer <myverysecrettoken>"
@@ -273,6 +273,21 @@
    1000, respectively, so *you should always provide your own values
    for delayAfter and delayMs* if you want to have reasonable request
    rates.
+
+** Endpoint timeouts
+
+   Service endpoints can be configured to have a strict timeout policy
+   by adding a ~proxyOptions.proxyTime~ option in milliseconds.  This
+   is the maximum time allow for an endpoint to respond.  Here's an
+   example:
+
+   #+begin_src yaml
+     serviceEndpoints:
+       BoulderCollege:
+         url: https://boulder-college.co/ooapi/
+         proxyOptions:
+           proxyTimeout: 10000
+   #+end_src
 
 ** TLS
 

@@ -22,7 +22,7 @@ const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
 
-let gw, otherGw, testBackend, otherTestBackend, echoBackend, badBackend, mockOauth, redis
+let gw, otherGw, testBackend, otherTestBackend, echoBackend, badBackend, slowBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
 
 const TEST_BACKEND_PORT = 9082
@@ -30,6 +30,7 @@ const OTHER_TEST_BACKEND_PORT = 9083
 const MOCK_OAUTH_TOKEN_PORT = 9084
 const TEST_ECHO_BACKEND_PORT = 9085
 const TEST_BAD_BACKEND_PORT = 9086
+const TEST_SLOW_BACKEND_PORT = 9087
 const REDIS_PORT = 6379
 
 const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
@@ -42,6 +43,8 @@ const TEST_ECHO_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${T
 const TEST_ECHO_BACKEND_URL = `http://localhost:${TEST_ECHO_BACKEND_PORT}/`
 const TEST_BAD_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BAD_BACKEND_PORT}/`
 const TEST_BAD_BACKEND_URL = `http://localhost:${TEST_BAD_BACKEND_PORT}/`
+const TEST_SLOW_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_SLOW_BACKEND_PORT}/`
+const TEST_SLOW_BACKEND_URL = `http://localhost:${TEST_SLOW_BACKEND_PORT}/`
 const REDIS_HOST = 'host.testcontainers.internal'
 
 // As reflected in config/credentials.json.test
@@ -105,6 +108,7 @@ module.exports = {
     mockOauth = require('../scripts/mock-oauth').run(MOCK_OAUTH_TOKEN_PORT)
     echoBackend = require('../scripts/echo-backend').run(TEST_ECHO_BACKEND_PORT)
     badBackend = require('../scripts/bad-backend').run(TEST_BAD_BACKEND_PORT)
+    slowBackend = require('../scripts/slow-backend').run(TEST_SLOW_BACKEND_PORT)
 
     redis = await new GenericContainer('redis')
       .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
@@ -118,6 +122,7 @@ module.exports = {
       MOCK_OAUTH_TOKEN_PORT,
       TEST_ECHO_BACKEND_PORT,
       TEST_BAD_BACKEND_PORT,
+      TEST_SLOW_BACKEND_PORT,
       redisPort
     )
 
@@ -135,6 +140,7 @@ module.exports = {
         .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
         .withEnv('OOAPI_ECHO_BACKEND_URL', TEST_ECHO_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_BAD_BACKEND_URL', TEST_BAD_BACKEND_CONTAINER_URL)
+        .withEnv('OOAPI_SLOW_BACKEND_URL', TEST_SLOW_BACKEND_CONTAINER_URL)
         .withEnv('RATE_LIMIT_MAX', rateLimitMax)
         .withEnv('RATE_LIMIT_WINDOW_MS', rateLimitWindowMs)
         .withEnv('RATE_LIMIT_DELAY_AFTER', rateLimitDelayAfter)
@@ -164,6 +170,7 @@ module.exports = {
     await otherGw.stop()
     await redis.stop()
 
+    slowBackend.close()
     badBackend.close()
     echoBackend.close()
     testBackend.close()
@@ -200,6 +207,8 @@ module.exports = {
 
   TEST_BAD_BACKEND_URL,
   TEST_BAD_BACKEND_CONTAINER_URL,
+  TEST_SLOW_BACKEND_URL,
+  TEST_SLOW_BACKEND_CONTAINER_URL,
   TEST_ECHO_BACKEND_URL,
   TEST_ECHO_BACKEND_CONTAINER_URL,
   TEST_BACKEND_CONTAINER_URL,

@@ -1,4 +1,4 @@
-http: # remove http section in production environmennt
+http: # remove http section in production environment
   port: 8080
 https:
   port: 4444
@@ -94,6 +94,11 @@ serviceEndpoints:
     url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
   'Bad.Backend':
     url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
+  'Slow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
+    proxyOptions:
+      proxyTimeout: 500
+
 policies:
   - basic-auth
   - cors
@@ -169,6 +174,8 @@ pipelines:
                     - endpoint: 'Echo.Backend'
                       paths: ['/']
                     - endpoint: 'Bad.Backend'
+                      paths: ['/']
+                    - endpoint: 'Slow.Backend'
                       paths: ['/']
 
       - response-transformer:
