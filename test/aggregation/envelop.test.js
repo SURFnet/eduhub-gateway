@@ -27,17 +27,24 @@ describe('envelop', () => {
       url: '/test-url?foo=bar'
     }
     const responses = [[
-      { id: 'endpoint-1', name: 'endpoint-1-name', url: 'http://endpoint-1.org' },
+      { id: 'endpoint', name: 'endpoint-name', url: 'http://endpoint.org' },
       {
         statusCode: httpcode.OK,
         body: '{"foo": "bar"}',
         headers: { 'content-type': 'application/json' }
       }
     ], [
-      { id: 'endpoint-2', name: 'endpoint-2-name', url: 'http://endpoint-2.org/test/' },
+      { id: 'bad-request-endpoint', name: 'bad-request-endpoint-name', url: 'http://bad-request-endpoint.org/test/' },
       {
         statusCode: httpcode.BadRequest,
         body: '{"foo": "bar"}',
+        headers: { 'content-type': 'application/json' }
+      }
+    ], [
+      { id: 'bad-content-endpoint', name: 'bad-content-endpoint-name', url: 'http://bad-content-endpoint.org' },
+      {
+        statusCode: httpcode.OK,
+        body: 'bad',
         headers: { 'content-type': 'application/json' }
       }
     ]]
@@ -51,16 +58,22 @@ describe('envelop', () => {
           requestId: 'test-request-id',
           request: '/test-url?foo=bar',
           endpoints: {
-            'endpoint-1': {
-              name: 'endpoint-1-name',
-              url: 'http://endpoint-1.org/test-url?foo=bar',
+            endpoint: {
+              name: 'endpoint-name',
+              url: 'http://endpoint.org/test-url?foo=bar',
               responseCode: httpcode.OK,
               headers: { 'content-type': 'application/json' }
             },
-            'endpoint-2': {
-              name: 'endpoint-2-name',
-              url: 'http://endpoint-2.org/test/test-url?foo=bar',
+            'bad-request-endpoint': {
+              name: 'bad-request-endpoint-name',
+              url: 'http://bad-request-endpoint.org/test/test-url?foo=bar',
               responseCode: httpcode.BadRequest,
+              headers: { 'content-type': 'application/json' }
+            },
+            'bad-content-endpoint': {
+              name: 'bad-content-endpoint-name',
+              url: 'http://bad-content-endpoint.org/test-url?foo=bar',
+              responseCode: httpcode.OK,
               headers: { 'content-type': 'application/json' }
             }
           }
@@ -70,8 +83,10 @@ describe('envelop', () => {
 
     it('has an responses property', () => {
       assert.deepEqual(
-        resp.responses,
-        { 'endpoint-1': { foo: 'bar' } }
+        resp.responses, {
+          endpoint: { foo: 'bar' },
+          'bad-content-endpoint': null
+        }
       )
     })
   })

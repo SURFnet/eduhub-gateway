@@ -92,6 +92,8 @@ serviceEndpoints:
               client_secret: wilma
   'Echo.Backend':
     url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
+  'Bad.Backend':
+    url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
 policies:
   - basic-auth
   - cors
@@ -165,6 +167,8 @@ pipelines:
                 - app: bubbles
                   endpoints:
                     - endpoint: 'Echo.Backend'
+                      paths: ['/']
+                    - endpoint: 'Bad.Backend'
                       paths: ['/']
 
       - response-transformer:

@@ -14,6 +14,8 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
+const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
+
 const httpcode = require('../../lib/httpcode')
 
 const urlJoin = (...parts) => (
@@ -39,7 +41,12 @@ const packageResponses = (req, responses) => ({
     ([, res]) => res.statusCode === httpcode.OK
   ).reduce(
     (m, [{ id }, { body }]) => {
-      m[id] = JSON.parse(body)
+      try {
+        m[id] = JSON.parse(body)
+      } catch (err) {
+        logger.warn('can not parse response: ', err)
+        m[id] = null
+      }
       return m
     }, {}
   )
