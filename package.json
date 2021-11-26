@@ -27,7 +27,7 @@
     "express-gateway": "^1.16.11",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.6.1",
-    "yeoman-environment": "^3.8.0",
+    "yeoman-environment": "^3.8.1",
     "ajv-formats": "2.1.1",
     "prom-client": "14.0.1"
   }
