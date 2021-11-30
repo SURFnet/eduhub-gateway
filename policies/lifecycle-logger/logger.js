@@ -27,7 +27,7 @@ module.exports = () => {
       const reqTimerEnd = new Date()
       const statusCode = res.statusCode
       jsonLog.info({
-        short_message: method,
+        short_message: `${requestId} - ${method} ${url} ${statusCode}`,
         trace_id: requestId,
         client: app,
         http_status: statusCode,

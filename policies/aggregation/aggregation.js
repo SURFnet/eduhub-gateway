@@ -131,7 +131,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('end', () => {
             const reqTimerEnd = new Date()
             jsonLog.info({
-              short_message: method,
+              short_message: `${requestId} - ${method} ${remoteUrl} ${statusCode}`,
               trace_id: requestId,
               client: 'PROXY',
               http_status: statusCode,
@@ -150,7 +150,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         proxy.on('error', (e) => {
           const reqTimerEnd = new Date()
           jsonLog.error({
-            short_message: 'error',
+            short_message: `${requestId} - ${e} 0`,
             trace_id: requestId,
             client: 'PROXY',
             error_msg: e.toString(),
