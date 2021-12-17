@@ -32,6 +32,10 @@ describe('gatekeeper/authorization', () => {
         {
           endpoint: 'betty',
           paths: ['/foo']
+        },
+        {
+          endpoint: 'bubbles', // endpoint without paths should be ignored by compiler
+          paths: []
         }
       ]
     },
@@ -47,11 +51,11 @@ describe('gatekeeper/authorization', () => {
   ])
 
   describe('compileAcls', () => {
-    it('maps apps and endpoints to regexps', () => {
+    it('maps apps and endpoints to matchers', () => {
       assert.deepEqual(Object.keys(acls), ['fred', 'barney'])
-      assert(acls.fred.wilma instanceof RegExp)
-      assert(acls.fred.betty instanceof RegExp)
-      assert(acls.barney.betty instanceof RegExp)
+      assert(acls.fred.wilma)
+      assert(acls.fred.betty)
+      assert(acls.barney.betty)
       assert(!acls.barney.wilma)
     })
   })
@@ -126,6 +130,10 @@ describe('gatekeeper/authorization', () => {
         assert.equal(
           false,
           isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/bar' })
+        )
+        assert.equal(
+          false,
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=bubbles' }, path: '/' })
         )
       })
 

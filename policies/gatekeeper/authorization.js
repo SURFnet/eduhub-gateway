@@ -17,13 +17,28 @@
 const pathToRegexp = require('path-to-regexp')
 const xroute = require('../../lib/xroute')
 
+// Given a collection of `paths` with `:param` placeholders, return a
+// function that matches an actual path (returns true if the given
+// path matches any of the paths in the collection).
+//
+// If `paths` is empty, returns null
+const compileMatcher = (paths) => {
+  if (paths.length) {
+    const rx = new RegExp(paths.map(path => pathToRegexp(path).source).join('|'))
+    return (path) => rx.exec(path)
+  } else {
+    return null
+  }
+}
+
 const compileAcls = (acls) => (
   acls.reduce((m, { app, endpoints }) => {
-    m[app] = endpoints.reduce((m, { endpoint, paths }) => {
-      m[endpoint] = new RegExp(
-        paths.map(path => pathToRegexp(path).source).join('|')
-      )
-      return m
+    m[app] = endpoints.reduce((appm, { endpoint, paths }) => {
+      const matcher = compileMatcher(paths)
+      if (matcher) {
+        appm[endpoint] = matcher
+      }
+      return appm
     }, {})
     return m
   }, {})
@@ -40,7 +55,7 @@ const isAuthorized = (acl, req) => {
 
   if (endpoints.length) {
     return endpoints.reduce(
-      (m, endpoint) => m && !!acl[endpoint] && !!acl[endpoint].exec(req.path),
+      (m, endpoint) => m && !!acl[endpoint] && !!acl[endpoint](req.path),
       true
     )
   } else {
