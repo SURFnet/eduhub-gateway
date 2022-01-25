@@ -72,7 +72,7 @@ services:
 # of in docker
 
   fluentd:
-    image: fluent/fluent-bit:1.8
+    image: fluent/fluent-bit:1.8.7
     command: /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/td-agent-bit.conf
     volumes:
       - ./fluentconfig:/fluent-bit/etc
