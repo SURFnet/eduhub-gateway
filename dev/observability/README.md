@@ -27,17 +27,35 @@ add the expected inputs:
  - enter a title, i.e. "Gelf input"
  - click "Save"
 
-## Reset full system
+## Graylog dev setup is brittle
 
-The observability setup is stateful and depends on different moving
-parts that tend to get confused when they get killed / restarted. This
-can manifest itself as events not showing up in graylog or messages
-about elasticsearch indexes not being available.
+In development, we run the graylog system (graylog, elasticsearch,
+fluentd, mongo) using docker-compose, which we shut down and
+restart/rebuild regularly, as you would expect when doing development.
+
+We also run all the services that generate logs in docker, mostly to
+ensure we've got a single method for delivering logs; services log to
+STDOUT / STDERR in a JSON format, one line per message, and there is a
+single fluentd process running that forwards the logs to Graylog using
+the GELF TCP connector.
+
+When log messages do not show up in Graylog, which happens quite
+often, it's difficult to find out why. Sometimes a full state reset
+(shut down containers, remove volumes, restart) of the graylog system
+works, sometimes it does not. Sometimes elasticsearch complains about
+indexes not being available.
 
 The simplest brute-force way out is to shutdown the observability
 stack and removing its state (removing the associated volumes):
 
     docker-compose down -v  # note the -v option
+
+## Debugging hints
+
+If logs do not show up in graylog, heck out the logs of the
+`docker-compose` process for this directory. Especially, take note of
+any issues reported by `fluentd` and `graylog` - some json keys are
+required and leaving them off will mean messages get dropped.
 
 ## Prometheus metrics
 
