@@ -4,6 +4,22 @@
 
   Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
 
+* Setting up development environment
+
+  Install [[https://nodejs.org/en/][nodejs]] for your system.
+
+  Fetch [[https://github.com/jomco/express-gateway-lite][express-gateway-lite]] submodule:
+
+  #+begin_src sh
+    git submodule update --init --recursive
+  #+end_src
+
+  Install other dependencies
+
+  #+begin_src sh
+    npm install
+  #+end_src
+
 * Running tests
 ** Functional tests
 
