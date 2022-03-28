@@ -25,9 +25,11 @@
   },
   "dependencies": {
     "ajv-formats": "2.1.1",
+    "js-yaml": "^4.1.0",
     "express-gateway-lite": "file:vendor/express-gateway-lite",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.6.1",
+    "http-proxy": "^1.18.0",
     "prom-client": "14.0.1",
     "path-to-regexp": "1.7.0"
   }

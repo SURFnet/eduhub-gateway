@@ -27,7 +27,7 @@ const { makeValidateResponseMiddleware } = require('./response-validator')
 module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
   logger.info(`initializing validator for ${apiSpec}`)
 
-  const openApiDocument = jsYaml.safeLoad(fs.readFileSync(apiSpec, 'utf-8'))
+  const openApiDocument = jsYaml.load(fs.readFileSync(apiSpec, 'utf-8'))
   const validator = new OpenApiValidator(
     openApiDocument,
     {

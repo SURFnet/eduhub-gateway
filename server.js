@@ -15,9 +15,9 @@
  */
 
 const path = require('path')
-const gateway = require('express-gateway')
+const gateway = require('express-gateway-lite')
 
-const policies = require('express-gateway/lib/policies')
+const policies = require('express-gateway-lite/lib/policies')
 policies.register(require('./policies/lifecycle-logger'))
 policies.register(require('./policies/gatekeeper'))
 policies.register(require('./policies/openapi-validator'))
