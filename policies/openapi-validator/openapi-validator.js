@@ -17,7 +17,7 @@
 const fs = require('fs')
 const jsYaml = require('js-yaml')
 
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Validator]')
 const { OpenApiValidator } = require('express-openapi-validate')
 
 const { squashMiddlewareStack } = require('../../lib/utils.js')

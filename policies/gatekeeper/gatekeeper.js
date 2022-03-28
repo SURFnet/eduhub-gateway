@@ -14,7 +14,7 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Gatekeeper]')
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Gatekeeper]')
 
 const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')

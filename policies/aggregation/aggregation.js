@@ -16,7 +16,7 @@
 
 const httpProxy = require('http-proxy')
 
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
 const jsonLog = require('../../lib/json_log')
 
 const httpcode = require('../../lib/httpcode')
@@ -31,7 +31,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
 
   // Note: can not require db earlier because EG configuration might
   // not be fully loaded yet causing a deadlock.
-  const db = require('express-gateway/lib/db')
+  const db = require('express-gateway-lite/lib/db')
 
   const isEnvelopRequest = (req) => {
     if (config.noEnvelopIfAnyHeaders) {

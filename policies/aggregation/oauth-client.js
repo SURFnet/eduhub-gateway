@@ -20,7 +20,7 @@ const querystring = require('querystring')
 const crypto = require('crypto')
 const httpcode = require('../../lib/httpcode')
 
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:OauthClient]')
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:OauthClient]')
 
 const redisNs = 'OAGW-OAUTH2-Token'
 

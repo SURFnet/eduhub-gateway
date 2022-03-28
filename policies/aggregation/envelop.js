@@ -14,7 +14,7 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const logger = require('express-gateway/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
 
 const httpcode = require('../../lib/httpcode')
 
