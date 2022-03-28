@@ -14,7 +14,7 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const pathToRegexp = require('path-to-regexp')
+const { pathToRegexp } = require('path-to-regexp')
 const xroute = require('../../lib/xroute')
 
 // Given a collection of `paths` with `:param` placeholders, return a

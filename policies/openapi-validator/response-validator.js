@@ -14,7 +14,7 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const pathToRegexp = require('path-to-regexp')
+const { pathToRegexp } = require('path-to-regexp')
 const modifyResponse = require('express-modify-response')
 
 const { oasPathToExpressPath } = require('express-openapi-validate/dist/schema-utils')
