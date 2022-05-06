@@ -5,7 +5,7 @@ RUN cp config/system.config.yml.prod config/system.config.yml
 RUN rm -rf node_modules
 RUN npm ci --only=production
 
-FROM gcr.io/distroless/nodejs:14
+FROM gcr.io/distroless/nodejs:18
 COPY --from=build-env /app /app
 WORKDIR /app
 CMD ["server.js"]
