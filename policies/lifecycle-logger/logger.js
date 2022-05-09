@@ -32,7 +32,7 @@ module.exports = () => {
         client: app,
         http_status: statusCode,
         request_method: method,
-        url: url,
+        url,
         time_ms: reqTimerEnd - reqTimerStart
       })
     })
