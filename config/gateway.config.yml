@@ -105,7 +105,6 @@ policies:
   - expression
   - key-auth
   - lifecycle-logger
-  - oauth2
   - proxy
   - rate-limit
   - openapi-validator
