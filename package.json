@@ -21,7 +21,7 @@
     "mocha": "^10.0.0",
     "standard": "*",
     "testcontainers": "^8.10.0",
-    "yargs": "^17.5.0"
+    "yargs": "^17.5.1"
   },
   "dependencies": {
     "ajv-formats": "2.1.1",
