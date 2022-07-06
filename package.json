@@ -9,7 +9,10 @@
     "node": "^14"
   },
   "scripts": {
-    "test": "standard --env mocha && mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
+    "lint": "standard --env mocha",
+    "test-v4": "mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
+    "test-v5": "TEST_OOAPI_V5=true mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
+    "test": "npm run lint &&  npm run test-v4 && npm run test-v5",
     "test-backend": "scripts/test-backend.js",
     "other-test-backend": "scripts/other-test-backend.js",
     "mock-oauth": "scripts/mock-oauth.js",

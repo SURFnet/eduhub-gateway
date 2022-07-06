@@ -1,3 +1,6 @@
 [submodule "express-gateway-lite"]
 	path = vendor/express-gateway-lite
 	url = https://github.com/jomco/express-gateway-lite.git
+[submodule "ooapi-specification"]
+	path = ooapi-specification
+	url = https://github.com/open-education-api/specification

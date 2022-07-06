@@ -21,6 +21,7 @@ const http = require('http')
 const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
+const fs = require('fs')
 
 let gw, otherGw, testBackend, otherTestBackend, echoBackend, badBackend, slowBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
@@ -32,6 +33,7 @@ const TEST_ECHO_BACKEND_PORT = 9085
 const TEST_BAD_BACKEND_PORT = 9086
 const TEST_SLOW_BACKEND_PORT = 9087
 const REDIS_PORT = 6379
+const TEST_OOAPI_V5 = process.env.TEST_OOAPI_V5
 
 const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
 const TEST_BACKEND_URL = `http://localhost:${TEST_BACKEND_PORT}/`
@@ -126,6 +128,12 @@ module.exports = {
       redisPort
     )
 
+    // Prepare the correct configuration file for OOAPI v4 or v5.
+    fs.copyFileSync(
+      './config/gateway.config.yml' + (TEST_OOAPI_V5 ? '.v5' : '.v4'),
+      './config/gateway.config.yml'
+    )
+
     const dockerFilePath = path.resolve(__dirname, '..')
     const dockerFile = 'Dockerfile.test'
     const image = await GenericContainer
@@ -217,6 +225,7 @@ module.exports = {
   OTHER_TEST_BACKEND_URL,
   MOCK_OAUTH_TOKEN_CONTAINER_URL,
   MOCK_OAUTH_TOKEN_URL,
+  TEST_OOAPI_V5,
 
   sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms))
 }

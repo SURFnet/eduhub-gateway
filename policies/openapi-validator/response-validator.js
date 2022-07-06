@@ -18,7 +18,6 @@ const { pathToRegexp } = require('path-to-regexp')
 const modifyResponse = require('express-modify-response')
 
 const { oasPathToExpressPath } = require('express-openapi-validate/dist/schema-utils')
-const { ValidationError } = require('express-openapi-validate')
 
 const httpcode = require('../../lib/httpcode')
 
@@ -52,18 +51,12 @@ const makeValidator = (validator) => {
         return body
       }
     } catch (e) {
-      if (e instanceof ValidationError) {
-        res.statusCode = httpcode.BadGateway
-        res.setHeader('content-type', 'application/json')
-        return JSON.stringify({
-          message: e.message,
-          data: e.data
-        })
-      } else {
-        res.statusCode = httpcode.InternalServerError
-        res.setHeader('content-type', 'text/plain')
-        return e.message
-      }
+      res.statusCode = httpcode.BadGateway
+      res.setHeader('content-type', 'application/json')
+      return JSON.stringify({
+        message: e.message,
+        data: e.data
+      })
     }
     return body
   }
