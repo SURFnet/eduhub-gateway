@@ -22,7 +22,8 @@ const httpcode = require('../lib/httpcode')
 const {
   httpGet,
   integrationContext,
-  gatewayUrl
+  gatewayUrl,
+  TEST_OOAPI_V5
 } = require('./integration.environment.js')
 
 integrationContext('validation policy', function () {
@@ -62,16 +63,30 @@ integrationContext('validation policy', function () {
   })
 
   it('should accept array params in the querystring correctly', async () => {
-    const resMultiple = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator'))
+    const resMultiple = await httpGet(
+      gatewayUrl(
+        'fred',
+        '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=' +
+          (TEST_OOAPI_V5 ? 'coordinators' : 'coordinator')
+      )
+    )
     assert.equal(resMultiple.statusCode, httpcode.OK, resMultiple.body)
 
-    const resSingle = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs'))
+    const resSingle = await httpGet(
+      gatewayUrl(
+        'fred',
+        '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs'
+      )
+    )
     assert.equal(resSingle.statusCode, httpcode.OK, resSingle.body)
   })
 
   describe('with validation', () => {
     it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'), {
+      const res = await httpGet(gatewayUrl(
+        'fred',
+        '/courses/900d900d-900d-900d-900d-900d900d900d'
+      ), {
         headers: {
           'X-Validate-Response': 'true',
           'X-Route': 'endpoint=Test.Backend',
@@ -83,9 +98,10 @@ integrationContext('validation policy', function () {
 
       const course = JSON.parse(res.body)
       assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    })
+    });
 
-    it('should respond with BadGateway for an incorrect response', async () => {
+    // v5 response validation is disabled because of problems loading the full ooapi schema
+    (TEST_OOAPI_V5 ? xit : it)('should respond with BadGateway for an incorrect response', async () => {
       const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
         headers: {
           'X-Validate-Response': 'true',

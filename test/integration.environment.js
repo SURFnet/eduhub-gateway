@@ -32,6 +32,7 @@ const TEST_ECHO_BACKEND_PORT = 9085
 const TEST_BAD_BACKEND_PORT = 9086
 const TEST_SLOW_BACKEND_PORT = 9087
 const REDIS_PORT = 6379
+const TEST_OOAPI_V5 = process.env.TEST_OOAPI_V5
 
 const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
 const TEST_BACKEND_URL = `http://localhost:${TEST_BACKEND_PORT}/`
@@ -127,7 +128,7 @@ module.exports = {
     )
 
     const dockerFilePath = path.resolve(__dirname, '..')
-    const dockerFile = 'Dockerfile.test'
+    const dockerFile = TEST_OOAPI_V5 ? 'Dockerfile.test.v5' : 'Dockerfile.test'
     const image = await GenericContainer
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
@@ -150,11 +151,12 @@ module.exports = {
         .withEnv('REDIS_PORT', redisPort)
         .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
         .withExposedPorts(8080, 4444)
+        .withStartupTimeout(5 * 60 * 1000)
         .start()
     )
 
-    gw = await startGw('ooapi-gateway')
-    otherGw = await startGw('ooapi-othergateway')
+    gw = await startGw('ooapi-gateway' + TEST_OOAPI_V5)
+    otherGw = await startGw('ooapi-othergateway' + TEST_OOAPI_V5)
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
@@ -217,6 +219,7 @@ module.exports = {
   OTHER_TEST_BACKEND_URL,
   MOCK_OAUTH_TOKEN_CONTAINER_URL,
   MOCK_OAUTH_TOKEN_URL,
+  TEST_OOAPI_V5,
 
   sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms))
 }

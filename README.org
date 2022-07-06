@@ -355,6 +355,31 @@
 
    When ~validateResponses~ is ~true~, responses are validated when
    the request has an ~X-Validate-Response: true~ header.
+*** OOAPI V4 & V5 configuration & validation
+
+There are example configurations for handling and validating OOAPI v4
+and v5 at [[config/gateway.config.yml.v4]] and
+[[config/gateway.config.yml.v5]]. These include the correct set of
+endpoint paths for each version, and refer to the API specifications
+at [[ooapiv4.json]] and [[ooapiv5.json]].
+
+The ooapiv5 json can be regenerated from the specification repository
+(included as a submodule in [[ooapi-specification]]) by running:
+
+#+begin_src sh
+  make ooapiv5.json
+#+end_src
+
+Which will generate a version of ooapi specification that excludes the
+response schemas since the full v5 specification is incompatible with
+the validation library used.
+
+You will need to have [[https://stedolan.github.io/jq/][jq]] installed. On MacOS, jq is available with
+brew:
+
+#+begin_src sh
+  brew install jq
+#+end_src
 
 ** Aggregation
 
