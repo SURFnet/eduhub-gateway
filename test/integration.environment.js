@@ -21,7 +21,6 @@ const http = require('http')
 const querystring = require('querystring')
 const path = require('path')
 const { GenericContainer, TestContainers, Wait } = require('testcontainers')
-const fs = require('fs')
 
 let gw, otherGw, testBackend, otherTestBackend, echoBackend, badBackend, slowBackend, mockOauth, redis
 const skipTest = process.env.MOCHA_SKIP === 'integration'
@@ -128,14 +127,8 @@ module.exports = {
       redisPort
     )
 
-    // Prepare the correct configuration file for OOAPI v4 or v5.
-    fs.copyFileSync(
-      './config/gateway.config.yml' + (TEST_OOAPI_V5 ? '.v5' : '.v4'),
-      './config/gateway.config.yml'
-    )
-
     const dockerFilePath = path.resolve(__dirname, '..')
-    const dockerFile = 'Dockerfile.test'
+    const dockerFile = TEST_OOAPI_V5 ? 'Dockerfile.test.v5' : 'Dockerfile.test'
     const image = await GenericContainer
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
@@ -158,11 +151,12 @@ module.exports = {
         .withEnv('REDIS_PORT', redisPort)
         .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
         .withExposedPorts(8080, 4444)
+        .withStartupTimeout(5 * 60 * 1000)
         .start()
     )
 
-    gw = await startGw('ooapi-gateway')
-    otherGw = await startGw('ooapi-othergateway')
+    gw = await startGw('ooapi-gateway' + TEST_OOAPI_V5)
+    otherGw = await startGw('ooapi-othergateway' + TEST_OOAPI_V5)
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()

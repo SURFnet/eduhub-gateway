@@ -1,0 +1,21 @@
+FROM node:14
+
+# copy to least likely to change files first to allow caching
+COPY vendor /app/vendor
+
+#COPY node_modules /app/node_modules
+COPY *.json /app/
+WORKDIR /app
+RUN npm install --production
+
+COPY *.js /app/
+COPY config /app/config
+COPY config/gateway.config.yml.v5 config/gateway.config.yml
+COPY config/system.config.yml.test config/system.config.yml
+COPY lib /app/lib
+COPY policies /app/policies
+
+CMD npm start
+
+EXPOSE 8080
+EXPOSE 4444

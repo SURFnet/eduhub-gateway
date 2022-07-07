@@ -15,5 +15,5 @@ jobs:
         node-version: 14
     - run: npm ci
     - run: npm run lint
-    - run: npm run test-v4
-    - run: npm run test-v5
+    - run: DEBUG='testcontainers' npm run test-v4
+    - run: DEBUG='testcontainers' npm run test-v5
