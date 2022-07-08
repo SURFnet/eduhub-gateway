@@ -1,4 +1,4 @@
-name: npm-test
+name: test-v5
 
 on:
   - push
@@ -15,5 +15,4 @@ jobs:
         node-version: 14
     - run: npm ci
     - run: npm run lint
-    - run: DEBUG='testcontainers' npm run test-v4
-    - run: DEBUG='testcontainers' npm run test-v5
+    - run: npm run test-v5
