@@ -174,13 +174,13 @@ pipelines:
                 - app: fred
                   endpoints:
                     - endpoint: 'Test.Backend'
-                      paths: ['/', '/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:courseId']
                     - endpoint: 'Other-Test.Backend'
-                      paths: ['/', '/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:courseId']
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
-                      paths: ['/', '/courses', '/courses/:id']
+                      paths: ['/', '/courses', '/courses/:courseId']
                     - endpoint: 'Bad-Credentials-Oath-Test.Backend'
                       paths: ['/']
                     - endpoint: 'Bad-Url-Oath-Test.Backend'
