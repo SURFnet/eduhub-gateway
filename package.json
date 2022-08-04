@@ -6,7 +6,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "engines": {
-    "node": "^14"
+    "node": "^16"
   },
   "scripts": {
     "lint": "standard --env mocha",

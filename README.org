@@ -6,7 +6,9 @@
 
 * Setting up development environment
 
-  Install [[https://nodejs.org/en/][nodejs]] for your system.
+  Install [[https://nodejs.org/en/][nodejs]] for your system. We keep Node on LTS
+  release. Currently we run v16 (Active LTS as of August, 2022). See
+  https://nodejs.org/en/about/releases/
 
   Fetch [[https://github.com/jomco/express-gateway-lite][express-gateway-lite]] submodule:
 
