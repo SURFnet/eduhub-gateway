@@ -1,4 +1,4 @@
-FROM node:14 AS build-env
+FROM node:18 AS build-env
 COPY . /app
 WORKDIR /app
 RUN cp config/system.config.yml.prod config/system.config.yml
