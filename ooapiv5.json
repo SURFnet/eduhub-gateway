@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "version": "5.0.0 RC2",
+    "version": "5.0.0",
     "title": "Open Education API",
     "description": "OpenAPI (fka Swagger) specification for the Open Education API.\n\n<figure>\n\t<a target=\"_blank\" href=\"OOAPIv5_model.png\">\n  <img src=\"OOAPIv5_model.png\" alt=\"OOAPI information model that feeds OOAPI specification\" width=\"70%\" class=\"img-responsive\">\n  </a>\n  <figcaption> OOAPI information model that feeds OOAPI specification (click to enlage)</figcaption>\n</figure>\n\nThe model provides an overview of how the objects on which the API is specified are related. The overarching concept educations is not found in the in the end points of the API. The smaller concepts of programOffering, courseOffering and conceptOffering are all found in the offering endpoint. The different types of association can all be found in the association endpoint.\n\nThe original file for this model can be found <a target=\"_blank\" href=\"OOAPIv5_model_v0.4.drawio\">here</a>\n\nThe program relations object is not found as a separate endpoint but relations between programs can be found within the program endpoint by expanding that endpoint.\n\nInformation about earlier meetings and presentations can be found <a target=\"_blank\" href=\"https://github.com/open-education-api/notulen\">here</a>\n\nInformation on the EDU-API model that was also used for this api is shown <a target=\"_blank\" href=\"eduapi.png\">here</a>\n",
     "x-logo": {
@@ -401,7 +401,7 @@
           "schacHome",
           "identifier"
         ],
-        "example": "crohoCreboCode"
+        "example": "identifier"
       },
       "IdentifierEntry": {
         "type": "object",
@@ -418,7 +418,11 @@
           "codeType",
           "code"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "example": {
+          "codeType": "identifier",
+          "code": "1234qwe12"
+        }
       },
       "gender": {
         "type": "string",
@@ -1063,6 +1067,14 @@
           "academicSessionType": {
             "$ref": "#/components/schemas/academicSessionType"
           },
+          "primaryCode": {
+            "description": "The primary human readable identifier for this academic session. This is often the source identifier as defined by the institution.",
+            "$ref": "#/components/schemas/IdentifierEntry",
+            "example": {
+              "codeType": "identifier",
+              "code": "2012-Q1"
+            }
+          },
           "name": {
             "type": "array",
             "description": "The name of this academic session",
@@ -1130,6 +1142,13 @@
                 "title": "Expanded AcademicSession"
               }
             ]
+          },
+          "otherCodes": {
+            "type": "array",
+            "description": "An array of additional human readable codes/identifiers for the entity being described.",
+            "items": {
+              "$ref": "#/components/schemas/IdentifierEntry"
+            }
           },
           "consumers": {
             "description": "The additional consumer elements that can be provided, see the [documentation on support for specific consumers](https://open-education-api.github.io/specification/#/consumers) for more information about this mechanism.",
@@ -5559,6 +5578,9 @@
         ],
         "parameters": [
           {
+            "$ref": "#/components/parameters/primaryCode"
+          },
+          {
             "$ref": "#/components/parameters/pageSize"
           },
           {
@@ -5961,7 +5983,7 @@
               "default": [
                 "name"
               ],
-              "sort": [
+              "example": [
                 "name",
                 "programId"
               ]
@@ -6779,12 +6801,12 @@
             "$ref": "#/components/parameters/teachingLanguage"
           },
           {
-            "name": "modeOfStudy",
+            "name": "modeOfDelivery",
             "in": "query",
-            "description": "Filter by modeOfStudy",
+            "description": "Filter by modeOfDelivery",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/modeOfStudy"
+              "$ref": "#/components/schemas/modesOfDelivery"
             }
           },
           {
@@ -8625,7 +8647,7 @@
     "/education-specifications/{educationSpecificationId}/courses": {
       "get": {
         "summary": "GET /education-specifications/{educationSpecificationId}/courses",
-        "description": "Get an ordered list of all courses given through this educationspecification.",
+        "description": "Get an ordered list of all courses given through this EducationSpecification.",
         "tags": [
           "education specifications"
         ],
@@ -8648,6 +8670,9 @@
           },
           {
             "$ref": "#/components/parameters/consumer"
+          },
+          {
+            "$ref": "#/components/parameters/search"
           },
           {
             "$ref": "#/components/parameters/teachingLanguage"

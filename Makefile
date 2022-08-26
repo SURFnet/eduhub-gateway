@@ -12,7 +12,7 @@ test: package-lock.json
 	npm test
 
 ooapiv5-full.json:
-	(cd ooapi-specification/v5-rc && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv5-full.json
+	(cd ooapi-specification/v5 && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv5-full.json
 
 ooapiv5.json: ooapiv5-full.json
 	jq '.paths[].get.responses["200"].content["application/json"].schema|={type: "object"}' <$< >$@
