@@ -32,6 +32,11 @@ integrationContext('validation policy', function () {
     assert.equal(res.statusCode, httpcode.OK)
   })
 
+  it('should respond with OK for a correct request for programs', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programs'))
+    assert.equal(res.statusCode, httpcode.OK)
+  })
+
   it('should respond with OK for a correct request with parameter', async () => {
     const res = await httpGet(gatewayUrl('fred', '/courses?pageNumber=1'))
     assert.equal(res.statusCode, httpcode.OK)

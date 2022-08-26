@@ -1,0 +1,36 @@
+{
+
+    "pageSize": 0,
+    "pageNumber": 0,
+    "items":
+
+[
+
+{
+
+    "programId": "123e4567-e89b-12d3-a456-426614174000",
+    "type": "alliance",
+    "name": "Student Mobility",
+    "abbreviation": "studM",
+    "description": "program that is a place holder for all courses that are made available for student mobility",
+    "ects": 5,
+    "qualificationAwarded": "None",
+    "lengthOfProgram": 6,
+    "levelOfQualification": "6",
+    "sector": "university education",
+    "fieldsOfStudy": "0732",
+    "crohoCreboCode": "59312",
+    "profileOfProgram": "the program is meant to be a place holder for all courses that can be exchanged between Universities, therefore there is no main focus for this program",
+    "learningOutcomes":
+
+            [
+                "string"
+            ],
+            "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
+            "qualificationRequirements": "None",
+            "link": "https://bijvak.nl",
+            "ext": { }
+        }
+    ]
+
+}
