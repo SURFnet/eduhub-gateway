@@ -374,33 +374,6 @@
       "codeType": {
         "type": "string",
         "description": "The code/identifier type. \n\nThis is an *extensible enumeration*. Use `x-` to prefix custom values\n\nThe predefined values are:\n  - `brin`: The registration number for a Dutch educational institution that is issued by the Dutch Ministry of Education, Culture and Science\n  - `crohoCreboCode`: programs with a CREBO and CROHO number are accredited by the Dutch Ministry of Education, Culture and Science (OCW)\n  - `programCode`: Identifier for the program (collection of courses)\n  - `componentCode`: The code for a component (part of a course)\n  - `offeringCode`: The code to identify a specific offering (program, course or component offering)\n  - `organizationId`: The identifier for the organization\n  - `buildingId`: The number or code to identify a building\n  - `bagId`: The identification of a building as it is known in the Dutch Building Administration (BAG)\n  - `roomCode`: The code for a room\n  - `systemId`: Identifier assigned to an entity in context of a specific system\n  - `productId`: Identifier assigned to a specific product\n  - `nationalIdentityNumber`: Identifier assigned by the governement of the person. e.g. a social security number in the USA\n  - `studentNumber`: Identifier for the student\n  - `studielinkNumber`: Identifier for the person as determined by Studielink\n  - `esi`: European Student Identifier\n  - `userName`: The name of a user\n  - `accountId`: Identifier assigned to a specific account\n  - `emailAdress`: An email address\n  - `groupCode`: The identifier for a group (of persons)\n  - `isbn`: International Standard Book Number that serve as product identifiers for Books\n  - `issn`: International Standard Book Number that serve as product identifiers for periodicals\n  - `orcId`: Open Researcher and Contributor ID\n  - `uuid`: A universally unique identifier\n  - `schacHome`: Home organization using the domain name of the organization\n  - `identifier`: Generic Identifier\n",
-        "x-ooapi-extensible-enum": [
-          "brin",
-          "crohoCreboCode",
-          "programCode",
-          "componentCode",
-          "offeringCode",
-          "organizationId",
-          "buildingId",
-          "bagId",
-          "roomCode",
-          "systemId",
-          "productId",
-          "nationalIdentityNumber",
-          "studentNumber",
-          "studielinkNumber",
-          "esi",
-          "userName",
-          "accountId",
-          "emailAdress",
-          "groupCode",
-          "isbn",
-          "issn",
-          "orcId",
-          "uuid",
-          "schacHome",
-          "identifier"
-        ],
         "example": "identifier"
       },
       "IdentifierEntry": {
@@ -1032,15 +1005,7 @@
       "academicSessionType": {
         "type": "string",
         "description": "The type of this Academic Session This is an *extensible enumeration*.\n- academic year: academic year\n- semester: semester, typically there are two semesters per academic year\n- trimester: trimester, typically there are three semesters per academic year\n- quarter: quarter, typically there are four quarters per academic year\n- testing period: a period in which tests take place\n- period: any other period in an academic year\n\nImplementations are allowed to add additional values to those above, as long as they do not overlap in definition to existing values.\n",
-        "example": "semester",
-        "x-ooapi-extensible-enum": [
-          "academic year",
-          "semester",
-          "trimester",
-          "quarter",
-          "testing period",
-          "period"
-        ]
+        "example": "semester"
       },
       "Identifier": {
         "type": "string",
@@ -1358,11 +1323,7 @@
       "costType": {
         "type": "string",
         "description": "The type of the cost. This is an *extensible enumeration*.\n\nThe following values have been defined in the specification:\n  - `STAP eligible`: the costs that a student can get STAP subsidy for\n  - `total costs`: the total costs that a student is to pay to follow this offering\n\nImplementations are allowed to add additional values to those above, as long as they do not overlap in definition to existing values.\n",
-        "example": "total costs",
-        "x-ooapi-extensible-enum": [
-          "STAP eligible",
-          "total costs"
-        ]
+        "example": "total costs"
       },
       "Cost": {
         "type": "object",

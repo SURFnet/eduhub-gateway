@@ -15,4 +15,10 @@ ooapiv5-full.json:
 	(cd ooapi-specification/v5 && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv5-full.json
 
 ooapiv5.json: ooapiv5-full.json
-	jq '.paths[].get.responses["200"].content["application/json"].schema|={type: "object"}' <$< >$@
+# allow any json object as response and remove
+# 'x-ooapi-extensible-enum' since they clash with the validator and
+# validate as plain "string" anyway.
+	cat $< | \
+	jq '.paths[].get.responses["200"].content["application/json"].schema|={type: "object"}' | \
+	jq '.components.schemas[] |= del(.["x-ooapi-extensible-enum"])' \
+	>$@
