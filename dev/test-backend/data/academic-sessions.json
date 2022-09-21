@@ -1,0 +1,13 @@
+{
+  "pageSize": 0,
+  "pageNumber": 0,
+  "items": [
+    {
+      "academicSessionId": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "Fall semester 2020",
+      "startDate": "2020-08-17",
+      "endDate": "2020-12-18",
+      "ext": {}
+    }
+  ]
+}

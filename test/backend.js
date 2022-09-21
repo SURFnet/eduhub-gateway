@@ -19,8 +19,17 @@ const express = require('express')
 module.exports = {
   start: (data, port, ...middleware) => {
     const app = express()
+    app.use(function (req, res, next) {
+      // ensure that, if we have a request like '/courses?foo=bar'
+      // it gets mapped to '/courses.json'
+      //
+      // leave paths that end in '/' alone (for root url), assumes
+      // there is an index.json for that
+      req.url = req.url.replace(/([^/])(\?|$).*/, '$1.json')
+      next()
+    })
     middleware && middleware.forEach(v => app.use(v))
-    app.use(express.static(data, { index: 'index.json', extensions: 'json', forwardError: true }))
+    app.use(express.static(data, { index: 'index.json', extensions: ['json'], forwardError: true, redirect: true }))
     return app.listen(port)
   }
 }
