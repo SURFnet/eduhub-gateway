@@ -1,0 +1,30 @@
+{
+  "pageSize": 0,
+  "pageNumber": 0,
+  "items": [
+    {
+      "offeringId": "123e4567-e89b-12d3-a456-134564174000",
+      "type": "component",
+      "academicSession": {
+        "academicSessionId": "123e4567-e89b-12d3-a456-426614174000",
+        "name": "Fall semester 2020",
+        "startDate": "2020-08-17",
+        "endDate": "2020-12-18",
+        "ext": {}
+      },
+      "name": "Final written test for INFOMQNM for fall semseter 2020",
+      "abbreviation": "Test-INFOMQNM-20FS",
+      "description": "Prove in wirting knowledge of research methods, including: Acquire knowledge of HCI research paradigms Able to design suitable research studies (e.g., choose between within and between subject designs) Define/apply/design metrics and scales Define/produce materials (e.g., stimuli and questionnaires) Define protocols for research studies Understands and take in account concepts of reliability and validity Analyze and improve methods and analysis of published scientific articles Able to deliver scientific reports Prove in writing knowledge of ­­­statistics, including: Handle hypothesis testing with complex designs (e.g., including , dependent, independent, and co variates) Data preparation (e.g., coding and feature selection) Reason towards adequate techniques to ensure valid outcomes (e.g., be aware of type I, type II errors) Select an appropriate sampling method (e.g., stratified) Perform parametric tests (e.g., repeated measures (M)ANOVA) Perform non-parametric tests (e.g., Chi-square, Mann-Whitney, and Kruskal-Wallis)",
+      "mainLanguage": "nl-NL",
+      "maxNumberStudents": 200,
+      "enrolledNumberStudents": 150,
+      "pendingNumberStudents": 50,
+      "isLineItem": true,
+      "resultValueType": "1-10",
+      "ext": {},
+      "modeOfStudy": "full-time",
+      "startDate": "2019-08-24",
+      "endDate": "2019-08-24"
+    }
+  ]
+}

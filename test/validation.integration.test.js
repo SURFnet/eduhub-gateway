@@ -142,4 +142,114 @@ integrationContext('validation policy', function () {
       assert.equal(course.courseId, 'badbadba-badb-badb-badb-badbadbadbad')
     })
   })
+
+  const V5_PATHS = [
+    '/',
+    '/academic-sessions',
+    '/academic-sessions/{academicSessionId}',
+    '/academic-sessions/{academicSessionId}/offerings',
+    '/associations/{associationId}',
+    '/buildings',
+    '/buildings/{buildingId}',
+    '/buildings/{buildingId}/rooms',
+    '/components/{componentId}',
+    '/components/{componentId}/offerings',
+    '/courses',
+    '/courses/{courseId}',
+    '/courses/{courseId}/components',
+    '/courses/{courseId}/offerings',
+    '/education-specifications',
+    '/education-specifications/{educationSpecificationId}',
+    '/education-specifications/{educationSpecificationId}/courses',
+    '/education-specifications/{educationSpecificationId}/education-specifications',
+    '/education-specifications/{educationSpecificationId}/programs',
+    '/groups',
+    '/groups/{groupId}',
+    '/groups/{groupId}/persons',
+    '/news-feeds',
+    '/news-feeds/{newsFeedId}',
+    '/news-feeds/{newsFeedId}/news-items',
+    '/news-items/{newsItemId}',
+    '/offerings/{offeringId}',
+    '/offerings/{offeringId}/associations',
+    '/offerings/{offeringId}/groups',
+    '/organizations',
+    '/organizations/{organizationId}',
+    '/organizations/{organizationId}/components',
+    '/organizations/{organizationId}/courses',
+    '/organizations/{organizationId}/education-specifications',
+    '/organizations/{organizationId}/groups',
+    '/organizations/{organizationId}/offerings',
+    '/organizations/{organizationId}/programs',
+    '/persons',
+    '/persons/{personId}',
+    '/persons/{personId}/associations',
+    '/persons/{personId}/groups',
+    '/programs',
+    '/programs/{programId}',
+    '/programs/{programId}/courses',
+    '/programs/{programId}/offerings',
+    '/programs/{programId}/programs',
+    '/rooms',
+    '/rooms/{roomId}'
+  ]
+
+  const V4_PATHS = [
+    // The following paths have been disabled because of known issues
+    // in the v4 spec / examples:
+    //
+    // '/academic-sessions/{academicSessionId}/offerings',
+    // '/components/{componentId}/offerings',
+    // '/offerings/{offeringId}/associations',
+    // '/associations/{associationId}',
+    // '/offerings/{offeringId}',
+    // '/organizations/{organizationId}/offerings',
+    // '/persons/{personId}/associations',
+    // '/programs/{programId}/offerings',
+
+    '/',
+    '/academic-sessions',
+    '/academic-sessions/{academicSessionId}',
+    '/buildings',
+    '/buildings/{buildingId}',
+    '/buildings/{buildingId}/rooms',
+    '/components/{componentId}',
+    '/courses',
+    '/courses/{courseId}',
+    '/courses/{courseId}/components',
+    '/courses/{courseId}/offerings',
+    '/news-feeds',
+    '/news-feeds/{newsFeedId}',
+    '/news-feeds/{newsFeedId}/news-items',
+    '/news-items/{newsItemId}',
+    '/organizations',
+    '/organizations/{organizationId}',
+    '/organizations/{organizationId}/components',
+    '/organizations/{organizationId}/courses',
+    '/organizations/{organizationId}/programs',
+    '/persons',
+    '/persons/{personId}',
+    '/programs',
+    '/programs/{programId}',
+    '/programs/{programId}/courses',
+    '/rooms',
+    '/rooms/{roomId}'
+  ]
+
+  describe('smoketest for every path', () => {
+    (TEST_OOAPI_V5 ? V5_PATHS : V4_PATHS).forEach((path) => {
+      const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
+      it(`Path '${p}' should give an OK response`, async () => {
+        const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
+          headers: {
+            'X-Route': 'endpoint=Test.Backend',
+            'X-Validate-Response': 'true'
+          }
+        })
+        const summary =
+              statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
+        assert.deepEqual(summary, { statusCode: httpcode.OK })
+      })
+    })
+  })
 })

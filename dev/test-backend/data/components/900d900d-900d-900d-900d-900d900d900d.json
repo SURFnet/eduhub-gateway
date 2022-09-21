@@ -1,0 +1,59 @@
+{
+  "componentId": "123e4567-e89b-12d3-a456-426614174000",
+  "type": "test",
+  "name": "Written test for INFOMQNM",
+  "abbreviation": "Test-INFOMQNM",
+  "description": "Prove executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms Able to design suitable research studies (e.g., choose between within and between subject designs) Define/apply/design metrics and scales Define/produce materials (e.g., stimuli and questionnaires) Define protocols for research studies Understands and take in account concepts of reliability and validity Analyze and improve methods and analysis of published scientific articles Able to deliver scientific reports\nProve executable knowledge of ­­­statistics, including: Handle hypothesis testing with complex designs (e.g., including , dependent, independent, and co variates) Data preparation (e.g., coding and feature selection) Reason towards adequate techniques to ensure valid outcomes (e.g., be aware of type I, type II errors) Select an appropriate sampling method (e.g., stratified) Perform parametric tests (e.g., repeated measures (M)ANOVA) Perform non-parametric tests (e.g., Chi-square, Mann-Whitney, and Kruskal-Wallis)",
+  "ext": {},
+  "course": {
+    "courseId": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Academic and Professional Writing",
+    "abbreviation": "INFOMQNM",
+    "ects": 7.5,
+    "description": "As with all empirical sciences, to assure valid outcomes, HCI studies heavily rely on research methods and statistics. This holds for the design of user interfaces, personalized recommender systems, and interaction paradigms for the internet of things. This course prepares you to do so by learning you to collect data, design experiments, and analyze the results. By the end of the course, you will have a detailed understanding of how to select and apply quantitative research methods and analysis to address virtually all HCI challenges. Quantitative research and data analysis will be taught in the context of state-of-the-art HCI challenges. Lectures will be alternated with hands-on learning, including work with predefined datasets (e.g., addressing facial features, cognitive load, and emotion). Additionally, students will set up their own research (e.g., using eye tracking). Data processing and analysis will be executed using R.",
+    "learningOutcomes": [
+      "Executable knowledge of research methods, including: Acquire knowledge of HCI research paradigms Able to design suitable research studies (e.g., choose between within and between subject designs) Define/apply/design metrics and scales Define/produce materials (e.g., stimuli and questionnaires) Define protocols for research studies Understands and take in account concepts of reliability and validity Analyze and improve methods and analysis of published scientific articles Able to deliver scientific reports",
+      " Executable knowledge of ­­­statistics, including: Handle hypothesis testing with complex designs (e.g., including , dependent, independent, and co variates) Data preparation (e.g., coding and feature selection) Reason towards adequate techniques to ensure valid outcomes (e.g., be aware of type I, type II errors) Select an appropriate sampling method (e.g., stratified) Perform parametric tests (e.g., repeated measures (M)ANOVA) Perform non-parametric tests (e.g., Chi-square, Mann-Whitney, and Kruskal-Wallis)"
+    ],
+    "requirements": "None",
+    "level": "master",
+    "modeOfDelivery": [
+      "situated"
+    ],
+    "enrollment": "enrollment through SIS",
+    "resources": [
+      "book to be announced",
+      "on-line resource x"
+    ],
+    "assessment": "Exam on campus",
+    "link": "https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusZoekCursus.do#submitForm?cursuscode=INFOMQNM",
+    "ext": {}
+  },
+  "organization": {
+    "organizationId": "123e4567-e89b-12d3-a456-123514174000",
+    "name": "Coöperatie SURF U.A.",
+    "shortName": "SURF",
+    "description": "SURF is een coöperatieve vereniging van Nederlandse onderwijs- en onderzoeksinstellingen waarin de leden hun krachten bundelen. De leden zijn eigenaar van SURF.",
+    "type": "root",
+    "addresses": [
+      {
+        "type": "postal",
+        "street": "Moreelsepark",
+        "streetNumber": "48",
+        "additional": "On the other side of the road",
+        "postalCode": "3511 EP",
+        "city": "Utrecht",
+        "countryCode": "NL",
+        "geolocation": {
+          "latitude": 52.089123,
+          "longitude": 5.113337
+        },
+        "ext": {}
+      }
+    ],
+    "link": "https://surf.nl",
+    "logo": "https://www.surf.nl/themes/surf/logo.svg",
+    "brin": "00AA",
+    "ext": {}
+  }
+}

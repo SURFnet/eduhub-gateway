@@ -1,0 +1,21 @@
+{
+  "pageSize": 0,
+  "pageNumber": 0,
+  "items": [
+    {
+      "newsItemId": "123e4567-e89b-12d3-a456-122564174000",
+      "name": "Room Bb 4.35 will be un available from 2020-09-29 until 2020-09-30",
+      "type": "calamity",
+      "authors": [
+        "admin@universiteitvanharderwijk.nl"
+      ],
+      "image": "https://upload.wikimedia.org/wikipedia/commons/4/44/Antu_emblem-unavailable.svg",
+      "link": "https://www.universiteitvanharderwijk.nl/cms/ruimtegebrek",
+      "content": "The room Bb 4.35 will be under maintenance",
+      "validFrom": "2020-09-28T08:30:00.000Z",
+      "validUntil": "2020-09-30T20:00:00.000Z",
+      "lastModified": "2020-09-28T00:00:00.000Z",
+      "ext": {}
+    }
+  ]
+}

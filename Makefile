@@ -5,7 +5,7 @@ package-lock.json: package.json
 deps.json: package-lock.json
 	jq <package-lock.json '.dependencies |with_entries(select(.value | .dev != true))|keys' > $@
 
-.PHONY: test ooapiv5-full.json
+.PHONY: test ooapiv5-full.json ooapiv4.json
 
 # ensure dependencies are up to date before running npm test
 test: package-lock.json
@@ -22,3 +22,6 @@ ooapiv5.json: ooapiv5-full.json
 	jq '.paths[].get.responses["200"].content["application/json"].schema|={type: "object"}' | \
 	jq '.components.schemas[] |= del(.["x-ooapi-extensible-enum"])' \
 	>$@
+
+ooapiv4.json:
+	(cd ooapi-specification/v4 && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv4.json

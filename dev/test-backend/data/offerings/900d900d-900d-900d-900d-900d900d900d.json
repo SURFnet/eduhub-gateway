@@ -1,0 +1,73 @@
+{
+  "offeringId": "123e4567-e89b-12d3-a456-134564174000",
+  "type": "component",
+  "academicSession": {
+    "academicSessionId": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Fall semester 2020",
+    "startDate": "2020-08-17",
+    "endDate": "2020-12-18",
+    "ext": {}
+  },
+  "name": "Final written test for INFOMQNM for fall semseter 2020",
+  "abbreviation": "Test-INFOMQNM-20FS",
+  "description": "Prove in wirting knowledge of research methods, including: Acquire knowledge of HCI research paradigms Able to design suitable research studies (e.g., choose between within and between subject designs) Define/apply/design metrics and scales Define/produce materials (e.g., stimuli and questionnaires) Define protocols for research studies Understands and take in account concepts of reliability and validity Analyze and improve methods and analysis of published scientific articles Able to deliver scientific reports Prove in writing knowledge of ­­­statistics, including: Handle hypothesis testing with complex designs (e.g., including , dependent, independent, and co variates) Data preparation (e.g., coding and feature selection) Reason towards adequate techniques to ensure valid outcomes (e.g., be aware of type I, type II errors) Select an appropriate sampling method (e.g., stratified) Perform parametric tests (e.g., repeated measures (M)ANOVA) Perform non-parametric tests (e.g., Chi-square, Mann-Whitney, and Kruskal-Wallis)",
+  "mainLanguage": "nl-NL",
+  "maxNumberStudents": 200,
+  "enrolledNumberStudents": 150,
+  "pendingNumberStudents": 50,
+  "isLineItem": true,
+  "resultValueType": "1-10",
+  "ext": {},
+  "modeOfStudy": "full-time",
+  "startDate": "2019-08-21",
+  "endDate": "2023-06-15",
+  "program": {
+    "programId": "123e4567-e89b-12d3-a456-426614174000",
+    "type": "alliance",
+    "name": "Student Mobility",
+    "abbreviation": "studM",
+    "description": "program that is a place holder for all courses that are made available for student mobility",
+    "ects": 5,
+    "qualificationAwarded": "None",
+    "lengthOfProgram": 6,
+    "levelOfQualification": "6",
+    "sector": "university education",
+    "fieldsOfStudy": "0732",
+    "crohoCreboCode": "59312",
+    "profileOfProgram": "the program is meant to be a place holder for all courses that can be exchanged between Universities, therefore there is no main focus for this program",
+    "learningOutcomes": [
+      "string"
+    ],
+    "admissionRequirements": "Students need to be enrolled at qualifying institutions of higher education that participate in this alliance",
+    "qualificationRequirements": "None",
+    "link": "https://bijvak.nl",
+    "ext": {}
+  },
+  "organization": {
+    "organizationId": "123e4567-e89b-12d3-a456-123514174000",
+    "name": "Coöperatie SURF U.A.",
+    "shortName": "SURF",
+    "description": "SURF is een coöperatieve vereniging van Nederlandse onderwijs- en onderzoeksinstellingen waarin de leden hun krachten bundelen. De leden zijn eigenaar van SURF.",
+    "type": "root",
+    "addresses": [
+      {
+        "type": "postal",
+        "street": "Moreelsepark",
+        "streetNumber": "48",
+        "additional": "On the other side of the road",
+        "postalCode": "3511 EP",
+        "city": "Utrecht",
+        "countryCode": "NL",
+        "geolocation": {
+          "latitude": 52.089123,
+          "longitude": 5.113337
+        },
+        "ext": {}
+      }
+    ],
+    "link": "https://surf.nl",
+    "logo": "https://www.surf.nl/themes/surf/logo.svg",
+    "brin": "00AA",
+    "ext": {}
+  }
+}

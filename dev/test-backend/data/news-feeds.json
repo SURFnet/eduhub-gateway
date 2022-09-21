@@ -1,0 +1,13 @@
+{
+  "pageSize": 0,
+  "pageNumber": 0,
+  "items": [
+    {
+      "newsFeedId": "123e4567-e89b-12d3-a456-134564174222",
+      "name": "room Bb 4.35 news",
+      "description": "all information on what happens in room Bb 4.35",
+      "type": "room",
+      "ext": {}
+    }
+  ]
+}

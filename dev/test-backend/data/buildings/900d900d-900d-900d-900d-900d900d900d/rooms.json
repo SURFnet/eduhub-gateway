@@ -1,0 +1,22 @@
+{
+  "pageSize": 0,
+  "pageNumber": 0,
+  "items": [
+    {
+      "roomId": "123e4567-e89b-12d3-a456-332114174000",
+      "abbreviation": "Bb 4.54",
+      "name": "Beatrix building room 4.54",
+      "type": "exam location",
+      "description": "External education and exam room 4.54",
+      "totalSeats": 300,
+      "availableSeats": 200,
+      "floor": "4",
+      "wing": "None",
+      "geolocation": {
+        "latitude": 52.088255,
+        "longitude": 5.106669
+      },
+      "ext": {}
+    }
+  ]
+}

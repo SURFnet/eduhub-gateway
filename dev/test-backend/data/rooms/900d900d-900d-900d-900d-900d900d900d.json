@@ -1,0 +1,37 @@
+{
+  "roomId": "123e4567-e89b-12d3-a456-332114174000",
+  "abbreviation": "Bb 4.54",
+  "name": "Beatrix building room 4.54",
+  "type": "exam location",
+  "description": "External education and exam room 4.54",
+  "totalSeats": 300,
+  "availableSeats": 200,
+  "floor": "4",
+  "wing": "None",
+  "geolocation": {
+    "latitude": 52.088255,
+    "longitude": 5.106669
+  },
+  "ext": {},
+  "building": {
+    "buildingId": "123e4567-e89b-12d3-a456-331214174000",
+    "abbreviation": "Bb",
+    "name": "Beatrix building",
+    "description": "external rooms location for exams",
+    "address": {
+      "type": "postal",
+      "street": "Moreelsepark",
+      "streetNumber": "48",
+      "additional": "On the other side of the road",
+      "postalCode": "3511 EP",
+      "city": "Utrecht",
+      "countryCode": "NL",
+      "geolocation": {
+        "latitude": 52.089123,
+        "longitude": 5.113337
+      },
+      "ext": {}
+    },
+    "ext": {}
+  }
+}
