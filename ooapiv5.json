@@ -4240,27 +4240,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "personId",
-                  "givenName",
-                  "surName",
-                  "displayName",
-                  "-personId",
-                  "-givenName",
-                  "-surName",
-                  "-displayName"
-                ]
-              },
-              "default": [
-                "personId"
-              ],
-              "example": [
-                "surName",
-                "-personId"
-              ]
+              "type": "string",
+              "pattern": "^((personId|givenName|surName|displayName|-personId|-givenName|-surName|-displayName)(,(personId|givenName|surName|displayName|-personId|-givenName|-surName|-displayName))*)?$"
             }
           }
         ],
@@ -4515,20 +4496,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "associationId",
-                  "-associationId"
-                ]
-              },
-              "default": [
-                "associationId"
-              ],
-              "example": [
-                "associationId"
-              ]
+              "type": "string",
+              "pattern": "^((associationId|-associationId)(,(associationId|-associationId))*)?$"
             }
           }
         ],
@@ -4613,25 +4582,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "groupId",
-                  "name",
-                  "startDate",
-                  "-groupId",
-                  "-name",
-                  "-startDate"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-groupId"
-              ]
+              "type": "string",
+              "pattern": "^((groupId|name|startDate|-groupId|-name|-startDate)(,(groupId|name|startDate|-groupId|-name|-startDate))*)?$"
             }
           }
         ],
@@ -4706,23 +4658,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "organizationId",
-                  "name",
-                  "-organizationId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-organizationId"
-              ]
+              "type": "string",
+              "pattern": "^((organizationId|name|-organizationId|-name)(,(organizationId|name|-organizationId|-name))*)?$"
             }
           }
         ],
@@ -4782,14 +4719,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "parent",
-                  "children"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((parent|children)(,(parent|children))*)?$"
             }
           }
         ],
@@ -4913,23 +4844,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "programId",
-                  "name",
-                  "-programId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-programId"
-              ]
+              "type": "string",
+              "pattern": "^((programId|name|-programId|-name)(,(programId|name|-programId|-name))*)?$"
             }
           }
         ],
@@ -5026,23 +4942,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "courseId",
-                  "name",
-                  "-courseId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-courseId"
-              ]
+              "type": "string",
+              "pattern": "^((courseId|name|-courseId|-name)(,(courseId|name|-courseId|-name))*)?$"
             }
           }
         ],
@@ -5130,23 +5031,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "componentId",
-                  "name",
-                  "-componentId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "componentId",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((componentId|name|-componentId|-name)(,(componentId|name|-componentId|-name))*)?$"
             }
           }
         ],
@@ -5268,27 +5154,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "offeringId",
-                  "name",
-                  "startDate",
-                  "endDate",
-                  "-offeringId",
-                  "-name",
-                  "-startDate",
-                  "-endDate"
-                ]
-              },
-              "default": [
-                "startDate"
-              ],
-              "example": [
-                "name",
-                "-startDate"
-              ]
+              "type": "string",
+              "pattern": "^((offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate)(,(offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate))*)?$"
             }
           }
         ],
@@ -5373,25 +5240,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "groupId",
-                  "name",
-                  "startDate",
-                  "-groupId",
-                  "-name",
-                  "-startDate"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "groupId",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((groupId|name|startDate|-groupId|-name|-startDate)(,(groupId|name|startDate|-groupId|-name|-startDate))*)?$"
             }
           }
         ],
@@ -5473,25 +5323,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "educationSpecificationType",
-                  "name",
-                  "primarycode",
-                  "-educationSpecificationType",
-                  "-name",
-                  "-primarycode"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-educationSpecificationType"
-              ]
+              "type": "string",
+              "pattern": "^((educationSpecificationType|name|primarycode|-educationSpecificationType|-name|-primarycode)(,(educationSpecificationType|name|primarycode|-educationSpecificationType|-name|-primarycode))*)?$"
             }
           }
         ],
@@ -5586,25 +5419,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "academicSessionId",
-                  "name",
-                  "startDate",
-                  "-academicSessionId",
-                  "-name",
-                  "-startDate"
-                ]
-              },
-              "default": [
-                "startDate"
-              ],
-              "example": [
-                "startDate",
-                "-academicSessionId"
-              ]
+              "type": "string",
+              "pattern": "^((academicSessionId|name|startDate|-academicSessionId|-name|-startDate)(,(academicSessionId|name|startDate|-academicSessionId|-name|-startDate))*)?$"
             }
           }
         ],
@@ -5664,15 +5480,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "parent",
-                  "children",
-                  "year"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((parent|children|year)(,(parent|children|year))*)?$"
             }
           }
         ],
@@ -5794,27 +5603,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "offeringId",
-                  "name",
-                  "startDate",
-                  "endDate",
-                  "-offeringId",
-                  "-name",
-                  "-startDate",
-                  "-endDate"
-                ]
-              },
-              "default": [
-                "startDate"
-              ],
-              "example": [
-                "startDate",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate)(,(offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate))*)?$"
             }
           }
         ],
@@ -5931,23 +5721,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "programId",
-                  "name",
-                  "-programId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "programId"
-              ]
+              "type": "string",
+              "pattern": "^((programId|name|-programId|-name)(,(programId|name|-programId|-name))*)?$"
             }
           }
         ],
@@ -6007,17 +5782,8 @@
             "description": "Optional properties to include, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "parent",
-                  "children",
-                  "coordinators",
-                  "organization",
-                  "educationSpecification"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((parent|children|coordinators|organization|educationSpecification)(,(parent|children|coordinators|organization|educationSpecification))*)?$"
             }
           },
           {
@@ -6144,23 +5910,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "programId",
-                  "name",
-                  "-programId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-programId"
-              ]
+              "type": "string",
+              "pattern": "^((programId|name|-programId|-name)(,(programId|name|-programId|-name))*)?$"
             }
           }
         ],
@@ -6254,23 +6005,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "courseId",
-                  "name",
-                  "-courseId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "courseId"
-              ],
-              "example": [
-                "name",
-                "-courseId"
-              ]
+              "type": "string",
+              "pattern": "^((courseId|name|-courseId|-name)(,(courseId|name|-courseId|-name))*)?$"
             }
           }
         ],
@@ -6387,27 +6123,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "offeringId",
-                  "name",
-                  "startDate",
-                  "endDate",
-                  "-offeringId",
-                  "-name",
-                  "-startDate",
-                  "-endDate"
-                ]
-              },
-              "default": [
-                "startDate"
-              ],
-              "example": [
-                "name",
-                "-startDate"
-              ]
+              "type": "string",
+              "pattern": "^((offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate)(,(offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate))*)?$"
             }
           }
         ],
@@ -6497,23 +6214,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "courseId",
-                  "name",
-                  "-courseId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-courseId"
-              ]
+              "type": "string",
+              "pattern": "^((courseId|name|-courseId|-name)(,(courseId|name|-courseId|-name))*)?$"
             }
           }
         ],
@@ -6573,16 +6275,8 @@
             "description": "Optional properties to include, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "programs",
-                  "coordinators",
-                  "organization",
-                  "educationSpecification"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((programs|coordinators|organization|educationSpecification)(,(programs|coordinators|organization|educationSpecification))*)?$"
             }
           },
           {
@@ -6673,23 +6367,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "componentId",
-                  "name",
-                  "-componentId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "componentId"
-              ],
-              "example": [
-                "name",
-                "-componentId"
-              ]
+              "type": "string",
+              "pattern": "^((componentId|name|-componentId|-name)(,(componentId|name|-componentId|-name))*)?$"
             }
           }
         ],
@@ -6806,27 +6485,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "offeringId",
-                  "name",
-                  "startDate",
-                  "endDate",
-                  "-offeringId",
-                  "-name",
-                  "-startDate",
-                  "-endDate"
-                ]
-              },
-              "default": [
-                "startDate"
-              ],
-              "example": [
-                "offeringId",
-                "-endDate"
-              ]
+              "type": "string",
+              "pattern": "^((offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate)(,(offeringId|name|startDate|endDate|-offeringId|-name|-startDate|-endDate))*)?$"
             }
           }
         ],
@@ -6889,14 +6549,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "course",
-                  "organization"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((course|organization)(,(course|organization))*)?$"
             }
           }
         ],
@@ -7004,27 +6658,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "offeringId",
-                  "name",
-                  "startDateTime",
-                  "endDateTime",
-                  "-offeringId",
-                  "-name",
-                  "-startDateTime",
-                  "-endDateTime"
-                ]
-              },
-              "default": [
-                "startDateTime"
-              ],
-              "example": [
-                "offeringId",
-                "-startDateTime"
-              ]
+              "type": "string",
+              "pattern": "^((offeringId|name|startDateTime|endDateTime|-offeringId|-name|-startDateTime|-endDateTime)(,(offeringId|name|startDateTime|endDateTime|-offeringId|-name|-startDateTime|-endDateTime))*)?$"
             }
           }
         ],
@@ -7087,19 +6722,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "program",
-                  "programOffering",
-                  "course",
-                  "courseOffering",
-                  "component",
-                  "organization",
-                  "academicSession"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((program|programOffering|course|courseOffering|component|organization|academicSession)(,(program|programOffering|course|courseOffering|component|organization|academicSession))*)?$"
             }
           }
         ],
@@ -7212,20 +6836,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "associationId",
-                  "-associationId"
-                ]
-              },
-              "default": [
-                "associationId"
-              ],
-              "example": [
-                "associationId"
-              ]
+              "type": "string",
+              "pattern": "^((associationId|-associationId)(,(associationId|-associationId))*)?$"
             }
           }
         ],
@@ -7310,25 +6922,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "groupId",
-                  "name",
-                  "startDate",
-                  "-groupId",
-                  "-name",
-                  "-startDate"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-startDate"
-              ]
+              "type": "string",
+              "pattern": "^((groupId|name|startDate|-groupId|-name|-startDate)(,(groupId|name|startDate|-groupId|-name|-startDate))*)?$"
             }
           }
         ],
@@ -7388,14 +6983,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "person",
-                  "offering"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((person|offering)(,(person|offering))*)?$"
             }
           }
         ],
@@ -7628,23 +7217,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "buildingId",
-                  "name",
-                  "-buildingId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-buildingId"
-              ]
+              "type": "string",
+              "pattern": "^((buildingId|name|-buildingId|-name)(,(buildingId|name|-buildingId|-name))*)?$"
             }
           }
         ],
@@ -7780,27 +7354,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "roomId",
-                  "name",
-                  "totalSeats",
-                  "availableSeats",
-                  "-roomId",
-                  "-name",
-                  "-totalSeats",
-                  "-availableSeats"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-availableSeats"
-              ]
+              "type": "string",
+              "pattern": "^((roomId|name|totalSeats|availableSeats|-roomId|-name|-totalSeats|-availableSeats)(,(roomId|name|totalSeats|availableSeats|-roomId|-name|-totalSeats|-availableSeats))*)?$"
             }
           }
         ],
@@ -7878,27 +7433,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "roomId",
-                  "name",
-                  "totalSeats",
-                  "availableSeats",
-                  "-roomId",
-                  "-name",
-                  "-totalSeats",
-                  "-availableSeats"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-availableSeats"
-              ]
+              "type": "string",
+              "pattern": "^((roomId|name|totalSeats|availableSeats|-roomId|-name|-totalSeats|-availableSeats)(,(roomId|name|totalSeats|availableSeats|-roomId|-name|-totalSeats|-availableSeats))*)?$"
             }
           }
         ],
@@ -7958,13 +7494,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "building"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((building)(,(building))*)?$"
             }
           }
         ],
@@ -8048,23 +7579,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "newsFeedId",
-                  "name",
-                  "-newsFeedId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "name",
-                "-newsFeedId"
-              ]
+              "type": "string",
+              "pattern": "^((newsFeedId|name|-newsFeedId|-name)(,(newsFeedId|name|-newsFeedId|-name))*)?$"
             }
           }
         ],
@@ -8200,29 +7716,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "newsItemId",
-                  "name",
-                  "validFrom",
-                  "validUntil",
-                  "lastModified",
-                  "-newsItemId",
-                  "-name",
-                  "-validFrom",
-                  "-validUntil",
-                  "-lastModified"
-                ]
-              },
-              "default": [
-                "newsItemId"
-              ],
-              "example": [
-                "validFrom",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((newsItemId|name|validFrom|validUntil|lastModified|-newsItemId|-name|-validFrom|-validUntil|-lastModified)(,(newsItemId|name|validFrom|validUntil|lastModified|-newsItemId|-name|-validFrom|-validUntil|-lastModified))*)?$"
             }
           }
         ],
@@ -8285,13 +7780,8 @@
             "description": "Optional properties to include, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "newsFeeds"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((newsFeeds)(,(newsFeeds))*)?$"
             }
           }
         ],
@@ -8375,27 +7865,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "educationSpecificationType",
-                  "name",
-                  "primaryCode",
-                  "-educationSpecificationType",
-                  "-name",
-                  "-primaryCode"
-                ]
-              },
-              "default": [
-                [
-                  "name"
-                ]
-              ],
-              "example": [
-                "educationSpecificationType",
-                "-primaryCode"
-              ]
+              "type": "string",
+              "pattern": "^((educationSpecificationType|name|primaryCode|-educationSpecificationType|-name|-primaryCode)(,(educationSpecificationType|name|primaryCode|-educationSpecificationType|-name|-primaryCode))*)?$"
             }
           }
         ],
@@ -8461,15 +7932,8 @@
             "description": "Optional properties to include, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "parent",
-                  "children",
-                  "organization"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((parent|children|organization)(,(parent|children|organization))*)?$"
             }
           }
         ],
@@ -8548,25 +8012,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "educationSpecificationId",
-                  "name",
-                  "educationSpecificationType",
-                  "-educationSpecificationId",
-                  "-name",
-                  "-educationSpecificationType"
-                ]
-              },
-              "default": [
-                "educationSpecificationId"
-              ],
-              "example": [
-                "educationSpecificationId",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((educationSpecificationId|name|educationSpecificationType|-educationSpecificationId|-name|-educationSpecificationType)(,(educationSpecificationId|name|educationSpecificationType|-educationSpecificationId|-name|-educationSpecificationType))*)?$"
             }
           }
         ],
@@ -8663,23 +8110,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "courseId",
-                  "name",
-                  "-courseId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "courseId"
-              ],
-              "example": [
-                "courseId",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((courseId|name|-courseId|-name)(,(courseId|name|-courseId|-name))*)?$"
             }
           }
         ],
@@ -8812,23 +8244,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "programId",
-                  "name",
-                  "-programId",
-                  "-name"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "programId",
-                "-name"
-              ]
+              "type": "string",
+              "pattern": "^((programId|name|-programId|-name)(,(programId|name|-programId|-name))*)?$"
             }
           }
         ],
@@ -8906,25 +8323,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "groupId",
-                  "name",
-                  "startDate",
-                  "-groupId",
-                  "-name",
-                  "-startDate"
-                ]
-              },
-              "default": [
-                "name"
-              ],
-              "example": [
-                "groupId",
-                "-startDate"
-              ]
+              "type": "string",
+              "pattern": "^((groupId|name|startDate|-groupId|-name|-startDate)(,(groupId|name|startDate|-groupId|-name|-startDate))*)?$"
             }
           }
         ],
@@ -8984,13 +8384,8 @@
             "description": "Optional properties to expand, separated by a comma",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "organization"
-                ]
-              }
+              "type": "string",
+              "pattern": "^((organization)(,(organization))*)?$"
             }
           }
         ],
@@ -9075,27 +8470,8 @@
             "description": "Sort by one or more attributes, the default is ascending. Prefixing the attribute with a minus sign `-` allows for descending sort. Examples: [ATTR | -ATTR | ATTR1,-ATTR2]",
             "required": false,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "personId",
-                  "givenName",
-                  "surName",
-                  "displayName",
-                  "-personId",
-                  "-givenName",
-                  "-surName",
-                  "-displayName"
-                ]
-              },
-              "default": [
-                "personId"
-              ],
-              "example": [
-                "personId",
-                "-givenName"
-              ]
+              "type": "string",
+              "pattern": "^((personId|givenName|surName|displayName|-personId|-givenName|-surName|-displayName)(,(personId|givenName|surName|displayName|-personId|-givenName|-surName|-displayName))*)?$"
             }
           }
         ],

@@ -71,8 +71,7 @@ integrationContext('validation policy', function () {
     const resMultiple = await httpGet(
       gatewayUrl(
         'fred',
-        '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=' +
-          (TEST_OOAPI_V5 ? 'coordinators' : 'coordinator')
+        TEST_OOAPI_V5 ? '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs,coordinators' : '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator'
       )
     )
     assert.equal(resMultiple.statusCode, httpcode.OK, resMultiple.body)
