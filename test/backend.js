@@ -14,12 +14,21 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
+const status = require('../lib/httpcode')
 const express = require('express')
 
 module.exports = {
   start: (data, port, ...middleware) => {
     const app = express()
     app.use(function (req, res, next) {
+      // check that incoming request accept header
+      // is exactly correct
+
+      if (req.headers.accept !== 'application/json') {
+        console.log('accept header not application/json', req.headers)
+        return res.status(status.NotAcceptable).send('Not acceptable')
+      }
+
       // ensure that, if we have a request like '/courses?foo=bar'
       // it gets mapped to '/courses.json'
       //

@@ -244,6 +244,11 @@ pipelines:
                     - endpoint: 'Slow.Backend'
                       paths: ['/']
 
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  'Accept': '"application/json"'
       - response-transformer:
           - action:
               headers:

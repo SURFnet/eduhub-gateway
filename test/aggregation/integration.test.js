@@ -121,7 +121,10 @@ integrationContext('aggregation policy', function () {
       }
       const otherBackendGet = (accessToken) => (
         httpGet(OTHER_TEST_BACKEND_URL, {
-          headers: { authorization: `Bearer ${accessToken}` }
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: 'application/json'
+          }
         })
       )
 
@@ -133,7 +136,9 @@ integrationContext('aggregation policy', function () {
       })
 
       it('can not make unauthorized request to other-test-backend', async () => {
-        const res = await httpGet(OTHER_TEST_BACKEND_URL)
+        const res = await httpGet(OTHER_TEST_BACKEND_URL, {
+          headers: { Accept: 'application/json' }
+        })
         assert.equal(res.statusCode, httpcode.Unauthorized)
       })
 
