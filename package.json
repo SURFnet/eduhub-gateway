@@ -23,7 +23,7 @@
     "express-basic-auth": "^1.2.1",
     "mocha": "^10.0.0",
     "standard": "*",
-    "testcontainers": "^8.14.0",
+    "testcontainers": "^8.15.0",
     "yargs": "^17.6.0"
   },
   "dependencies": {
