@@ -27,7 +27,7 @@ const {
 
 integrationContext('endpoint timeouts', function () {
   describe('bad backend', () => {
-    it('backend response status code is 200 but body is empty', async () => {
+    it('backend response status code is BadGateway and body is not present', async () => {
       const res = await httpGet(gatewayUrl('bubbles', '/'), {
         headers: { 'X-Route': 'endpoint=Bad.Backend' }
       })
@@ -36,15 +36,11 @@ integrationContext('endpoint timeouts', function () {
 
       assert.equal(
         endpoints['Bad.Backend'].responseCode,
-        httpcode.OK
+        httpcode.BadGateway
       )
       assert.equal(
-        true,
+        false,
         Object.prototype.hasOwnProperty.call(responses, 'Bad.Backend')
-      )
-      assert.equal(
-        null,
-        responses['Bad.Backend']
       )
     })
   })
