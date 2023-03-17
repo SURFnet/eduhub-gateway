@@ -22,34 +22,56 @@ const urlJoin = (...parts) => (
   parts.map(part => part.replace(/^\/+/, '').replace(/\/$/, '')).join('/')
 )
 
-const packageResponses = (req, responses) => ({
-  gateway: {
-    requestId: req.egContext.requestID,
-    request: req.url,
-    endpoints: responses.reduce((m, [endpoint, res]) => {
-      m[endpoint.id] = {
-        name: endpoint.name,
-        url: urlJoin(endpoint.url, req.url),
-        responseCode: res.statusCode || 0,
-        headers: res.headers
+// Create an aggregated envelope response body. This contains the
+// response headers and status of every response, plus the response
+// body (JSON data) of all the OK responses.
+const packageResponses = (req, responses) => {
+  // Parse body of OK responses before proceeding.
+  //
+  // We need parsed JSON in order to merge the data with the envelope
+  // response (OK responses are returned in aggregate).
+  //
+  // If we encounter invalid JSON, we set the status to
+  // BadGateway. This also means we skip that response in the
+  // aggregate (treating it as an error response).
+  responses.forEach(
+    ([{ id, url }, res]) => {
+      if (res.statusCode === httpcode.OK) {
+        try {
+          res.parsedBody = JSON.parse(res.body)
+        } catch (err) {
+          logger.warn(`can not parse JSON response for ${id} ${url}: `, err)
+          res.statusCode = httpcode.BadGateway
+        }
       }
-      return m
-    }, {})
-  },
-
-  responses: responses.filter(
-    ([, res]) => res.statusCode === httpcode.OK
-  ).reduce(
-    (m, [{ id }, { body }]) => {
-      try {
-        m[id] = JSON.parse(body)
-      } catch (err) {
-        logger.warn('can not parse response: ', err)
-        m[id] = null
-      }
-      return m
-    }, {}
+    }
   )
-})
+
+  // Build envelope
+  return {
+    gateway: {
+      requestId: req.egContext.requestID,
+      request: req.url,
+      endpoints: responses.reduce((m, [endpoint, res]) => {
+        m[endpoint.id] = {
+          name: endpoint.name,
+          url: urlJoin(endpoint.url, req.url),
+          responseCode: res.statusCode || 0,
+          headers: res.headers
+        }
+        return m
+      }, {})
+    },
+
+    responses: responses.filter(
+      ([, res]) => res.statusCode === httpcode.OK
+    ).reduce(
+      (m, [{ id }, { parsedBody }]) => {
+        m[id] = parsedBody
+        return m
+      }, {}
+    )
+  }
+}
 
 module.exports = { packageResponses }

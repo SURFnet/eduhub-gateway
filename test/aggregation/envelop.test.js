@@ -73,7 +73,7 @@ describe('envelop', () => {
             'bad-content-endpoint': {
               name: 'bad-content-endpoint-name',
               url: 'http://bad-content-endpoint.org/test-url?foo=bar',
-              responseCode: httpcode.OK,
+              responseCode: httpcode.BadGateway,
               headers: { 'content-type': 'application/json' }
             }
           }
@@ -81,11 +81,10 @@ describe('envelop', () => {
       )
     })
 
-    it('has an responses property', () => {
+    it('has a responses property', () => {
       assert.deepEqual(
         resp.responses, {
-          endpoint: { foo: 'bar' },
-          'bad-content-endpoint': null
+          endpoint: { foo: 'bar' }
         }
       )
     })

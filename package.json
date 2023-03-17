@@ -9,6 +9,7 @@
     "node": "^14 || ^16 || ^18"
   },
   "scripts": {
+    "mocha": "mocha",
     "lint": "standard --env mocha",
     "test-v4": "mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
     "test-v5": "TEST_OOAPI_V5=true mocha --require test/integration.hook.js -t 120000 test/*.test.js test/**/*.test.js",
