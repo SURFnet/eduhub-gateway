@@ -189,7 +189,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         })
       } catch (err) {
         logger.warn(err)
-        res.sendStatus(httpcode.InternalServerError).end()
+        res.sendStatus(httpcode.InternalServerError)
       }
     })
   }
