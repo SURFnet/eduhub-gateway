@@ -1,0 +1,14 @@
+# Core
+db:
+  redis:
+    emulate: true
+    namespace: EG
+
+#plugins:
+  # express-gateway-plugin-example:
+  #   param1: 'param from system.config'
+
+crypto:
+  cipherKey: sensitiveKey
+  algorithm: aes256
+  saltRounds: 10
