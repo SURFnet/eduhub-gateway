@@ -32,10 +32,11 @@ const matchPath = (matchers, path) => (
   matchers.find(({ regex }) => regex.test(path))
 )
 
-const makeValidator = (validator) => {
-  const matchers = pathMatchers(validator)
-
+const makeValidator = (validatorFn) => {
   return (req, res, body) => {
+    const validator = validatorFn()
+    const matchers = pathMatchers(validator)
+
     try {
       // find request path in schema document
       const match = matchPath(matchers, req.path)

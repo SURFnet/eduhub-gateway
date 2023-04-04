@@ -18,11 +18,9 @@ const { ValidationError } = require('express-openapi-validate')
 
 const httpcode = require('../../lib/httpcode')
 
-const makeValidateRequestMiddleware = (validator) => {
-  const handler = validator.match()
-
+const makeValidateRequestMiddleware = (validatorFn) => {
   return (req, res, next) => {
-    handler(req, res, (err) => {
+    validatorFn().match()(req, res, (err) => {
       if (err instanceof ValidationError) {
         res.set('content-type', 'application/json')
         res.status(httpcode.BadRequest)

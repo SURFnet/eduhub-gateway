@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  # Just a single backend with dummy content
+  test-backend:
+    build:
+      context: test-backend
+    ports:
+      - "8082:80"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
