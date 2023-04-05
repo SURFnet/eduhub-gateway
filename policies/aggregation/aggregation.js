@@ -25,6 +25,7 @@ const envelop = require('./envelop')
 const { proxyOptionsForEndpoint } = require('./proxy-extras')
 const { keepHeadersFilter } = require('./keep-headers')
 const collector = require('../metrics-collector/metrics-collector')
+const oauthClient = require('./oauth-client')
 
 module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
@@ -189,7 +190,14 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         })
       } catch (err) {
         logger.warn(err)
-        res.sendStatus(httpcode.InternalServerError)
+
+        if (err instanceof oauthClient.PostTokenRequestError) {
+          res.status(httpcode.ServiceUnavailable).send({
+            error: `unable to acquire OAUTH token: ${err.message}`
+          }).end()
+        } else {
+          res.sendStatus(httpcode.InternalServerError)
+        }
       }
     })
   }

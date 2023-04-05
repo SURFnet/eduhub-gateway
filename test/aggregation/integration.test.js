@@ -226,13 +226,14 @@ integrationContext('aggregation policy', function () {
         res = await httpGet(gatewayUrl('barney', '/'), good)
         assert.equal(res.statusCode, httpcode.OK)
       })
-      it('responds with internal server error for endpoint with unreachable token url', async () => {
+
+      it('responds with service unavailable error for endpoint with unreachable token url', async () => {
         const res = await httpGet(gatewayUrl('barney', '/'), {
           headers: {
-            'X-Route': 'endpoint=Bad-Url-Oath-Test.Backend'
+            'X-Route': 'endpoint=ENOTFOUND-OAUTH-URL-Test.Backend'
           }
         })
-        assert.equal(res.statusCode, httpcode.InternalServerError)
+        assert.equal(res.statusCode, httpcode.ServiceUnavailable)
       })
     })
   })

@@ -30,6 +30,7 @@ const tokenKey = ({ url, params }) => {
 }
 
 class PostTokenError extends Error {}
+class PostTokenRequestError extends PostTokenError {}
 
 const postToken = (url, params) => {
   logger.debug(`postToken at ${url} for ${params.client_id}`)
@@ -54,7 +55,7 @@ const postToken = (url, params) => {
           })
         })
         req.on('error', err => {
-          reject(new PostTokenError(err))
+          reject(new PostTokenRequestError(err))
         })
         req.write(data)
         req.end()
@@ -104,5 +105,6 @@ module.exports = {
   authorizationHeader,
   AuthorizationError,
   PostTokenError,
+  PostTokenRequestError,
   tokenKey
 }
