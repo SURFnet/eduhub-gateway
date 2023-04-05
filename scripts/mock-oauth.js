@@ -26,7 +26,7 @@ app.post('/mock/token', (req, res) => {
       expires_in: 5
     })
   } else {
-    res.status(httpcode.BadRequest).json({
+    res.status(httpcode.Unauthorized).json({
       error: 'unauthorized_client'
     })
   }

@@ -209,19 +209,13 @@ integrationContext('aggregation policy', function () {
     })
 
     describe('bad oauth2 backend configuration', () => {
-      it('responds with internal server error for endpoint with bad credentials', async () => {
+      it('responds with unauthorized error for endpoint with bad credentials', async () => {
         let res
-        const bad = { headers: { 'X-Route': 'endpoint=Bad-Credentials-Oath-Test.Backend' } }
+        const bad = { headers: { 'X-Route': 'endpoint=Bad-Credentials-Oauth-Test.Backend' } }
         const good = { headers: { 'X-Route': 'endpoint=Other-Test.Backend' } }
 
         res = await httpGet(gatewayUrl('barney', '/'), bad)
-        assert.equal(res.statusCode, httpcode.InternalServerError)
-
-        res = await httpGet(gatewayUrl('barney', '/'), good)
-        assert.equal(res.statusCode, httpcode.OK)
-
-        res = await httpGet(gatewayUrl('barney', '/'), bad)
-        assert.equal(res.statusCode, httpcode.InternalServerError)
+        assert.equal(res.statusCode, httpcode.Unauthorized)
 
         res = await httpGet(gatewayUrl('barney', '/'), good)
         assert.equal(res.statusCode, httpcode.OK)

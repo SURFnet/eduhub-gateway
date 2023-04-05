@@ -86,7 +86,7 @@ serviceEndpoints:
               grant_type: client_credentials
               client_id: fred
               client_secret: wilma
-  'Bad-Credentials-Oath-Test.Backend':
+  'Bad-Credentials-Oauth-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
     proxyOptions:
       oauth2:
@@ -231,7 +231,7 @@ pipelines:
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
                       paths: ['/', '/courses', '/programs', '/courses/:courseId']
-                    - endpoint: 'Bad-Credentials-Oath-Test.Backend'
+                    - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
                       paths: ['/']
                     - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
                       paths: ['/']
