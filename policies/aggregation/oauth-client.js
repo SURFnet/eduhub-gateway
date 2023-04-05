@@ -29,8 +29,12 @@ const tokenKey = ({ url, params }) => {
   return redisNs + '-' + crypto.createHash('sha256').update(t).digest('hex')
 }
 
-class PostTokenError extends Error {}
-class PostTokenRequestError extends PostTokenError {}
+class AuthorizationError extends Error {
+  constructor (message, { cause, statusCode }) {
+    super(message, { cause })
+    this.statusCode = statusCode
+  }
+}
 
 const postToken = (url, params) => {
   logger.debug(`postToken at ${url} for ${params.client_id}`)
@@ -55,18 +59,22 @@ const postToken = (url, params) => {
           })
         })
         req.on('error', err => {
-          reject(new PostTokenRequestError(err))
+          reject(new AuthorizationError(err, {
+            cause: err,
+            statusCode: httpcode.ServiceUnavailable
+          }))
         })
         req.write(data)
         req.end()
       } catch (err) {
-        reject(new PostTokenError(err))
+        reject(new AuthorizationError(err, {
+          cause: err,
+          statusCode: httpcode.InternalServerError
+        }))
       }
     }
   )
 }
-
-class AuthorizationError extends Error {}
 
 const authorizationHeader = async ({
   db,
@@ -82,7 +90,9 @@ const authorizationHeader = async ({
     const res = await postToken(url, params)
     if (res.statusCode !== httpcode.OK) {
       throw new AuthorizationError(
-        `Failed to get token: ${url} for ${params.client_id}: ${res.statusCode} / ${res.body}`
+        `Failed to get token: ${url} for ${params.client_id}: ${res.statusCode} / ${res.body}`, {
+          statusCode: res.statusCode
+        }
       )
     }
     token = res.body
@@ -104,7 +114,5 @@ const authorizationHeader = async ({
 module.exports = {
   authorizationHeader,
   AuthorizationError,
-  PostTokenError,
-  PostTokenRequestError,
   tokenKey
 }

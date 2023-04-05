@@ -191,10 +191,8 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
       } catch (err) {
         logger.warn(err)
 
-        if (err instanceof oauthClient.PostTokenRequestError) {
-          res.status(httpcode.ServiceUnavailable).send({
-            error: `unable to acquire OAUTH token: ${err.message}`
-          }).end()
+        if (err instanceof oauthClient.AuthorizationError) {
+          res.status(err.statusCode).send({ error: err.message }).end()
         } else {
           res.sendStatus(httpcode.InternalServerError)
         }
