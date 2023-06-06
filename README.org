@@ -2,7 +2,7 @@
 
 * Status
 
-  Master branch status: [[https://github.com/persistent-services/surf-ooapi-gateway/workflows/npm-test/badge.svg]]
+  Master branch status: [[https://github.com/SURFnet/surf-ooapi-gateway/workflows/test-v4/badge.svg]] [[https://github.com/SURFnet/surf-ooapi-gateway/workflows/test-v5/badge.svg]]
 
 * Setting up development environment
 

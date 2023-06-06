@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 # copy to least likely to change files first to allow caching
 COPY vendor /app/vendor
