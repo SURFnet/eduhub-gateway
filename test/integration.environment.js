@@ -96,12 +96,7 @@ const httpPost = (url, { params, ...opts }) => {
 }
 
 module.exports = {
-  up: async ({
-    rateLimitMax = 10,
-    rateLimitWindowMs = 1000,
-    rateLimitDelayAfter = 5,
-    rateLimitDelayMs = 500
-  }) => {
+  up: async () => {
     if (skipTest) return
 
     testBackend = require('../scripts/test-backend').run(TEST_BACKEND_PORT)
@@ -142,10 +137,6 @@ module.exports = {
         .withEnv('OOAPI_ECHO_BACKEND_URL', TEST_ECHO_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_BAD_BACKEND_URL', TEST_BAD_BACKEND_CONTAINER_URL)
         .withEnv('OOAPI_SLOW_BACKEND_URL', TEST_SLOW_BACKEND_CONTAINER_URL)
-        .withEnv('RATE_LIMIT_MAX', rateLimitMax)
-        .withEnv('RATE_LIMIT_WINDOW_MS', rateLimitWindowMs)
-        .withEnv('RATE_LIMIT_DELAY_AFTER', rateLimitDelayAfter)
-        .withEnv('RATE_LIMIT_DELAY_MS', rateLimitDelayMs)
         .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
         .withEnv('REDIS_HOST', REDIS_HOST)
         .withEnv('REDIS_PORT', redisPort)

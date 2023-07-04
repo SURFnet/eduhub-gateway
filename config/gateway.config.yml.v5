@@ -123,7 +123,6 @@ policies:
   - key-auth
   - lifecycle-logger
   - proxy
-  - rate-limit
   - openapi-validator
   - gatekeeper
   - request-transformer
@@ -151,13 +150,6 @@ pipelines:
     policies:
       - metrics-collector:
       - lifecycle-logger:
-      - rate-limit:
-          - action:
-              max: ${RATE_LIMIT_MAX:-10}
-              windowMs: ${RATE_LIMIT_WINDOW_MS:-1000}
-              delayAfter: ${RATE_LIMIT_DELAY_AFTER:-5}
-              delayMs: ${RATE_LIMIT_DELAY_MS:-500}
-
       - gatekeeper:
           - action:
               apps:
@@ -287,12 +279,6 @@ pipelines:
     policies:
       - metrics-collector:
       - lifecycle-logger:
-      - rate-limit:
-          - action:
-              max: ${RATE_LIMIT_MAX:-10}
-              windowMs: ${RATE_LIMIT_WINDOW_MS:-1000}
-              delayAfter: ${RATE_LIMIT_DELAY_AFTER:-5}
-              delayMs: ${RATE_LIMIT_DELAY_MS:-500}
       - terminate:
           - action:
               statusCode: 404

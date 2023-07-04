@@ -265,31 +265,6 @@
    [[./dev/observability/README.md]] and
    [[./dev/docker-compose-with-logging-and-redis.yml]]
 
-** Rate limiting
-
-   Rate limiting is implemented using the standard [[https://www.express-gateway.io/docs/policies/rate-limiter/][EG rate limiter
-   policy]] in  [[./config/gateway.config.yml]]
-
-   A very aggressive example is
-
-   #+begin_src yaml
-      - rate-limit:
-          - action:
-              max: 10
-              windowMs: 1000
-              delayAfter: 5
-              delayMs: 1000
-   #+end_src
-
-   This sample configuration limits requests to 10 per second per IP
-   address, and will start delaying requests for a second when more
-   than 5 requests arrive per windowMs.
-
-   Note that the defaults for ~delayAfter~ and ~delayMs~ are 1 and
-   1000, respectively, so *you should always provide your own values
-   for delayAfter and delayMs* if you want to have reasonable request
-   rates.
-
 ** Endpoint timeouts
 
    Service endpoints can be configured to have a strict timeout policy
