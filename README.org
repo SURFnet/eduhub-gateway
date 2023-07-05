@@ -14,11 +14,14 @@
     git submodule update --init --recursive
   #+end_src
 
-  Install other dependencies
+  Install other dependencies:
 
   #+begin_src sh
     npm install
   #+end_src
+
+  Set ~SECRETS_KEY_FILE~ environment variable to
+  ~config/test-secret.txt~.
 
 * Running tests
 ** Functional tests
@@ -74,6 +77,7 @@
    #+begin_src sh
    ./scripts/perf-test.js --help
    #+end_src
+
 * Security
 
   See [[file:doc/security.org][doc/security.org]] on the strategies we use to keep the gateway
@@ -94,7 +98,7 @@
    Config entry:
 	myapp: {
           "passwordSalt":"f2c6d54c0aa39cde114702920b84a753",
-           "passwordHash":"eaaeaf91f8e5df9daa88c6980d057eb980757632ebea33b4c2060fef33a31ba2"
+          "passwordHash":"eaaeaf91f8e5df9daa88c6980d057eb980757632ebea33b4c2060fef33a31ba2"
         }
 
    Basic Auth token:
@@ -160,6 +164,11 @@
    for the ~X-Route~ header not starting with ~endpoint=~ is ignored.
 
 ** Server authentication
+
+The ~proxyOptions~ described below should be encoded using the 192 bit
+hexadecimal key referred by the ~SECRETS_KEY_FILE~ environment
+variable.  Use [[./bin/encode-proxy-options]] encode ~proxyOptions~
+to ~proxyOptionsEncoded~ using the key in ~SECRETS_KEY_FILE~.
 
 *** Basic authentication
 

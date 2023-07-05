@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2020, 2023 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,11 +14,27 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
+const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:ProxyExtras]')
+
 const oauthClient = require('./oauth-client')
+const secrets = require('../../lib/secrets')
 
 module.exports = {
-  proxyOptionsForEndpoint: async ({ db, endpoint: { proxyOptions } }) => {
-    const { oauth2, ...opts } = proxyOptions || {}
+  proxyOptionsForEndpoint: async ({
+    db,
+    endpoint: {
+      proxyOptions,
+      proxyOptionsEncoded
+    }
+  }) => {
+    if (proxyOptions) {
+      logger.warn('clear text proxyOptions in configuration')
+    }
+
+    const options = proxyOptionsEncoded
+      ? await secrets.decode(proxyOptionsEncoded)
+      : proxyOptions
+    const { oauth2, ...opts } = options || {}
     if (oauth2) {
       const auth = await oauthClient.authorizationHeader({ db, ...oauth2 })
       opts.headers = opts.headers || {}

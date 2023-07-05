@@ -58,10 +58,13 @@ apiEndpoints:
 serviceEndpoints:
   'Test.Backend':
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
-    proxyOptions:
-      auth: fred:wilma
+    # proxyOptions:
+    #   auth: fred:wilma
+    proxyOptionsEncoded: >-
+      9b81c96aaa8172e1b29555a50b78d0ed:eMNq3dYGf+NH9Yy+8zZLK+3l4uSExYzzj8TGyotAPt8=
   'Other-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    # can't provide proxyOptionsEncoded because of use of ${}
     proxyOptions:
       oauth2:
         clientCredentials:
@@ -73,6 +76,7 @@ serviceEndpoints:
               client_secret: wilma
   'Bad-Credentials-Oauth-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    # can't provide proxyOptionsEncoded because of use of ${}
     proxyOptions:
       oauth2:
         clientCredentials:
@@ -83,23 +87,27 @@ serviceEndpoints:
               client_id: dino
   'ENOTFOUND-OAUTH-URL-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
-    proxyOptions:
-      oauth2:
-        clientCredentials:
-          tokenEndpoint:
-            url: 'http://dummy:9999/'
-            params:
-              grant_type: client_credentials
-              client_id: fred
-              client_secret: wilma
+    # proxyOptions:
+    #   oauth2:
+    #     clientCredentials:
+    #       tokenEndpoint:
+    #         url: 'http://dummy:9999/'
+    #         params:
+    #           grant_type: client_credentials
+    #           client_id: fred
+    #           client_secret: wilma
+    proxyOptionsEncoded: >-
+      b115c681c531d8266ca84b6161465149:S9eu6lmyNDJUasO0heJue25pOBbdY1IdUR9B0XR648/fAOBlUH0cgFNZt/L7Kp5cpZ8rEaB33KCjumWP7PZwLzmQef3yDW2XNMQqgSFK3HNKlUnrYvzF5p6hj8N/7P/EAvuK48L09/Z1Qckeu3LHwOIVe7iAParwtZZRQiwj+Md4EaPRYSixGyDZJ7VmZ3OmYeTJMkJnpuOs802zob6zLp7+jel8PHzcDwfaas+LIn0=
   'Echo.Backend':
     url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
   'Bad.Backend':
     url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
   'Slow.Backend':
     url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
-    proxyOptions:
-      proxyTimeout: 500
+    # proxyOptions:
+    #   proxyTimeout: 500
+    proxyOptionsEncoded: >-
+      1ad6802a2431e8d09a03f7d9e7dbaf28:VyJb/QWzTZ/2jIU41q0zQGuJdRoZrr0yJ6W/pUE9jq8=
 
 policies:
   - basic-auth
