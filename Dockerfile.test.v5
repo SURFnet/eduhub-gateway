@@ -3,7 +3,7 @@ FROM node:18
 # copy to least likely to change files first to allow caching
 COPY vendor /app/vendor
 
-#COPY node_modules /app/node_modules
+COPY node_modules /app/node_modules
 COPY *.json /app/
 WORKDIR /app
 RUN npm install --production
