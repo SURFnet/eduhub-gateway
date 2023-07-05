@@ -3,6 +3,9 @@ name: test-v5
 on:
   - push
 
+env:
+  SECRETS_KEY_FILE: config/test-secret.txt
+
 jobs:
   build:
     runs-on: ubuntu-latest

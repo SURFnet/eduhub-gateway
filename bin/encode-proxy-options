@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+/* Copyright (C) 2023 SURFnet B.V.
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program. If not, see http://www.gnu.org/licenses/.
+ */
+
+const fs = require('fs')
+const readline = require('readline')
+const yaml = require('js-yaml')
+const secrets = require('../lib/secrets')
+
+// Node argv is a bit weird; scripts have "node" as their first
+// argument, followed by the script name, and then the arguments.
+if (process.argv.length !== 3) {
+  console.error('Usage: encode-proxy-options gateway.config.yml')
+  process.exit(1)
+}
+
+const fileName = process.argv[2]
+const data = yaml.load(fs.readFileSync(fileName, 'utf8'))
+
+async function doit () {
+  for (let endpoint in data.serviceEndpoints) {
+    endpoint = data.serviceEndpoints[endpoint]
+    const proxyOptions = endpoint.proxyOptions
+
+    if (endpoint.proxyOptions !== undefined) {
+      delete endpoint.proxyOptions
+      endpoint.proxyOptionsEncoded = await secrets.encode(proxyOptions)
+    }
+  }
+}
+
+doit().then(() => {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
+  rl.question(`Type 'YES' to overwrite ${fileName}: `, (answer) => {
+    rl.close()
+
+    if (answer === 'YES') {
+      fs.writeFileSync(fileName, yaml.dump(data), 'utf8')
+      console.log(`Wrote ${fileName}.`)
+    } else {
+      console.log('Aborted.')
+    }
+  })
+})

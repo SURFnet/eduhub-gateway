@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2020, 2023 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -140,6 +140,7 @@ module.exports = {
         .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
         .withEnv('REDIS_HOST', REDIS_HOST)
         .withEnv('REDIS_PORT', redisPort)
+        .withEnv('SECRETS_KEY_FILE', 'config/test-secret.txt')
         .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
         .withExposedPorts(8080, 4444)
         .withStartupTimeout(5 * 60 * 1000)
