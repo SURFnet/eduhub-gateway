@@ -15,20 +15,23 @@
  */
 
 const jsonLog = require('../../lib/json_log')
+const ensureTraceParent = require('../../lib/ensure_traceparent')
 
 module.exports = () => {
   return (req, res, next) => {
+    const traceParent = ensureTraceParent(req)
     const reqTimerStart = new Date()
     const method = req.method
     const url = req.originalUrl
     res.on('finish', () => {
       const app = req.egContext.app // set by gatekeeper policy
-      const requestId = req.egContext.requestID
       const reqTimerEnd = new Date()
       const statusCode = res.statusCode
       jsonLog.info({
-        short_message: `${requestId} - ${method} ${url} ${statusCode}`,
-        trace_id: requestId,
+        short_message: `${req.traceparent.traceId} - ${method} ${url} ${statusCode}`,
+        traceparent_trace_id: traceParent.traceId,
+        traceparent_id: traceParent.id,
+        traceparent_parent_id: traceParent.parent_id,
         client: app,
         http_status: statusCode,
         request_method: method,

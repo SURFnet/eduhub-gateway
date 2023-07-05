@@ -35,9 +35,9 @@ module.exports = {
       ? await secrets.decode(proxyOptionsEncoded)
       : proxyOptions
     const { oauth2, ...opts } = options || {}
+    opts.headers = opts.headers || {}
     if (oauth2) {
       const auth = await oauthClient.authorizationHeader({ db, ...oauth2 })
-      opts.headers = opts.headers || {}
       opts.headers.authorization = auth
     }
 

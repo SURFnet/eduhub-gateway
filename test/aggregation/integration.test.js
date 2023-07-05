@@ -35,7 +35,11 @@ const {
 
 integrationContext('aggregation policy', function () {
   it('should respond with an envelop', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/'))
+    const res = await httpGet(gatewayUrl('fred', '/'), {
+      headers: {
+        traceparent: '00-dae550beedf26f1f6ecf0bc3914e255e-e1020e167400e0aa-01'
+      }
+    })
     assert.equal(res.statusCode, httpcode.OK)
     assert.match(res.headers['content-type'], /^application\/json\b/)
 
@@ -53,7 +57,8 @@ integrationContext('aggregation policy', function () {
           responseCode: httpcode.OK,
           headers: {
             'content-length': '123',
-            'content-type': 'application/json; charset=UTF-8'
+            'content-type': 'application/json; charset=UTF-8',
+            traceparent: body.gateway.endpoints['Test.Backend'].headers.traceparent
           }
         },
         'Other-Test.Backend': {
@@ -61,10 +66,22 @@ integrationContext('aggregation policy', function () {
           responseCode: httpcode.OK,
           headers: {
             'content-length': '136',
-            'content-type': 'application/json; charset=UTF-8'
+            'content-type': 'application/json; charset=UTF-8',
+            traceparent: body.gateway.endpoints['Other-Test.Backend'].headers.traceparent
           }
         }
       }
+    )
+    assert.match(
+      body.gateway.endpoints['Test.Backend'].headers.traceparent,
+      /dae550beedf26f1f6ecf0bc3914e255e/,
+      'passes trace-id'
+    )
+
+    assert.match(
+      body.gateway.endpoints['Other-Test.Backend'].headers.traceparent,
+      /dae550beedf26f1f6ecf0bc3914e255e/,
+      'passes trace-id'
     )
 
     assert.deepEqual(body.responses, {

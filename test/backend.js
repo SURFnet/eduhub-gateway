@@ -29,6 +29,8 @@ module.exports = {
         return res.status(status.NotAcceptable).send('Not acceptable')
       }
 
+      res.setHeader('traceparent', req.headers.traceparent || 'no-traceparent')
+
       // ensure that, if we have a request like '/courses?foo=bar'
       // it gets mapped to '/courses.json'
       //
@@ -38,7 +40,12 @@ module.exports = {
       next()
     })
     middleware && middleware.forEach(v => app.use(v))
-    app.use(express.static(data, { index: 'index.json', extensions: ['json'], forwardError: true, redirect: true }))
+    app.use(express.static(data, {
+      index: 'index.json',
+      extensions: ['json'],
+      forwardError: true,
+      redirect: true
+    }))
     return app.listen(port)
   }
 }

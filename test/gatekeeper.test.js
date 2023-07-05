@@ -56,7 +56,12 @@ describe('gatekeeper', () => {
     }, { gatewayConfig: { serviceEndpoints: { wilma: true } } })
 
     let calledNext, gotStatus, gotSet
-    const res = { set: (v) => { gotSet = v }, sendStatus: (v) => { gotStatus = v } }
+    const res = {
+      set: (v) => { gotSet = v },
+      sendStatus: (v) => { gotStatus = v },
+      status: (v) => { gotStatus = v; return res },
+      send: () => {}
+    }
     const next = () => { calledNext = true }
     const auth = (cred) => `Basic ${Buffer.from(cred, 'utf-8').toString('base64')}`
 

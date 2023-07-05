@@ -26,6 +26,7 @@ const { proxyOptionsForEndpoint } = require('./proxy-extras')
 const { keepHeadersFilter } = require('./keep-headers')
 const collector = require('../metrics-collector/metrics-collector')
 const oauthClient = require('./oauth-client')
+const ensureTraceParent = require('../../lib/ensure_traceparent')
 
 module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   logger.info(`initializing aggregation policy for ${Object.keys(serviceEndpoints)}`)
@@ -80,13 +81,14 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
   return (req, res, next) => {
     const envelopRequest = isEnvelopRequest(req)
     const endpoints = xroute.decode(req.headers['x-route'])
-    const requestId = req.egContext.requestID
+    const traceParent = ensureTraceParent(req)
+
     if (!endpoints) {
       throw new Error('no endpoints selected, make sure gatekeeper policy configured')
     }
 
     if (endpoints.length > 1 && !envelopRequest) {
-      res.sendStatus(httpcode.BadRequest)
+      res.status(httpcode.BadRequest).send('Can not disable envelop with more than 1 endpoint')
       return
     }
 
@@ -113,6 +115,8 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           ...serviceEndpoints[endpointId],
           id: endpointId
         }
+
+        const outgoingTraceParent = traceParent.child()
         const proxy = httpProxy.createProxyServer()
         const reqTimerStart = new Date()
         // setup logging and metrics
@@ -132,8 +136,10 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('end', () => {
             const reqTimerEnd = new Date()
             jsonLog.info({
-              short_message: `${requestId} - ${method} ${remoteUrl} ${statusCode}`,
-              trace_id: requestId,
+              short_message: `${req.traceparent.traceId} - ${method} ${remoteUrl} ${statusCode}`,
+              traceparent_trace_id: outgoingTraceParent.traceId,
+              traceparent_id: outgoingTraceParent.id,
+              traceparent_parent_id: outgoingTraceParent.parent_id,
               client: 'PROXY',
               http_status: statusCode,
               request_method: method,
@@ -151,8 +157,10 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         proxy.on('error', (e) => {
           const reqTimerEnd = new Date()
           jsonLog.error({
-            short_message: `${requestId} - ${e} 0`,
-            trace_id: requestId,
+            traceparent_trace_id: outgoingTraceParent.traceId,
+            traceparent_id: outgoingTraceParent.id,
+            traceparent_parent_id: outgoingTraceParent.parent_id,
+            short_message: `${outgoingTraceParent.traceId} - ${e} 0`,
             client: 'PROXY',
             error_msg: e.toString(),
             http_status: 0
@@ -182,8 +190,11 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         } else {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
+
+        const opts = await proxyOptionsForEndpoint({ db, endpoint })
+        opts.headers.traceParent = outgoingTraceParent.toString()
         proxy.web(req, res, {
-          ...await proxyOptionsForEndpoint({ db, endpoint }),
+          ...opts,
           target: endpoint.url,
           changeOrigin: true,
           selfHandleResponse: envelopRequest

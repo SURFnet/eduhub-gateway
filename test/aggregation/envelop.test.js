@@ -24,7 +24,10 @@ describe('envelop', () => {
   describe('packageResponses', () => {
     const req = {
       egContext: { requestID: 'test-request-id' },
-      url: '/test-url?foo=bar'
+      url: '/test-url?foo=bar',
+      headers: {
+        traceparent: '00-dae550beedf26f1f6ecf0bc3914e255e-e1020e167400e0aa-01'
+      }
     }
     const responses = [[
       { id: 'endpoint', name: 'endpoint-name', url: 'http://endpoint.org' },
@@ -52,30 +55,29 @@ describe('envelop', () => {
     const resp = envelop.packageResponses(req, responses)
 
     it('has a gateway property', () => {
+      assert.equal(resp.gateway.request, '/test-url?foo=bar')
+      assert.equal(resp.gateway.traceparent_trace_id, 'dae550beedf26f1f6ecf0bc3914e255e')
+
       assert.deepEqual(
-        resp.gateway,
+        resp.gateway.endpoints,
         {
-          requestId: 'test-request-id',
-          request: '/test-url?foo=bar',
-          endpoints: {
-            endpoint: {
-              name: 'endpoint-name',
-              url: 'http://endpoint.org/test-url?foo=bar',
-              responseCode: httpcode.OK,
-              headers: { 'content-type': 'application/json' }
-            },
-            'bad-request-endpoint': {
-              name: 'bad-request-endpoint-name',
-              url: 'http://bad-request-endpoint.org/test/test-url?foo=bar',
-              responseCode: httpcode.BadRequest,
-              headers: { 'content-type': 'application/json' }
-            },
-            'bad-content-endpoint': {
-              name: 'bad-content-endpoint-name',
-              url: 'http://bad-content-endpoint.org/test-url?foo=bar',
-              responseCode: httpcode.BadGateway,
-              headers: { 'content-type': 'application/json' }
-            }
+          endpoint: {
+            name: 'endpoint-name',
+            url: 'http://endpoint.org/test-url?foo=bar',
+            responseCode: httpcode.OK,
+            headers: { 'content-type': 'application/json' }
+          },
+          'bad-request-endpoint': {
+            name: 'bad-request-endpoint-name',
+            url: 'http://bad-request-endpoint.org/test/test-url?foo=bar',
+            responseCode: httpcode.BadRequest,
+            headers: { 'content-type': 'application/json' }
+          },
+          'bad-content-endpoint': {
+            name: 'bad-content-endpoint-name',
+            url: 'http://bad-content-endpoint.org/test-url?foo=bar',
+            responseCode: httpcode.BadGateway,
+            headers: { 'content-type': 'application/json' }
           }
         }
       )

@@ -66,7 +66,7 @@ module.exports = (params, config) => {
           }
         } catch (e) {
           if (e instanceof xroute.MalformedHeader) {
-            res.sendStatus(httpcode.BadRequest)
+            res.status(httpcode.BadRequest).send('Malformed X-Route header')
             return
           } else {
             throw e

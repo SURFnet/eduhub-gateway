@@ -271,9 +271,11 @@ pipelines:
                 - 'accept-language'
                 - 'accept'
                 - 'x-validate-response' # needed for resp validation
+                - 'traceparent'
               keepResponseHeaders:
                 - 'content-type'
                 - 'content-length'
+                - 'traceparent'
   not_found:
     apiEndpoints:
       - not_found

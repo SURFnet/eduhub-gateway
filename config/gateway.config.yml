@@ -248,8 +248,10 @@ pipelines:
               keepRequestHeaders:
                 - 'accept-language'
                 - 'accept'
+                - 'traceparent'
                 - 'x-validate-response' # needed for resp validation
               keepResponseHeaders:
+                - 'traceparent'
                 - 'content-type'
                 - 'content-length'
   not_found:

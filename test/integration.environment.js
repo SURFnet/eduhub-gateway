@@ -81,7 +81,9 @@ const httpRequest = (url, { data, ...opts }) => {
   )
 }
 
-const httpGet = (url, opts) => httpRequest(url, { ...opts, method: 'GET' })
+const httpGet = (url, opts) => {
+  return httpRequest(url, { ...opts, method: 'GET' })
+}
 
 const httpPost = (url, { params, ...opts }) => {
   const data = querystring.stringify(params)

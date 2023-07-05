@@ -15,8 +15,8 @@
  */
 
 const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
-
 const httpcode = require('../../lib/httpcode')
+const ensureTraceParent = require('../../lib/ensure_traceparent')
 
 const urlJoin = (...parts) => (
   parts.map(part => part.replace(/^\/+/, '').replace(/\/$/, '')).join('/')
@@ -47,10 +47,15 @@ const packageResponses = (req, responses) => {
     }
   )
 
+  const traceParent = ensureTraceParent(req)
+
   // Build envelope
   return {
     gateway: {
       requestId: req.egContext.requestID,
+      traceparent_trace_id: traceParent.traceId,
+      traceparent_id: traceParent.id,
+      traceparent_parent_id: traceParent.parent_id,
       request: req.url,
       endpoints: responses.reduce((m, [endpoint, res]) => {
         m[endpoint.id] = {

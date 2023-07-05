@@ -37,7 +37,14 @@
    #+begin_src sh
      DEBUG='testcontainers*' npm test
    #+end_src
+   
+   Run all tests and see gateway logging output:
 
+   #+begin_src sh
+    MOCHA_LOG_GW_TO_CONSOLE=true npm test
+   #+end_src
+
+   
    Run all but the integration tests with:
 
    #+begin_src sh

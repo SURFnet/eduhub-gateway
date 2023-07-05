@@ -8,6 +8,7 @@ const run = (port) => (
     'dev/test-backend/data2',
     port,
     (req, res, next) => {
+      res.setHeader('traceparent', req.headers.traceparent || 'no-traceparent')
       if (req.headers.authorization) {
         const token = req.headers.authorization.match(/Bearer (.*)\/(.*)/)
         const [, secret, ts] = token || []
