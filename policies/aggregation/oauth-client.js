@@ -84,7 +84,11 @@ const authorizationHeader = async ({
 }) => {
   const key = tokenKey({ url, params })
   let token = await db.get(key)
-  if (!token) {
+
+  let tokenParsed
+  try { tokenParsed = token && JSON.parse(token) } catch (_) { /* bad token */ }
+
+  if (!tokenParsed) {
     logger.debug('Cache miss')
 
     const res = await postToken(url, params)
@@ -97,18 +101,27 @@ const authorizationHeader = async ({
     }
     token = res.body
 
+    try {
+      tokenParsed = JSON.parse(token)
+    } catch (ex) {
+      throw new AuthorizationError(
+        `Failed to parse token: ${url} for ${params.client_id}`, {
+          ex, body: res.body
+        }
+      )
+    }
+
     logger.debug('Caching token')
     db.set(key, token)
 
     // 75% of ttl just to be safe
-    const expire = Math.floor((JSON.parse(token).expires_in || 0) * 0.75)
+    const expire = Math.floor((tokenParsed.expires_in || 0) * 0.75)
     db.expire(key, expire)
   } else {
     logger.debug('Cache hit')
   }
-  token = JSON.parse(token)
 
-  return `${token.token_type} ${token.access_token}`
+  return `${tokenParsed.token_type} ${tokenParsed.access_token}`
 }
 
 module.exports = {
