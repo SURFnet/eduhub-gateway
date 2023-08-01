@@ -266,6 +266,7 @@ pipelines:
           - action:
               noEnvelopIfAnyHeaders:
                 'X-Validate-Response': 'true'
+                'X-Envelope-Response': 'false'
               keepRequestHeaders:
                 - 'accept-language'
                 - 'accept'
