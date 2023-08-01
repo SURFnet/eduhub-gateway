@@ -108,6 +108,33 @@ integrationContext('aggregation policy', function () {
     })
   })
 
+  describe('suppress envelop', () => {
+    it('should not respond with an envelop with one endpoint', async () => {
+      const res = await httpGet(gatewayUrl('fred', '/'), {
+        headers: {
+          'X-Envelope-Response': 'false',
+          'X-Route': 'endpoint=Test.Backend'
+        }
+      })
+      assert.equal(res.statusCode, httpcode.OK)
+      assert.match(res.headers['content-type'], /^application\/json\b/)
+
+      const body = JSON.parse(res.body)
+      assert(!body.gateway)
+      assert(!body.endpoint)
+    })
+
+    it('should respond with bad request for multiple endpoints', async () => {
+      const res = await httpGet(gatewayUrl('fred', '/'), {
+        headers: {
+          'X-Envelope-Response': 'false',
+          'X-Route': 'endpoint=Test.Backend,Other-Test.Backend'
+        }
+      })
+      assert.equal(res.statusCode, httpcode.BadRequest)
+    })
+  })
+
   describe('oauth', () => {
     describe('mock auth setup', () => {
       const params = {
