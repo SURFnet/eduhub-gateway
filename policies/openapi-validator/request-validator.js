@@ -25,9 +25,11 @@ const makeValidateRequestMiddleware = (validatorFn) => {
         res.set('content-type', 'application/json')
         res.status(httpcode.BadRequest)
         res.send(JSON.stringify({ message: err.message, data: err.data }))
+        res.error_msg = err.message // we log res.error_msg in lifecycle logger
       } else if (err instanceof Error) {
         res.set('content-type', 'text/plain')
         res.status(httpcode.InternalServerError)
+        res.error_msg = err.message // we log res.error_msg in lifecycle logger
         res.send(err.message)
       } else {
         next(err)

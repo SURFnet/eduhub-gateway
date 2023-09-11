@@ -27,7 +27,7 @@ module.exports = () => {
       const app = req.egContext.app // set by gatekeeper policy
       const reqTimerEnd = new Date()
       const statusCode = res.statusCode
-      jsonLog.info({
+      const infoProps = {
         short_message: `${req.traceparent.traceId} - ${method} ${url} ${statusCode}`,
         traceparent_trace_id: traceParent.traceId,
         traceparent_id: traceParent.id,
@@ -37,7 +37,13 @@ module.exports = () => {
         request_method: method,
         url,
         time_ms: reqTimerEnd - reqTimerStart
-      })
+      }
+      if (res.error_msg) {
+        // We also use `error_msg` for Bad Gateway errors in
+        // aggegration policy.
+        infoProps.error_msg = res.error_msg
+      }
+      jsonLog.info(infoProps)
     })
     next()
   }
