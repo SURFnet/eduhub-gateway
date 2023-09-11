@@ -22,7 +22,7 @@ const proxyExtras = require('../../policies/aggregation/proxy-extras.js')
 
 describe('proxy-extras', () => {
   describe('proxyOptionsForEndpoint', () => {
-    it('decodes proxyOptionsEncoded', async (data = { auth: 'fred:wilma' }) => {
+    it('decodes proxyOptionsEncoded', async (data = { auth: 'fred:wilma', headers: {} }) => {
       const proxyOptions = await proxyExtras.proxyOptionsForEndpoint(
         {
           endpoint: {
@@ -34,7 +34,7 @@ describe('proxy-extras', () => {
       assert.deepEqual(proxyOptions, data)
     })
 
-    it('pass through proxyOptions', async (data = { auth: 'fred:wilma' }) => {
+    it('pass through proxyOptions', async (data = { auth: 'fred:wilma', headers: {} }) => {
       const proxyOptions = await proxyExtras.proxyOptionsForEndpoint(
         {
           endpoint: { proxyOptions: data }
