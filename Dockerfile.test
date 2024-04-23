@@ -10,7 +10,6 @@ RUN npm install --production
 
 COPY *.js /app/
 COPY config /app/config
-COPY config/system.config.yml.test config/system.config.yml
 COPY lib /app/lib
 COPY policies /app/policies
 
