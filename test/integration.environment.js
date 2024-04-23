@@ -143,8 +143,8 @@ module.exports = {
         .withEnv('REDIS_HOST', REDIS_HOST)
         .withEnv('REDIS_PORT', redisPort)
         .withEnv('SECRETS_KEY_FILE', 'config/test-secret.txt')
-        .withWaitStrategy(Wait.forLogMessage('gateway https server listening'))
-        .withExposedPorts(8080, 4444)
+        .withWaitStrategy(Wait.forLogMessage('gateway http server listening'))
+        .withExposedPorts(8080)
         .withStartupTimeout(5 * 60 * 1000)
         .start()
     )
@@ -190,15 +190,11 @@ module.exports = {
 
   gatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
-    return `https://${auth}localhost:${gw.getMappedPort(4444)}${path || ''}`
+    return `http://${auth}localhost:${gw.getMappedPort(8080)}${path || ''}`
   },
   otherGatewayUrl: (app, path) => {
     const auth = app ? testCredentials[app] + '@' : ''
-    return `https://${auth}localhost:${otherGw.getMappedPort(4444)}${path || ''}`
-  },
-  gatewayInsecureUrl: (app, path) => {
-    const auth = app ? testCredentials[app] + '@' : ''
-    return `http://${auth}localhost:${gw.getMappedPort(8080)}${path || ''}`
+    return `http://${auth}localhost:${otherGw.getMappedPort(8080)}${path || ''}`
   },
 
   TEST_BAD_BACKEND_URL,
