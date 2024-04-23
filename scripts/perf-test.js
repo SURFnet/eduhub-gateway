@@ -69,7 +69,7 @@ const exec = (command) => {
 const {
   up,
   down,
-  gatewayInsecureUrl,
+  gatewayUrl,
   testCredentials
 } = require('../test/integration.environment.js')
 
@@ -84,7 +84,7 @@ const performanceTest = async () => {
   await up(argv)
   console.log('Ready to run')
 
-  const url = gatewayInsecureUrl('', '/') // needs plain http url; self-signed certs don't work with apachebench
+  const url = gatewayUrl('', '/') // needs plain http url; self-signed certs don't work with apachebench
   console.log(`testing url ${url}`)
 
   const tests = [1, 10, 25, 50, 100, 250, 500]
