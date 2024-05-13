@@ -1,7 +1,7 @@
 # Core
 db:
   redis:
-    namespace: EG
+    namespace: '${REDIS_NAMESPACE:-EG}'
     host: '${REDIS_HOST:-redis}'
     port: '${REDIS_PORT:-6379}'
 
