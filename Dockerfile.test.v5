@@ -17,4 +17,3 @@ COPY policies /app/policies
 CMD npm start
 
 EXPOSE 8080
-EXPOSE 4444
