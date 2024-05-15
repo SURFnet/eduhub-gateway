@@ -1,0 +1,260 @@
+http: # remove http section in production environment
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  metrics-reporter:
+    paths:
+      - '/metrics'
+  api:
+    # all matching paths should be specified including any template
+    # params as used in the ooapi spec
+    paths:
+       - '/'
+       - '/academic-sessions'
+       - '/academic-sessions/:academicSessionId'
+       - '/academic-sessions/:academicSessionId/offerings'
+       - '/associations/:associationId'
+       - '/buildings'
+       - '/buildings/:buildingId'
+       - '/buildings/:buildingId/rooms'
+       - '/components/:componentId'
+       - '/components/:componentId/offerings'
+       - '/courses'
+       - '/courses/:courseId'
+       - '/courses/:courseId/components'
+       - '/courses/:courseId/offerings'
+       - '/news-feeds'
+       - '/news-feeds/:newsFeedId'
+       - '/news-feeds/:newsFeedId/news-items'
+       - '/news-items/:newsItemId'
+       - '/offerings/:offeringId'
+       - '/offerings/:offeringId/associations'
+       - '/organizations'
+       - '/organizations/:organizationId'
+       - '/organizations/:organizationId/components'
+       - '/organizations/:organizationId/courses'
+       - '/organizations/:organizationId/programs'
+       - '/organizations/:organizationId/offerings'
+       - '/persons'
+       - '/persons/:personId'
+       - '/persons/:personId/associations'
+       - '/programs'
+       - '/programs/:programId'
+       - '/programs/:programId/courses'
+       - '/programs/:programId/offerings'
+       - '/rooms'
+       - '/rooms/:roomId'
+  not_found: # fallback: needed to track non-matching requests
+    paths:
+       - '/*'
+serviceEndpoints:
+  'Test.Backend':
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
+    # proxyOptions:
+    #   auth: fred:wilma
+    proxyOptionsEncoded: >-
+      9b81c96aaa8172e1b29555a50b78d0ed:eMNq3dYGf+NH9Yy+8zZLK+3l4uSExYzzj8TGyotAPt8=
+  'Other-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    # can't provide proxyOptionsEncoded because of use of ${}
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
+  'Bad-Credentials-Oauth-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    # can't provide proxyOptionsEncoded because of use of ${}
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: dino
+  'ENOTFOUND-OAUTH-URL-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    # proxyOptions:
+    #   oauth2:
+    #     clientCredentials:
+    #       tokenEndpoint:
+    #         url: 'http://dummy:9999/'
+    #         params:
+    #           grant_type: client_credentials
+    #           client_id: fred
+    #           client_secret: wilma
+    proxyOptionsEncoded: >-
+      b115c681c531d8266ca84b6161465149:S9eu6lmyNDJUasO0heJue25pOBbdY1IdUR9B0XR648/fAOBlUH0cgFNZt/L7Kp5cpZ8rEaB33KCjumWP7PZwLzmQef3yDW2XNMQqgSFK3HNKlUnrYvzF5p6hj8N/7P/EAvuK48L09/Z1Qckeu3LHwOIVe7iAParwtZZRQiwj+Md4EaPRYSixGyDZJ7VmZ3OmYeTJMkJnpuOs802zob6zLp7+jel8PHzcDwfaas+LIn0=
+  'Echo.Backend':
+    url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
+  'Bad.Backend':
+    url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
+  'Slow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
+    # proxyOptions:
+    #   proxyTimeout: 500
+    proxyOptionsEncoded: >-
+      1ad6802a2431e8d09a03f7d9e7dbaf28:VyJb/QWzTZ/2jIU41q0zQGuJdRoZrr0yJ6W/pUE9jq8=
+
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - lifecycle-logger
+  - proxy
+  - openapi-validator
+  - gatekeeper
+  - request-transformer
+  - response-transformer
+  - aggregation
+  - metrics-collector
+  - metrics-reporter
+  - terminate
+pipelines:
+  metrics:
+    apiEndpoints:
+      - metrics-reporter
+    policies:
+      - metrics-reporter:
+          - action:
+              url: "/metrics"
+              labels:
+                testLabel: "test"
+                otherLabel: "foo"
+              defaultMetricsLabels:
+                def: "something"
+  test:
+    apiEndpoints:
+      - api
+    policies:
+      - metrics-collector:
+      - lifecycle-logger:
+      - gatekeeper:
+          - action:
+              apps:
+                fred:
+                  passwordSalt: 8b52795e90b598eb022647f17c93ac2b
+                  passwordHash: e4c9628c52aead0dcf10330a6864d8bcc78a5a4a463b274bee39cee4cfc0a574
+                barney:
+                  passwordSalt: 5e5b3fb149fdd06ba9d18edd178d77cb
+                  passwordHash: 19d767b82ebb294e3c2008b53a0bcc59140e688baded13eea1794099c869e89f
+                bubbles:
+                  passwordSalt: 5970ad7d7501916274cf114f68d2aed0
+                  passwordHash: 5e063ba6dcff4b7bc0234be7861dac8c4dd7db573f36755e0578b2e77a5cf6bf
+              acls:
+                - app: fred
+                  endpoints:
+                    - endpoint: 'Test.Backend'
+                      paths:
+                        - '/'
+                        - '/academic-sessions'
+                        - '/academic-sessions/:academicSessionId'
+                        - '/academic-sessions/:academicSessionId/offerings'
+                        - '/associations/:associationId'
+                        - '/buildings'
+                        - '/buildings/:buildingId'
+                        - '/buildings/:buildingId/rooms'
+                        - '/components/:componentId'
+                        - '/components/:componentId/offerings'
+                        - '/courses'
+                        - '/courses/:courseId'
+                        - '/courses/:courseId/components'
+                        - '/courses/:courseId/offerings'
+                        - '/news-feeds'
+                        - '/news-feeds/:newsFeedId'
+                        - '/news-feeds/:newsFeedId/news-items'
+                        - '/news-items/:newsItemId'
+                        - '/offerings/:offeringId'
+                        - '/offerings/:offeringId/associations'
+                        - '/organizations'
+                        - '/organizations/:organizationId'
+                        - '/organizations/:organizationId/components'
+                        - '/organizations/:organizationId/courses'
+                        - '/organizations/:organizationId/programs'
+                        - '/organizations/:organizationId/offerings'
+                        - '/persons'
+                        - '/persons/:personId'
+                        - '/persons/:personId/associations'
+                        - '/programs'
+                        - '/programs/:programId'
+                        - '/programs/:programId/courses'
+                        - '/programs/:programId/offerings'
+                        - '/rooms'
+                        - '/rooms/:roomId'
+                    - endpoint: 'Other-Test.Backend'
+                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                - app: barney
+                  endpoints:
+                    - endpoint: 'Other-Test.Backend'
+                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                    - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
+                      paths: ['/']
+                    - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
+                      paths: ['/']
+                - app: bubbles
+                  endpoints:
+                    - endpoint: 'Echo.Backend'
+                      paths: ['/']
+                    - endpoint: 'Bad.Backend'
+                      paths: ['/']
+                    - endpoint: 'Slow.Backend'
+                      paths: ['/']
+
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  'Accept': '"application/json"'
+      - response-transformer:
+          - action:
+              headers:
+                add:
+                  # note: literal header values should be quoted twice
+                  # see https://www.express-gateway.io/docs/policies/response-transformer/
+                  'X-XSS-Protection': "'1; mode-block'"
+                  'Strict-Transport-Security': "'max-age=31536000; includeSubDomains; preload'"
+                  'X-Frame-Options': "'SAMEORIGIN'"
+                  'X-Content-Type-Options': "'nosniff'"
+                  # note: double escaping because of YAML parsing
+                  'Content-Security-Policy': "'default-src \\'self\\''"
+                  'Access-Control-Allow-Origin': "'*.surf.nl'"
+                  'Referrer-Policy': "'no-referrer-when-downgrade'"
+
+      - openapi-validator:
+          - action:
+              apiSpec: 'ooapiv4.json'
+              validateRequests: true
+              validateResponses: true
+
+      - aggregation:
+          - action:
+              noEnvelopIfAnyHeaders:
+                'X-Validate-Response': 'true'
+                'X-Envelope-Response': 'false'
+              keepRequestHeaders:
+                - 'accept-language'
+                - 'accept'
+                - 'traceparent'
+                - 'x-validate-response' # needed for resp validation
+              keepResponseHeaders:
+                - 'traceparent'
+                - 'content-type'
+                - 'content-length'
+  not_found:
+    apiEndpoints:
+      - not_found
+    policies:
+      - metrics-collector:
+      - lifecycle-logger:
+      - terminate:
+          - action:
+              statusCode: 404
+              message: "Not found"

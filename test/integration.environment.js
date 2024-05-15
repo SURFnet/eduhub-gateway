@@ -125,7 +125,7 @@ module.exports = {
     )
 
     const dockerFilePath = path.resolve(__dirname, '..')
-    const dockerFile = TEST_OOAPI_V5 ? 'Dockerfile.test.v5' : 'Dockerfile.test'
+    const dockerFile = 'Dockerfile'
     const image = await GenericContainer
       .fromDockerfile(dockerFilePath, dockerFile)
       .build()
@@ -133,19 +133,29 @@ module.exports = {
     const startGw = async (name) => (
       image
         .withName(name)
-        .withEnv('OOAPI_TEST_BACKEND_URL', TEST_BACKEND_CONTAINER_URL)
-        .withEnv('OOAPI_OTHER_TEST_BACKEND_URL', OTHER_TEST_BACKEND_CONTAINER_URL)
-        .withEnv('MOCK_OAUTH_TOKEN_URL', MOCK_OAUTH_TOKEN_CONTAINER_URL)
-        .withEnv('OOAPI_ECHO_BACKEND_URL', TEST_ECHO_BACKEND_CONTAINER_URL)
-        .withEnv('OOAPI_BAD_BACKEND_URL', TEST_BAD_BACKEND_CONTAINER_URL)
-        .withEnv('OOAPI_SLOW_BACKEND_URL', TEST_SLOW_BACKEND_CONTAINER_URL)
-        .withEnv('LOG_LEVEL', process.env.LOG_LEVEL || 'info')
-        .withEnv('REDIS_HOST', REDIS_HOST)
-        .withEnv('REDIS_PORT', redisPort)
-        .withEnv('SECRETS_KEY_FILE', 'config/test-secret.txt')
+        .withEnvironment({
+          EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_V5 ? '5' : '4'}.yml`,
+          OOAPI_TEST_BACKEND_URL: TEST_BACKEND_CONTAINER_URL,
+          OOAPI_OTHER_TEST_BACKEND_URL: OTHER_TEST_BACKEND_CONTAINER_URL,
+          MOCK_OAUTH_TOKEN_URL: MOCK_OAUTH_TOKEN_CONTAINER_URL,
+          OOAPI_ECHO_BACKEND_URL: TEST_ECHO_BACKEND_CONTAINER_URL,
+          OOAPI_BAD_BACKEND_URL: TEST_BAD_BACKEND_CONTAINER_URL,
+          OOAPI_SLOW_BACKEND_URL: TEST_SLOW_BACKEND_CONTAINER_URL,
+          LOG_LEVEL: process.env.LOG_LEVEL || 'info',
+          REDIS_HOST,
+          REDIS_PORT: redisPort,
+          SECRETS_KEY_FILE: 'config/test-secret.txt'
+        })
         .withWaitStrategy(Wait.forLogMessage('gateway http server listening'))
         .withExposedPorts(8080)
         .withStartupTimeout(5 * 60 * 1000)
+        .withBindMounts([
+          {
+            source: path.join(__dirname, '/config'),
+            target: '/shared-config',
+            mode: 'rw'
+          }
+        ])
         .start()
     )
 

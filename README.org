@@ -457,6 +457,20 @@ brew:
 
   To build the image
 
+** Location of system.config and gateway.config files and docker mounts
+
+The docker container does not contain a gateway configuration file.
+
+By default, the gateway loads ~system.config.yml~ and
+~gateway.config.yml~ from the ~./config~ directory. The ~./config~
+directory contains additional model files that must be present.
+
+To run the gateway in docker with a mutable configuration, it's
+recommended to read-write mount a directory containing the gateway
+configuration files and to set the ~EG_SYSTEM_CONFIG_PATH~ and
+~EG_GATEWAY_CONFIG_PATH~ environment variables to point to the files
+to use in that directory.
+  
 * Setting up development environment
 
 
