@@ -1,0 +1,7 @@
+*
+!policies
+!*.json
+!*.js
+!lib
+!vendor
+!config
