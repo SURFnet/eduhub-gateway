@@ -191,22 +191,26 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
 
-        const opts = await proxyOptionsForEndpoint({ db, endpoint })
-        opts.headers.traceParent = outgoingTraceParent.toString()
-        proxy.web(req, res, {
-          ...opts,
-          target: endpoint.url,
-          changeOrigin: true,
-          selfHandleResponse: envelopRequest
-        })
+        try {
+          const opts = await proxyOptionsForEndpoint({ db, endpoint })
+          opts.headers.traceParent = outgoingTraceParent.toString()
+          proxy.web(req, res, {
+            ...opts,
+            target: endpoint.url,
+            changeOrigin: true,
+            selfHandleResponse: envelopRequest
+          })
+        } catch (err) {
+          if (err instanceof oauthClient.AuthorizationError) {
+            logger.warn(err)
+            endpointDone(endpoint, { statusCode: err.statusCode })
+          } else {
+            throw err
+          }
+        }
       } catch (err) {
         logger.warn(err)
-
-        if (err instanceof oauthClient.AuthorizationError) {
-          res.status(err.statusCode).send({ error: err.message }).end()
-        } else {
-          res.sendStatus(httpcode.InternalServerError)
-        }
+        res.sendStatus(httpcode.InternalServerError)
       }
     })
   }
