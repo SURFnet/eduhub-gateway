@@ -129,26 +129,36 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         }
         concurrentRequestsMetric.labels(labels).inc()
 
+        // log and keep metrics for request to endpoint
+        const report = ({ statusCode, reqTimerEnd, ...rest }) => {
+          jsonLog.info({
+            client: 'PROXY',
+            http_status: statusCode,
+            traceparent_id: outgoingTraceParent.id,
+            traceparent_parent_id: outgoingTraceParent.parent_id,
+            traceparent_trace_id: outgoingTraceParent.traceId,
+            ...rest
+          })
+
+          requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
+          concurrentRequestsMetric.labels(labels).dec()
+          requestDurationSecondsMetric.labels({ ...labels, code: statusCode }).observe((reqTimerEnd - reqTimerStart) / 1000)
+        }
+
         proxy.on('proxyRes', (proxyRes, req, res) => {
           const remoteUrl = endpoint.url.replace(/\/$/, '') + req.url
           const statusCode = proxyRes.statusCode
           const method = req.method
           proxy.on('end', () => {
             const reqTimerEnd = new Date()
-            jsonLog.info({
-              short_message: `${req.traceparent.traceId} - ${method} ${remoteUrl} ${statusCode}`,
-              traceparent_trace_id: outgoingTraceParent.traceId,
-              traceparent_id: outgoingTraceParent.id,
-              traceparent_parent_id: outgoingTraceParent.parent_id,
-              client: 'PROXY',
-              http_status: statusCode,
+            report({
+              statusCode,
+              reqTimerEnd,
               request_method: method,
-              url: remoteUrl,
-              time_ms: reqTimerEnd - reqTimerStart
+              short_message: `${req.traceparent.traceId} - ${method} ${remoteUrl} ${statusCode}`,
+              time_ms: reqTimerEnd - reqTimerStart,
+              url: remoteUrl
             })
-            requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
-            concurrentRequestsMetric.labels(labels).dec()
-            requestDurationSecondsMetric.labels({ ...labels, code: statusCode }).observe((reqTimerEnd - reqTimerStart) / 1000)
           })
         })
         // Error here means we got no HTTP response (timeout or
@@ -156,18 +166,13 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         // log status code "0" in this case.
         proxy.on('error', (e) => {
           const reqTimerEnd = new Date()
-          jsonLog.error({
-            traceparent_trace_id: outgoingTraceParent.traceId,
-            traceparent_id: outgoingTraceParent.id,
-            traceparent_parent_id: outgoingTraceParent.parent_id,
-            short_message: `${outgoingTraceParent.traceId} - ${e} 0`,
-            client: 'PROXY',
+          const statusCode = 0
+          report({
+            statusCode,
+            reqTimerEnd,
             error_msg: e.toString(),
-            http_status: 0
+            short_message: `${outgoingTraceParent.traceId} - ${e} 0`
           })
-          requestsTotalMetric.labels({ ...labels, code: 0 }).inc()
-          concurrentRequestsMetric.labels(labels).dec()
-          requestDurationSecondsMetric.labels({ ...labels, code: 0 }).observe((reqTimerEnd - reqTimerStart) / 1000)
         })
 
         if (envelopRequest) {
@@ -191,22 +196,32 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
 
-        const opts = await proxyOptionsForEndpoint({ db, endpoint })
-        opts.headers.traceParent = outgoingTraceParent.toString()
-        proxy.web(req, res, {
-          ...opts,
-          target: endpoint.url,
-          changeOrigin: true,
-          selfHandleResponse: envelopRequest
-        })
+        try {
+          const opts = await proxyOptionsForEndpoint({ db, endpoint })
+          opts.headers.traceParent = outgoingTraceParent.toString()
+          proxy.web(req, res, {
+            ...opts,
+            target: endpoint.url,
+            changeOrigin: true,
+            selfHandleResponse: envelopRequest
+          })
+        } catch (err) {
+          if (err instanceof oauthClient.AuthorizationError) {
+            logger.warn(err)
+            report({
+              statusCode: err.statusCode,
+              reqTimerEnd: new Date(),
+              short_message: `oauth failure: ${err.message}`,
+              ...err.exInfo
+            })
+            endpointDone(endpoint, { statusCode: err.statusCode })
+          } else {
+            throw err
+          }
+        }
       } catch (err) {
         logger.warn(err)
-
-        if (err instanceof oauthClient.AuthorizationError) {
-          res.status(err.statusCode).send({ error: err.message }).end()
-        } else {
-          res.sendStatus(httpcode.InternalServerError)
-        }
+        res.sendStatus(httpcode.InternalServerError)
       }
     })
   }

@@ -254,24 +254,40 @@ integrationContext('aggregation policy', function () {
 
     describe('bad oauth2 backend configuration', () => {
       it('responds with unauthorized error for endpoint with bad credentials', async () => {
-        let res
-        const bad = { headers: { 'X-Route': 'endpoint=Bad-Credentials-Oauth-Test.Backend' } }
-        const good = { headers: { 'X-Route': 'endpoint=Other-Test.Backend' } }
+        let res, body
+        const url = gatewayUrl('barney', '/')
+        const goodEndpoint = 'Other-Test.Backend'
+        const good = { headers: { 'X-Route': `endpoint=${goodEndpoint}` } }
 
-        res = await httpGet(gatewayUrl('barney', '/'), bad)
-        assert.equal(res.statusCode, httpcode.Unauthorized)
-
-        res = await httpGet(gatewayUrl('barney', '/'), good)
+        res = await httpGet(url, good)
+        body = JSON.parse(res.body)
         assert.equal(res.statusCode, httpcode.OK)
+        assert.equal(body.gateway.endpoints[goodEndpoint].responseCode, httpcode.OK)
+
+        const badEndpoint = 'Bad-Credentials-Oauth-Test.Backend'
+        const bad = { headers: { 'X-Route': `endpoint=${badEndpoint}` } }
+
+        res = await httpGet(url, bad)
+        body = JSON.parse(res.body)
+        assert.equal(res.statusCode, httpcode.OK)
+        assert.equal(body.gateway.endpoints[badEndpoint].responseCode, httpcode.Unauthorized)
+
+        const both = { headers: { 'X-Route': `endpoint=${badEndpoint},${goodEndpoint}` } }
+        res = await httpGet(url, both)
+        body = JSON.parse(res.body)
+        assert.equal(res.statusCode, httpcode.OK)
+        assert.equal(body.gateway.endpoints[badEndpoint].responseCode, httpcode.Unauthorized)
+        assert.equal(body.gateway.endpoints[goodEndpoint].responseCode, httpcode.OK)
       })
 
       it('responds with service unavailable error for endpoint with unreachable token url', async () => {
+        const ep = 'ENOTFOUND-OAUTH-URL-Test.Backend'
         const res = await httpGet(gatewayUrl('barney', '/'), {
-          headers: {
-            'X-Route': 'endpoint=ENOTFOUND-OAUTH-URL-Test.Backend'
-          }
+          headers: { 'X-Route': `endpoint=${ep}` }
         })
-        assert.equal(res.statusCode, httpcode.ServiceUnavailable)
+        assert.equal(res.statusCode, httpcode.OK)
+        const body = JSON.parse(res.body)
+        assert.equal(body.gateway.endpoints[ep].responseCode, httpcode.ServiceUnavailable)
       })
     })
   })
