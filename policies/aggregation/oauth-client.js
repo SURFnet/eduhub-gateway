@@ -30,9 +30,10 @@ const tokenKey = ({ url, params }) => {
 }
 
 class AuthorizationError extends Error {
-  constructor (message, { cause, statusCode }) {
+  constructor (message, { cause, statusCode, ...exInfo }) {
     super(message, { cause })
     this.statusCode = statusCode
+    this.exInfo = exInfo
   }
 }
 
@@ -59,18 +60,26 @@ const postToken = (url, params) => {
           })
         })
         req.on('error', err => {
-          reject(new AuthorizationError(err, {
-            cause: err,
-            statusCode: httpcode.ServiceUnavailable
-          }))
+          reject(new AuthorizationError(
+            `Failed to connect: ${url} for ${params.client_id}`, {
+              url,
+              statusCode: httpcode.ServiceUnavailable,
+              clientId: params.client_id,
+              cause: err
+            }
+          ))
         })
         req.write(data)
         req.end()
       } catch (err) {
-        reject(new AuthorizationError(err, {
-          cause: err,
-          statusCode: httpcode.InternalServerError
-        }))
+        reject(new AuthorizationError(
+          `Failed to request: ${url} for ${params.client_id}`, {
+            url,
+            statusCode: httpcode.InternalServerError,
+            clientId: params.client_id,
+            cause: err
+          }
+        ))
       }
     }
   )
@@ -94,8 +103,10 @@ const authorizationHeader = async ({
     const res = await postToken(url, params)
     if (res.statusCode !== httpcode.OK) {
       throw new AuthorizationError(
-        `Failed to get token: ${url} for ${params.client_id}: ${res.statusCode} / ${res.body}`, {
-          statusCode: res.statusCode
+        `Failed to get token: ${url} for ${params.client_id}: ${res.statusCode}`, {
+          url,
+          statusCode: res.statusCode,
+          clientId: params.client_id
         }
       )
     }
@@ -103,10 +114,13 @@ const authorizationHeader = async ({
 
     try {
       tokenParsed = JSON.parse(token)
-    } catch (ex) {
+    } catch (err) {
       throw new AuthorizationError(
         `Failed to parse token: ${url} for ${params.client_id}`, {
-          ex, body: res.body
+          url,
+          statusCode: httpcode.InternalServerError,
+          clientId: params.client_id,
+          cause: err
         }
       )
     }

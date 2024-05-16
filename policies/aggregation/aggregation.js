@@ -208,6 +208,12 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         } catch (err) {
           if (err instanceof oauthClient.AuthorizationError) {
             logger.warn(err)
+            report({
+              statusCode: err.statusCode,
+              reqTimerEnd: new Date(),
+              short_message: `oauth failure: ${err.message}`,
+              ...err.exInfo
+            })
             endpointDone(endpoint, { statusCode: err.statusCode })
           } else {
             throw err
