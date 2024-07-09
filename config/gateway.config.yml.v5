@@ -86,6 +86,8 @@ serviceEndpoints:
               grant_type: client_credentials
               client_id: fred
               client_secret: wilma
+  'Unavailable-Test.Backend':
+    url: 'http://localhost:65535'
   'Bad-Credentials-Oauth-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
     proxyOptions:
@@ -219,6 +221,8 @@ pipelines:
                        - '/rooms/:roomId'
                     - endpoint: 'Other-Test.Backend'
                       paths: ['/', '/courses', '/programs', '/courses/:courseId']
+                    - endpoint: 'Unavailable-Test.Backend'
+                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
