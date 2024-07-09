@@ -25,7 +25,6 @@ const envelop = require('./envelop')
 const { proxyOptionsForEndpoint } = require('./proxy-extras')
 const { keepHeadersFilter } = require('./keep-headers')
 const collector = require('../metrics-collector/metrics-collector')
-const oauthClient = require('./oauth-client')
 const ensureTraceParent = require('../../lib/ensure_traceparent')
 
 module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
@@ -110,41 +109,41 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
     endpoints.forEach(async (endpointId) => {
       if (res.writableEnded) return
 
+      const endpoint = {
+        ...serviceEndpoints[endpointId],
+        id: endpointId
+      }
+
+      const outgoingTraceParent = traceParent.child()
+      const reqTimerStart = new Date()
+      // setup logging and metrics
+      const app = req.egContext.app
+      const labels = {
+        method: req.method,
+        path: req.route.path,
+        endpoint: endpointId,
+        client: app
+      }
+      concurrentRequestsMetric.labels(labels).inc()
+
+      // log and keep metrics for request to endpoint
+      const report = ({ statusCode, reqTimerEnd, ...rest }) => {
+        jsonLog.info({
+          client: 'PROXY',
+          http_status: statusCode,
+          traceparent_id: outgoingTraceParent.id,
+          traceparent_parent_id: outgoingTraceParent.parent_id,
+          traceparent_trace_id: outgoingTraceParent.traceId,
+          ...rest
+        })
+
+        requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
+        concurrentRequestsMetric.labels(labels).dec()
+        requestDurationSecondsMetric.labels({ ...labels, code: statusCode }).observe((reqTimerEnd - reqTimerStart) / 1000)
+      }
+
       try {
-        const endpoint = {
-          ...serviceEndpoints[endpointId],
-          id: endpointId
-        }
-
-        const outgoingTraceParent = traceParent.child()
         const proxy = httpProxy.createProxyServer()
-        const reqTimerStart = new Date()
-        // setup logging and metrics
-        const app = req.egContext.app
-        const labels = {
-          method: req.method,
-          path: req.route.path,
-          endpoint: endpointId,
-          client: app
-        }
-        concurrentRequestsMetric.labels(labels).inc()
-
-        // log and keep metrics for request to endpoint
-        const report = ({ statusCode, reqTimerEnd, ...rest }) => {
-          jsonLog.info({
-            client: 'PROXY',
-            http_status: statusCode,
-            traceparent_id: outgoingTraceParent.id,
-            traceparent_parent_id: outgoingTraceParent.parent_id,
-            traceparent_trace_id: outgoingTraceParent.traceId,
-            ...rest
-          })
-
-          requestsTotalMetric.labels({ ...labels, code: statusCode }).inc()
-          concurrentRequestsMetric.labels(labels).dec()
-          requestDurationSecondsMetric.labels({ ...labels, code: statusCode }).observe((reqTimerEnd - reqTimerStart) / 1000)
-        }
-
         proxy.on('proxyRes', (proxyRes, req, res) => {
           const remoteUrl = endpoint.url.replace(/\/$/, '') + req.url
           const statusCode = proxyRes.statusCode
@@ -196,32 +195,24 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
 
-        try {
-          const opts = await proxyOptionsForEndpoint({ db, endpoint })
-          opts.headers.traceParent = outgoingTraceParent.toString()
-          proxy.web(req, res, {
-            ...opts,
-            target: endpoint.url,
-            changeOrigin: true,
-            selfHandleResponse: envelopRequest
-          })
-        } catch (err) {
-          if (err instanceof oauthClient.AuthorizationError) {
-            logger.warn(err)
-            report({
-              statusCode: err.statusCode,
-              reqTimerEnd: new Date(),
-              short_message: `oauth failure: ${err.message}`,
-              ...err.exInfo
-            })
-            endpointDone(endpoint, { statusCode: err.statusCode })
-          } else {
-            throw err
-          }
-        }
+        const opts = await proxyOptionsForEndpoint({ db, endpoint })
+        opts.headers.traceParent = outgoingTraceParent.toString()
+        proxy.web(req, res, {
+          ...opts,
+          target: endpoint.url,
+          changeOrigin: true,
+          selfHandleResponse: envelopRequest
+        })
       } catch (err) {
         logger.warn(err)
-        res.sendStatus(httpcode.InternalServerError)
+        // const exInfo = err.exInfo || {}
+        report({
+          statusCode: err.statusCode,
+          reqTimerEnd: new Date(),
+          short_message: err.message,
+          ...err.exInfo
+        })
+        endpointDone(endpoint, { statusCode: err.statusCode })
       }
     })
   }

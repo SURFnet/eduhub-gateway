@@ -69,6 +69,10 @@ integrationContext('aggregation policy', function () {
             'content-type': 'application/json; charset=UTF-8',
             traceparent: body.gateway.endpoints['Other-Test.Backend'].headers.traceparent
           }
+        },
+        'Unavailable-Test.Backend': {
+          url: 'http://localhost:65535/',
+          responseCode: 0
         }
       }
     )
@@ -96,6 +100,41 @@ integrationContext('aggregation policy', function () {
         documentation: 'http://data2.example.com'
       }
     })
+  })
+
+  it('should respond with errors in envelop', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/'), {
+      headers: {
+        'X-Route': 'endpoint=Test.Backend,Unavailable-Test.Backend'
+      }
+    })
+    assert.equal(res.statusCode, httpcode.OK)
+    assert.match(res.headers['content-type'], /^application\/json\b/)
+
+    const body = JSON.parse(res.body)
+    assert(body.gateway)
+    assert(body.responses)
+
+    assert.equal(body.gateway.request, '/')
+
+    assert.deepEqual(
+      body.gateway.endpoints,
+      {
+        'Test.Backend': {
+          url: TEST_BACKEND_CONTAINER_URL,
+          responseCode: httpcode.OK,
+          headers: {
+            'content-length': '123',
+            'content-type': 'application/json; charset=UTF-8',
+            traceparent: body.gateway.endpoints['Test.Backend'].headers.traceparent
+          }
+        },
+        'Unavailable-Test.Backend': {
+          url: 'http://localhost:65535/',
+          responseCode: 0
+        }
+      }
+    )
   })
 
   describe('combined with validation', () => {
