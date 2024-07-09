@@ -134,7 +134,7 @@ module.exports = {
       image
         .withName(name)
         .withEnvironment({
-          EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_V5 ? '5' : '4'}.yml`,
+          EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_V5 ? 5 : 4}.yml`,
           OOAPI_TEST_BACKEND_URL: TEST_BACKEND_CONTAINER_URL,
           OOAPI_OTHER_TEST_BACKEND_URL: OTHER_TEST_BACKEND_CONTAINER_URL,
           MOCK_OAUTH_TOKEN_URL: MOCK_OAUTH_TOKEN_CONTAINER_URL,
@@ -159,8 +159,8 @@ module.exports = {
         .start()
     )
 
-    gw = await startGw('ooapi-gateway' + TEST_OOAPI_V5)
-    otherGw = await startGw('ooapi-othergateway' + TEST_OOAPI_V5)
+    gw = await startGw(`ooapi-gateway-v${TEST_OOAPI_V5 ? 5 : 4}`)
+    otherGw = await startGw(`ooapi-othergateway-v${TEST_OOAPI_V5 ? 5 : 4}`)
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
