@@ -23,6 +23,7 @@ const httpcode = require('../../lib/httpcode')
 const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:OauthClient]')
 
 const redisNs = 'OAGW-OAUTH2-Token'
+const REQUEST_TIMEOUT_MSEC = 5000
 
 const tokenKey = ({ url, params }) => {
   const t = url + JSON.stringify(Object.entries(params).sort())
@@ -50,7 +51,8 @@ const postToken = (url, params) => {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'Content-Length': Buffer.byteLength(data)
-          }
+          },
+          timeout: REQUEST_TIMEOUT_MSEC
         }, (res) => {
           let body = ''
           res.on('data', (chunk) => { body += chunk })
@@ -69,6 +71,8 @@ const postToken = (url, params) => {
             }
           ))
         })
+        req.on('timeout', () => req.destroy())
+
         req.write(data)
         req.end()
       } catch (err) {
