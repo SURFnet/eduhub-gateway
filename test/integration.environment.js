@@ -108,7 +108,12 @@ module.exports = {
     badBackend = require('../scripts/bad-backend').run(TEST_BAD_BACKEND_PORT)
     slowBackend = require('../scripts/slow-backend').run(TEST_SLOW_BACKEND_PORT)
 
-    redis = await new GenericContainer('redis')
+    const redisImage = await GenericContainer
+      .fromDockerfile(path.resolve(__dirname, 'config'), 'redis.Dockerfile')
+      .build()
+
+    redis = await redisImage
+      .withName('redis')
       .withWaitStrategy(Wait.forLogMessage('Ready to accept connections'))
       .withExposedPorts(REDIS_PORT)
       .start()
@@ -144,6 +149,8 @@ module.exports = {
           LOG_LEVEL: process.env.LOG_LEVEL || 'info',
           REDIS_HOST,
           REDIS_PORT: redisPort,
+          REDIS_USERNAME: 'fred',
+          REDIS_PASSWORD: 'wilma',
           SECRETS_KEY_FILE: 'config/test-secret.txt'
         })
         .withWaitStrategy(Wait.forLogMessage('gateway http server listening'))

@@ -346,6 +346,7 @@ to ~proxyOptionsEncoded~ using the key in ~SECRETS_KEY_FILE~.
 
    When ~validateResponses~ is ~true~, responses are validated when
    the request has an ~X-Validate-Response: true~ header.
+
 *** OOAPI V4 & V5 configuration & validation
 
 There are example configurations for handling and validating OOAPI v4
@@ -449,13 +450,23 @@ brew:
   deployable docker image, including the configuration provided in the
   [[./config][./config]] directory.
 
-  Ensure [[https://www.docker.com/][Docker]] is installed and do the usual
+  Ensure [[https://www.docker.com/][Docker]] is installed and do the usual:
 
   #+begin_src sh
   docker build .
   #+end_src
 
-  To build the image
+  to build the image.
+
+  Use the following environment variables to setup the Redis username
+  and password in ~config/system.config.yml~:
+
+  - ~REDIS_USERNAME~
+  - ~REDIS_PASSWORD~
+
+  Note that not using authorization for Redis is also possible by
+  editing ~config/system.config.yml~ to delete the ~db.redis.username~
+  and ~db.redis.password~ properties before building the docker image.
 
 ** Location of system.config and gateway.config files and docker mounts
 

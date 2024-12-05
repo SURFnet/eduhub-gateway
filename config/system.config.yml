@@ -4,6 +4,8 @@ db:
     namespace: '${REDIS_NAMESPACE:-EG}'
     host: '${REDIS_HOST:-redis}'
     port: '${REDIS_PORT:-6379}'
+    username: '${REDIS_USERNAME}'
+    password: '${REDIS_PASSWORD}'
 
 #plugins:
   # express-gateway-plugin-example:
