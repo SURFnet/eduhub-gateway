@@ -389,8 +389,8 @@ brew:
    #+end_example
 
    See also [[client-auth][Client Authorization]].
-
-** Aggregation and response validation
+   
+** Aggregation, responses, and response validation
 
    When responses from multiple backends are aggregated, they are
    wrapped in an envelope.
@@ -404,6 +404,7 @@ brew:
          - action:
              noEnvelopIfAnyHeaders:
                'X-Validate-Response': 'true'
+               'X-Envelope-Response': 'false'
    #+end_src
 
    Since aggregated responses are never valid against the OOAPI spec,
@@ -411,6 +412,13 @@ brew:
    specified. In this case, the request must specify an ~X-Route~
    header with exactly one backend, or a ~BAD REQUEST~ response is
    returned.
+
+   Applications that request a single endpoint's data according in
+   OOAPI format can also provide an ~X-Envelope-Response: false~
+   header, which disables the envelope, passing the endpoints response
+   body as-is.  As with the ~X-Validate-Response~ header, the request
+   must specify an ~X-Route~ header with exactly one backend, or a
+   ~BAD REQUEST~ response is returned.
 
 *** ~keepRequestHeaders~
 
