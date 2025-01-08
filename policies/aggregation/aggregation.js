@@ -129,11 +129,13 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
       // log and keep metrics for request to endpoint
       const report = ({ statusCode, reqTimerEnd, ...rest }) => {
         jsonLog.info({
-          client: 'PROXY',
+          client: app,
+          side: 'backend',
           http_status: statusCode,
           traceparent_id: outgoingTraceParent.id,
           traceparent_parent_id: outgoingTraceParent.parent_id,
           traceparent_trace_id: outgoingTraceParent.traceId,
+          route_path: req.route && req.route.path,
           ...rest
         })
 

@@ -30,6 +30,7 @@ module.exports = () => {
       const statusCode = res.statusCode
 
       const infoProps = {
+        side: 'client',
         short_message: `${req.traceparent.traceId} - ${method} ${url} ${statusCode}`,
         traceparent_trace_id: traceParent.traceId,
         traceparent_id: traceParent.id,
