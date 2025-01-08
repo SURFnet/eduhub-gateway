@@ -15,6 +15,7 @@
  */
 
 const jsonLog = require('../../lib/json_log')
+const xroute = require('../../lib/xroute')
 const ensureTraceParent = require('../../lib/ensure_traceparent')
 
 module.exports = () => {
@@ -23,12 +24,12 @@ module.exports = () => {
     const reqTimerStart = new Date()
     const method = req.method
     const url = req.originalUrl
+    const routes = xroute.decode(req.headers['x-route'])
 
     res.on('finish', () => {
       const app = req.egContext.app // set by gatekeeper policy
       const reqTimerEnd = new Date()
       const statusCode = res.statusCode
-
       const infoProps = {
         side: 'client',
         short_message: `${req.traceparent.traceId} - ${method} ${url} ${statusCode}`,
@@ -40,7 +41,8 @@ module.exports = () => {
         http_status: statusCode,
         request_method: method,
         url,
-        time_ms: reqTimerEnd - reqTimerStart
+        time_ms: reqTimerEnd - reqTimerStart,
+        num_x_routes: routes ? routes.length : 0
       }
 
       if (res.error_msg) {

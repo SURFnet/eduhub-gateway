@@ -15,7 +15,7 @@
  */
 
 const prom = require('prom-client')
-
+const xroute = require('../../lib/xroute')
 const collector = {}
 
 // these are the default prom-client buckets, extended up till 5
@@ -38,7 +38,7 @@ collector.policy = ({
     prefix + 'incoming_http_requests_total',
     'Counter', {
       help: 'Number of incoming HTTP requests',
-      labelNames: ['code', 'path', 'method', 'client']
+      labelNames: ['code', 'path', 'method', 'client', 'num_x_routes']
     },
     labels
   )
@@ -48,7 +48,7 @@ collector.policy = ({
     'Histogram',
     {
       help: 'Histogram of latencies for incoming HTTP requests',
-      labelNames: ['path', 'method', 'code', 'client'],
+      labelNames: ['path', 'method', 'code', 'client', 'num_x_routes'],
       buckets: collector.latencyBuckets
     }
   )
@@ -57,14 +57,20 @@ collector.policy = ({
     prefix + 'incoming_concurrent_http_requests',
     'Gauge', {
       help: 'Number of concurrent incoming HTTP requests',
-      labelNames: ['path', 'method', 'code', 'client']
+      labelNames: ['path', 'method', 'code', 'client', 'num_x_routes']
     }
   )
 
   return (req, res, next) => {
     const app = collector.unsafeClientFromRequest(req)
     const endTimer = requestDurationSecondsMetric.startTimer()
-    const baseLabels = { method: req.method, path: req.route.path }
+    const routes = xroute.decode(req.headers['x-route'])
+
+    const baseLabels = {
+      method: req.method,
+      path: req.route.path,
+      num_x_routes: routes ? routes.length : 0
+    }
     if (app) {
       baseLabels.client = app
     }
