@@ -131,6 +131,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         jsonLog.info({
           client: 'PROXY',
           http_status: statusCode,
+          endpoint: endpointId,
           traceparent_id: outgoingTraceParent.id,
           traceparent_parent_id: outgoingTraceParent.parent_id,
           traceparent_trace_id: outgoingTraceParent.traceId,
@@ -205,7 +206,7 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
         })
       } catch (err) {
         logger.warn(err)
-        // const exInfo = err.exInfo || {}
+
         report({
           statusCode: err.statusCode,
           reqTimerEnd: new Date(),
