@@ -1,9 +1,9 @@
-FROM node:20 AS build-env
+FROM node:20-alpine AS build-env
 COPY . /app
 WORKDIR /app
 RUN npm ci --only=production
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM node:20-alpine
 COPY --from=build-env /app /app
 WORKDIR /app
 CMD ["server.js"]
