@@ -3,7 +3,7 @@ COPY . /app
 WORKDIR /app
 RUN npm ci --only=production
 
-FROM gcr.io/distroless/nodejs20-debian12
+FROM gcr.io/distroless/nodejs20-debian12:nonroot
 COPY --from=build-env /app /app
 WORKDIR /app
 CMD ["server.js"]
