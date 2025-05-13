@@ -51,7 +51,7 @@ const prepareRequestHeaders = (acl, req) => {
 }
 
 const isAuthorized = (acl, req) => {
-  const endpoints = xroute.decode(req.headers['x-route'])
+  const endpoints = xroute.decode(req.headers['x-route'], true)
 
   if (endpoints.length) {
     return endpoints.reduce(

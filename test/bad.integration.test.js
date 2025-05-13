@@ -44,4 +44,15 @@ integrationContext('endpoint timeouts', function () {
       )
     })
   })
+
+  describe('bad x-routes header', () => {
+    it('response status code is BadRequest', async () => {
+      const res = await httpGet(gatewayUrl('bubbles', '/'), {
+        headers: { 'X-Route': 'endpoint=Bad.Backend*' }
+      })
+
+      assert.equal(res.statusCode, httpcode.BadRequest)
+      assert.equal('Malformed X-Route header', res.body)
+    })
+  })
 })

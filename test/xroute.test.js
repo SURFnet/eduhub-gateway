@@ -25,10 +25,18 @@ describe('xroute', () => {
       assert.deepStrictEqual(decode(undefined), null)
     })
 
-    it('throws error on malformed x-route header', () => {
-      assert.throws(() => { decode('dummy') }, MalformedHeader)
-      assert.throws(() => { decode('endpoint=') }, MalformedHeader)
-      assert.throws(() => { decode('endpoint=foo;bar') }, MalformedHeader)
+    it('throws error on malformed x-route header when requested', () => {
+      assert.throws(() => { decode('dummy', true) }, MalformedHeader)
+      assert.throws(() => { decode('endpoint=', true) }, MalformedHeader)
+      assert.throws(() => { decode('endpoint=foo;bar', true) }, MalformedHeader)
+      assert.throws(() => { decode('endpoint=foo"', true) }, MalformedHeader)
+    })
+
+    it('returns null on malformed x-route header', () => {
+      assert.equal(null, decode('dummy'))
+      assert.equal(null, decode('endpoint='))
+      assert.equal(null, decode('endpoint=foo;bar'))
+      assert.equal(null, decode('endpoint=foo"'))
     })
 
     it('returns list of endpoints', () => {
