@@ -452,6 +452,20 @@ brew:
    If keepResponseHeaders is not specified all headers will be
    returned.
 
+*** ~proxyOptions~
+
+Allow setting global ~proxyOptions~ (can be overwritten per backend).
+
+#+begin_src yaml
+  - aggregation:
+      - action:
+          proxyOptions:
+            proxyTimeout: 10000
+#+end_src
+
+The above will set a global timeout for requests going to backends of
+10 seconds.
+
 * Building deployable images
 
   The repository includes a [[./Dockerfile][Dockerfile]] that can be used to build a

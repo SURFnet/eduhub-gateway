@@ -104,6 +104,8 @@ serviceEndpoints:
     #   proxyTimeout: 500
     proxyOptionsEncoded: >-
       1ad6802a2431e8d09a03f7d9e7dbaf28:VyJb/QWzTZ/2jIU41q0zQGuJdRoZrr0yJ6W/pUE9jq8=
+  'OtherSlow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
 
 policies:
   - basic-auth
@@ -211,6 +213,8 @@ pipelines:
                       paths: ['/']
                     - endpoint: 'Slow.Backend'
                       paths: ['/']
+                    - endpoint: 'OtherSlow.Backend'
+                      paths: ['/']
 
       - request-transformer:
           - action:
@@ -252,6 +256,8 @@ pipelines:
                 - 'traceparent'
                 - 'content-type'
                 - 'content-length'
+              proxyOptions:
+                proxyTimeout: 2000
   not_found:
     apiEndpoints:
       - not_found

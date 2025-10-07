@@ -28,7 +28,7 @@ const {
 integrationContext('endpoint timeouts', function () {
   describe('slow backend', () => {
     it('backend response status code is 0 when sleeping longer than configured 500ms', async () => {
-      const res = await httpGet(gatewayUrl('bubbles', `/?sleep=${1000 * 60 * 60 * 24}`), {
+      const res = await httpGet(gatewayUrl('bubbles', `/?sleep=${60 * 60 * 24}`), {
         headers: { 'X-Route': 'endpoint=Slow.Backend' }
       })
       const { gateway: { endpoints } } = JSON.parse(res.body)
@@ -45,6 +45,30 @@ integrationContext('endpoint timeouts', function () {
       const { gateway: { endpoints } } = JSON.parse(res.body)
       assert.equal(
         endpoints['Slow.Backend'].responseCode,
+        httpcode.OK
+      )
+    })
+  })
+
+  describe('other slow backend', () => {
+    it('backend response status code is 0 when sleeping longer than globally configured 2s', async () => {
+      const res = await httpGet(gatewayUrl('bubbles', `/?sleep=${60 * 60 * 24}`), {
+        headers: { 'X-Route': 'endpoint=OtherSlow.Backend' }
+      })
+      const { gateway: { endpoints } } = JSON.parse(res.body)
+      assert.equal(
+        endpoints['OtherSlow.Backend'].responseCode,
+        0
+      )
+    })
+
+    it('backend response status code is OK when fast enough', async () => {
+      const res = await httpGet(gatewayUrl('bubbles', '/?sleep=1'), {
+        headers: { 'X-Route': 'endpoint=OtherSlow.Backend' }
+      })
+      const { gateway: { endpoints } } = JSON.parse(res.body)
+      assert.equal(
+        endpoints['OtherSlow.Backend'].responseCode,
         httpcode.OK
       )
     })

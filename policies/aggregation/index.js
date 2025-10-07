@@ -35,6 +35,10 @@ module.exports = {
       metricsPrefix: {
         type: 'string',
         description: 'Prefix for metrics for outgoing HTTP requests'
+      },
+      proxyOptions: {
+        type: 'object',
+        description: 'Global proxy options'
       }
 
     },

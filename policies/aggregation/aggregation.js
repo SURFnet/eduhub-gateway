@@ -198,9 +198,11 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
           proxy.on('error', () => res.sendStatus(httpcode.BadGateway))
         }
 
+        const proxyOptions = config.proxyOptions || {}
         const opts = await proxyOptionsForEndpoint({ db, endpoint })
         opts.headers.traceParent = outgoingTraceParent.toString()
         proxy.web(req, res, {
+          ...proxyOptions,
           ...opts,
           target: endpoint.url,
           changeOrigin: true,
