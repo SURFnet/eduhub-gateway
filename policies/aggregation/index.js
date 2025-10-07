@@ -21,14 +21,14 @@ module.exports = {
     $id: 'http://express-gateway.io/schemas/policies/surfnet-ooapi-gw-aggregation.json',
     type: 'object',
     properties: {
-      noEnvelopIfHeaders: {
+      noEnvelopIfAnyHeaders: {
         type: 'object'
       },
-      allowRequestHeaders: {
+      keepRequestHeaders: {
         type: 'array',
         items: { type: 'string' }
       },
-      allowResponseHeaders: {
+      keepResponseHeaders: {
         type: 'array',
         items: { type: 'string' }
       },
