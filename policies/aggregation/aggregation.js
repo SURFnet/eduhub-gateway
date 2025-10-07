@@ -14,7 +14,7 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const httpProxy = require('http-proxy')
+const httpProxy = require('http-proxy-3')
 
 const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Aggregation]')
 const jsonLog = require('../../lib/json_log')
