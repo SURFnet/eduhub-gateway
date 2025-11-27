@@ -68,8 +68,9 @@ const appFromRequest = (req, apps) => {
     const pass = password || dummyPass
     const salt = app ? app.passwordSalt : dummySalt
     const hash = app ? app.passwordHash : dummyHash
+
     if (timingSafeHashEqual(hashPassword(pass, salt), hash)) {
-      return app ? user : null
+      return { ...app, user }
     }
   }
 

@@ -64,6 +64,8 @@ describe('gatekeeper/authentication', () => {
     let salt
     const apps = {
       fred: {
+        client_name: 'Fred Flintstone',
+        client_schachome: 'fred.flintstone',
         passwordHash: authentication.hashPassword('wilma', salt = randomString()),
         passwordSalt: salt
       },
@@ -82,19 +84,20 @@ describe('gatekeeper/authentication', () => {
     )
 
     it('should return app from basic authentication', () => {
-      assert.equal(
-        authentication.appFromRequest({
-          headers: { authorization: authorizationHeader('fred', 'wilma') }
-        }, apps),
-        'fred'
-      )
+      const app = authentication.appFromRequest({
+        headers: { authorization: authorizationHeader('fred', 'wilma') }
+      }, apps)
+
+      assert.equal(app.user, 'fred')
+      assert.equal(app.client_name, 'Fred Flintstone')
+      assert.equal(app.client_schachome, 'fred.flintstone')
     })
 
     it('should allow colon in password', () => {
       assert.equal(
         authentication.appFromRequest({
           headers: { authorization: authorizationHeader('with-colon', 'with:colon') }
-        }, apps),
+        }, apps).user,
         'with-colon'
       )
     })

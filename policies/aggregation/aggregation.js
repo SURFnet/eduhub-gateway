@@ -117,19 +117,21 @@ module.exports = (config, { gatewayConfig: { serviceEndpoints } }) => {
       const outgoingTraceParent = traceParent.child()
       const reqTimerStart = new Date()
       // setup logging and metrics
-      const app = req.egContext.app
+      const app = req.egContext.app // set by gatekeeper policy
       const labels = {
         method: req.method,
         path: req.route.path,
         endpoint: endpointId,
-        client: app
+        client: app.user
       }
       concurrentRequestsMetric.labels(labels).inc()
 
       // log and keep metrics for request to endpoint
       const report = ({ statusCode, reqTimerEnd, ...rest }) => {
         jsonLog.info({
-          client: app,
+          client: app.user,
+          client_name: app.client_name,
+          client_schachome: app.client_schachome,
           side: 'backend',
           http_status: statusCode,
           endpoint: endpointId,

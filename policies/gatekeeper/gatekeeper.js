@@ -55,7 +55,7 @@ module.exports = (params, config) => {
     delete req.headers.authorization
 
     if (app) {
-      const acl = acls[app]
+      const acl = acls[app.user]
 
       if (acl) {
         authorization.prepareRequestHeaders(acl, req)
