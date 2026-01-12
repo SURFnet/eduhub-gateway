@@ -1,0 +1,343 @@
+http: # remove http section in production environment
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  metrics-reporter:
+    paths:
+      - '/metrics'
+  api:
+    # all matching paths should be specified including any template
+    # params as used in the ooapi spec
+    paths:
+      - '/'
+      - '/academic-sessions'
+      - '/academic-sessions/:academicSessionId'
+      - '/academic-sessions/:academicSessionId/course-offerings'
+      - '/academic-sessions/:academicSessionId/learning-component-offerings'
+      - '/academic-sessions/:academicSessionId/programme-offerings'
+      - '/academic-sessions/:academicSessionId/test-component-offerings'
+      - '/buildings'
+      - '/buildings/:buildingId'
+      - '/buildings/:buildingId/rooms'
+      - '/course-offering-associations/external/me'
+      - '/course-offering-associations/:courseOfferingAssociationId'
+      - '/course-offerings/:courseOfferingId'
+      - '/course-offerings/:courseOfferingId/course-offering-associations'
+      - '/course-offerings/:courseOfferingId/groups'
+      - '/course-offerings/:courseOfferingId/learning-component-offerings'
+      - '/course-offerings/:courseOfferingId/test-component-offerings'
+      - '/courses'
+      - '/courses/:courseId'
+      - '/courses/:courseId/course-offerings'
+      - '/courses/:courseId/learning-component-offerings'
+      - '/courses/:courseId/learning-components'
+      - '/courses/:courseId/test-component-offerings'
+      - '/courses/:courseId/test-components'
+      - '/documents/:documentId'
+      - '/groups'
+      - '/groups/:groupId'
+      - '/groups/:groupId/memberships'
+      - '/groups/:groupId/memberships/:personId'
+      - '/learning-component-offering-associations/:learningComponentOfferingAssociationId'
+      - '/learning-component-offerings/:learningComponentOfferingId'
+      - '/learning-component-offerings/:learningComponentOfferingId/groups'
+      - '/learning-component-offerings/:learningComponentOfferingId/learning-component-offering-associations'
+      - '/learning-components'
+      - '/learning-components/:learningComponentId'
+      - '/learning-components/:learningComponentId/learning-component-offerings'
+      - '/learning-outcomes'
+      - '/learning-outcomes/:learningOutcomeId'
+      - '/organisations'
+      - '/organisations/:organisationId'
+      - '/organisations/:organisationId/course-offerings'
+      - '/organisations/:organisationId/courses'
+      - '/organisations/:organisationId/groups'
+      - '/organisations/:organisationId/learning-component-offerings'
+      - '/organisations/:organisationId/learning-components'
+      - '/organisations/:organisationId/programme-offerings'
+      - '/organisations/:organisationId/programmes'
+      - '/organisations/:organisationId/test-component-offerings'
+      - '/organisations/:organisationId/test-components'
+      - '/persons'
+      - '/persons/me'
+      - '/persons/:personId'
+      - '/persons/:personId/course-offering-associations'
+      - '/persons/:personId/learning-component-offering-associations'
+      - '/persons/:personId/programme-offering-associations'
+      - '/persons/:personId/test-component-offering-associations'
+      - '/programme-offering-associations/external/me'
+      - '/programme-offering-associations/:programmeOfferingAssociationId'
+      - '/programme-offerings/:programmeOfferingId'
+      - '/programme-offerings/:programmeOfferingId/groups'
+      - '/programme-offerings/:programmeOfferingId/programme-offering-associations'
+      - '/programmes'
+      - '/programmes/:programmeId'
+      - '/programmes/:programmeId/courses'
+      - '/programmes/:programmeId/programme-offerings'
+      - '/programmes/:programmeId/programmes'
+      - '/rooms'
+      - '/rooms/:roomId'
+      - '/test-component-offering-associations-attempt/:testComponentOfferingAssociationAttemptId'
+      - '/test-component-offering-associations/:testComponentOfferingAssociationId'
+      - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempt/:testComponentOfferingAssociationAttemptId'
+      - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempts'
+      - '/test-component-offering-associations/:testComponentOfferingAssociationId/url'
+      - '/test-component-offerings/:testComponentOfferingId'
+      - '/test-component-offerings/:testComponentOfferingId/groups'
+      - '/test-component-offerings/:testComponentOfferingId/test-component-offering-associations'
+      - '/test-components'
+      - '/test-components/:testComponentId'
+      - '/test-components/:testComponentId/test-component-offerings'
+  not_found: # fallback: needed to track non-matching requests
+    paths:
+       - '/*'
+serviceEndpoints:
+  'Test.Backend':
+    url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
+    proxyOptions:
+      auth: fred:wilma
+  'Other-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
+  'Unavailable-Test.Backend':
+    url: 'http://localhost:65535'
+  'Bad-Credentials-Oauth-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: '${MOCK_OAUTH_TOKEN_URL:-http://localhost:8084/mock/token}'
+            params:
+              grant_type: client_credentials
+              client_id: dino
+  'ENOTFOUND-OAUTH-URL-Test.Backend':
+    url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: 'http://dummy:9999/'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
+  'Echo.Backend':
+    url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
+  'Bad.Backend':
+    url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
+  'Slow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
+    proxyOptions:
+      proxyTimeout: 500
+  'OtherSlow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
+
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - lifecycle-logger
+  - proxy
+  - openapi-validator
+  - gatekeeper
+  - request-transformer
+  - response-transformer
+  - aggregation
+  - metrics-collector
+  - metrics-reporter
+  - terminate
+pipelines:
+  metrics:
+    apiEndpoints:
+      - metrics-reporter
+    policies:
+      - metrics-reporter:
+          - action:
+              url: "/metrics"
+              labels:
+                testLabel: "test"
+                otherLabel: "foo"
+              defaultMetricsLabels:
+                def: "something"
+  test:
+    apiEndpoints:
+      - api
+    policies:
+      - metrics-collector:
+      - lifecycle-logger:
+      - gatekeeper:
+          - action:
+              apps:
+                fred:
+                  passwordSalt: 8b52795e90b598eb022647f17c93ac2b
+                  passwordHash: e4c9628c52aead0dcf10330a6864d8bcc78a5a4a463b274bee39cee4cfc0a574
+                barney:
+                  passwordSalt: 5e5b3fb149fdd06ba9d18edd178d77cb
+                  passwordHash: 19d767b82ebb294e3c2008b53a0bcc59140e688baded13eea1794099c869e89f
+                bubbles:
+                  passwordSalt: 5970ad7d7501916274cf114f68d2aed0
+                  passwordHash: 5e063ba6dcff4b7bc0234be7861dac8c4dd7db573f36755e0578b2e77a5cf6bf
+              acls:
+                - app: fred
+                  endpoints:
+                    - endpoint: 'Test.Backend'
+                      paths:
+                        - '/'
+                        - '/academic-sessions'
+                        - '/academic-sessions/:academicSessionId'
+                        - '/academic-sessions/:academicSessionId/course-offerings'
+                        - '/academic-sessions/:academicSessionId/learning-component-offerings'
+                        - '/academic-sessions/:academicSessionId/programme-offerings'
+                        - '/academic-sessions/:academicSessionId/test-component-offerings'
+                        - '/buildings'
+                        - '/buildings/:buildingId'
+                        - '/buildings/:buildingId/rooms'
+                        - '/course-offering-associations/external/me'
+                        - '/course-offering-associations/:courseOfferingAssociationId'
+                        - '/course-offerings/:courseOfferingId'
+                        - '/course-offerings/:courseOfferingId/course-offering-associations'
+                        - '/course-offerings/:courseOfferingId/groups'
+                        - '/course-offerings/:courseOfferingId/learning-component-offerings'
+                        - '/course-offerings/:courseOfferingId/test-component-offerings'
+                        - '/courses'
+                        - '/courses/:courseId'
+                        - '/courses/:courseId/course-offerings'
+                        - '/courses/:courseId/learning-component-offerings'
+                        - '/courses/:courseId/learning-components'
+                        - '/courses/:courseId/test-component-offerings'
+                        - '/courses/:courseId/test-components'
+                        - '/documents/:documentId'
+                        - '/groups'
+                        - '/groups/:groupId'
+                        - '/groups/:groupId/memberships'
+                        - '/groups/:groupId/memberships/:personId'
+                        - '/learning-component-offering-associations/:learningComponentOfferingAssociationId'
+                        - '/learning-component-offerings/:learningComponentOfferingId'
+                        - '/learning-component-offerings/:learningComponentOfferingId/groups'
+                        - '/learning-component-offerings/:learningComponentOfferingId/learning-component-offering-associations'
+                        - '/learning-components'
+                        - '/learning-components/:learningComponentId'
+                        - '/learning-components/:learningComponentId/learning-component-offerings'
+                        - '/learning-outcomes'
+                        - '/learning-outcomes/:learningOutcomeId'
+                        - '/organisations'
+                        - '/organisations/:organisationId'
+                        - '/organisations/:organisationId/course-offerings'
+                        - '/organisations/:organisationId/courses'
+                        - '/organisations/:organisationId/groups'
+                        - '/organisations/:organisationId/learning-component-offerings'
+                        - '/organisations/:organisationId/learning-components'
+                        - '/organisations/:organisationId/programme-offerings'
+                        - '/organisations/:organisationId/programmes'
+                        - '/organisations/:organisationId/test-component-offerings'
+                        - '/organisations/:organisationId/test-components'
+                        - '/persons'
+                        - '/persons/me'
+                        - '/persons/:personId'
+                        - '/persons/:personId/course-offering-associations'
+                        - '/persons/:personId/learning-component-offering-associations'
+                        - '/persons/:personId/programme-offering-associations'
+                        - '/persons/:personId/test-component-offering-associations'
+                        - '/programme-offering-associations/external/me'
+                        - '/programme-offering-associations/:programmeOfferingAssociationId'
+                        - '/programme-offerings/:programmeOfferingId'
+                        - '/programme-offerings/:programmeOfferingId/groups'
+                        - '/programme-offerings/:programmeOfferingId/programme-offering-associations'
+                        - '/programmes'
+                        - '/programmes/:programmeId'
+                        - '/programmes/:programmeId/courses'
+                        - '/programmes/:programmeId/programme-offerings'
+                        - '/programmes/:programmeId/programmes'
+                        - '/rooms'
+                        - '/rooms/:roomId'
+                        - '/test-component-offering-associations-attempt/:testComponentOfferingAssociationAttemptId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempt/:testComponentOfferingAssociationAttemptId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempts'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/url'
+                        - '/test-component-offerings/:testComponentOfferingId'
+                        - '/test-component-offerings/:testComponentOfferingId/groups'
+                        - '/test-component-offerings/:testComponentOfferingId/test-component-offering-associations'
+                        - '/test-components'
+                        - '/test-components/:testComponentId'
+                        - '/test-components/:testComponentId/test-component-offerings'
+                    - endpoint: 'Other-Test.Backend'
+                      paths: ['/', '/courses', '/programmes', '/courses/:courseId']
+                    - endpoint: 'Unavailable-Test.Backend'
+                      paths: ['/', '/programmes', '/courses', '/courses/:courseId']
+                - app: barney
+                  endpoints:
+                    - endpoint: 'Other-Test.Backend'
+                      paths: ['/', '/courses', '/programmes', '/courses/:courseId']
+                    - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
+                      paths: ['/']
+                    - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
+                      paths: ['/']
+                - app: bubbles
+                  endpoints:
+                    - endpoint: 'Echo.Backend'
+                      paths: ['/']
+                    - endpoint: 'Bad.Backend'
+                      paths: ['/']
+                    - endpoint: 'Slow.Backend'
+                      paths: ['/']
+                    - endpoint: 'OtherSlow.Backend'
+                      paths: ['/']
+
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  'Accept': '"application/json"'
+      - response-transformer:
+          - action:
+              headers:
+                add:
+                  # note: literal header values should be quoted twice
+                  # see https://www.express-gateway.io/docs/policies/response-transformer/
+                  'X-XSS-Protection': "'1; mode-block'"
+                  'Strict-Transport-Security': "'max-age=31536000; includeSubDomains; preload'"
+                  'X-Frame-Options': "'SAMEORIGIN'"
+                  'X-Content-Type-Options': "'nosniff'"
+                  # note: double escaping because of YAML parsing
+                  'Content-Security-Policy': "'default-src \\'self\\''"
+                  'Access-Control-Allow-Origin': "'*.surf.nl'"
+                  'Referrer-Policy': "'no-referrer-when-downgrade'"
+
+      - aggregation:
+          - action:
+              noEnvelopIfAnyHeaders:
+                'X-Validate-Response': 'true'
+                'X-Envelope-Response': 'false'
+              keepRequestHeaders:
+                - 'accept-language'
+                - 'accept'
+                - 'traceparent'
+              keepResponseHeaders:
+                - 'content-type'
+                - 'content-length'
+                - 'traceparent'
+              proxyOptions:
+                proxyTimeout: 2000
+  not_found:
+    apiEndpoints:
+      - not_found
+    policies:
+      - metrics-collector:
+      - lifecycle-logger:
+      - terminate:
+          - action:
+              statusCode: 404
+              message: "Not found"

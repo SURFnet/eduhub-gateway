@@ -32,7 +32,7 @@ const TEST_ECHO_BACKEND_PORT = 9085
 const TEST_BAD_BACKEND_PORT = 9086
 const TEST_SLOW_BACKEND_PORT = 9087
 const REDIS_PORT = 6379
-const TEST_OOAPI_V5 = process.env.TEST_OOAPI_V5
+const TEST_OOAPI_VERSION = parseInt(process.env.TEST_OOAPI_VERSION || '4')
 
 const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
 const TEST_BACKEND_URL = `http://localhost:${TEST_BACKEND_PORT}/`
@@ -139,7 +139,7 @@ module.exports = {
       image
         .withName(name)
         .withEnvironment({
-          EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_V5 ? 5 : 4}.yml`,
+          EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_VERSION}.yml`,
           OOAPI_TEST_BACKEND_URL: TEST_BACKEND_CONTAINER_URL,
           OOAPI_OTHER_TEST_BACKEND_URL: OTHER_TEST_BACKEND_CONTAINER_URL,
           MOCK_OAUTH_TOKEN_URL: MOCK_OAUTH_TOKEN_CONTAINER_URL,
@@ -166,8 +166,8 @@ module.exports = {
         .start()
     )
 
-    gw = await startGw(`ooapi-gateway-v${TEST_OOAPI_V5 ? 5 : 4}`)
-    otherGw = await startGw(`ooapi-othergateway-v${TEST_OOAPI_V5 ? 5 : 4}`)
+    gw = await startGw(`ooapi-gateway-v${TEST_OOAPI_VERSION}`)
+    otherGw = await startGw(`ooapi-othergateway-v${TEST_OOAPI_VERSION}`)
 
     if (process.env.MOCHA_LOG_GW_TO_CONSOLE) {
       const stream = await gw.logs()
@@ -226,7 +226,7 @@ module.exports = {
   OTHER_TEST_BACKEND_URL,
   MOCK_OAUTH_TOKEN_CONTAINER_URL,
   MOCK_OAUTH_TOKEN_URL,
-  TEST_OOAPI_V5,
+  TEST_OOAPI_VERSION,
 
   sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms))
 }
