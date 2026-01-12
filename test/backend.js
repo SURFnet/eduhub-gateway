@@ -44,8 +44,13 @@ module.exports = {
       index: 'index.json',
       extensions: ['json'],
       forwardError: true,
-      redirect: true
+      redirect: true,
+      fallthrough: true
     }))
+    app.use(function (req, res, next) { // return empty json if no static content was provided
+      res.setHeader('content-type', 'application/json')
+      res.send('{}')
+    })
     return app.listen(port)
   }
 }
