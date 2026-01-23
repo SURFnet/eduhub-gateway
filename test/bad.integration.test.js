@@ -55,4 +55,32 @@ integrationContext('endpoint timeouts', function () {
       assert.equal('Malformed X-Route header', res.body)
     })
   })
+
+  describe('duplicate x-routes headers', () => {
+    it('response status code is BadRequest', async () => {
+      const res = await httpGet(gatewayUrl('fred', '/'), {
+        headers: {
+          'X-Route': [
+            'endpoint=Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend'
+          ]
+        }
+      })
+
+      assert.equal(res.statusCode, httpcode.BadRequest)
+      assert.equal('Malformed X-Route header', res.body)
+    })
+  })
 })

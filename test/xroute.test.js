@@ -48,5 +48,29 @@ describe('xroute', () => {
     it('deduplicates list of endpoints', () => {
       assert.deepStrictEqual(decode('endpoint=foo,bar,foo'), ['foo', 'bar'])
     })
+
+    it('do not allow multiple headers', () => {
+      assert.throws(() => {
+        decode(
+          // note: http server will convert multiple headers into comma separated values
+          [
+            'endpoint=Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend',
+            'endpoint=Other-Test.Backend'
+          ].join(', '),
+          true)
+      }, MalformedHeader)
+    })
   })
 })
