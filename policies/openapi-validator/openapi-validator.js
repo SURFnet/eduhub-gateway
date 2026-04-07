@@ -46,13 +46,8 @@ module.exports = ({ apiSpec, validateRequests, validateResponses }) => {
   )
 
   const middlewareStack = []
-
-  if (validateRequests) {
-    middlewareStack.push(makeValidateRequestMiddleware(validatorFn))
-  }
-  if (validateResponses) {
-    middlewareStack.push(makeValidateResponseMiddleware(validatorFn))
-  }
+  middlewareStack.push(makeValidateRequestMiddleware(validatorFn, validateRequests))
+  middlewareStack.push(makeValidateResponseMiddleware(validatorFn, validateResponses))
 
   return squashMiddlewareStack(middlewareStack)
 }

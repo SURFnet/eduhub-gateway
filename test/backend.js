@@ -24,8 +24,8 @@ module.exports = {
       // check that incoming request accept header
       // is exactly correct
 
-      if (req.headers.accept !== 'application/json') {
-        console.log('accept header not application/json', req.headers)
+      if (req.headers.accept !== 'application/json' && !req.headers.accept.startsWith('application/vnd.oeapi+json')) {
+        console.log('accept header not application/json or application/vnd.oeapi+json', req.headers)
         return res.status(status.NotAcceptable).send('Not acceptable')
       }
 

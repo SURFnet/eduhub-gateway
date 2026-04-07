@@ -32,7 +32,7 @@ const TEST_ECHO_BACKEND_PORT = 9085
 const TEST_BAD_BACKEND_PORT = 9086
 const TEST_SLOW_BACKEND_PORT = 9087
 const REDIS_PORT = 6379
-const TEST_OOAPI_VERSION = parseInt(process.env.TEST_OOAPI_VERSION || '4')
+const TEST_OOAPI_VERSION = process.env.TEST_OOAPI_VERSION || '4'
 
 const TEST_BACKEND_CONTAINER_URL = `http://host.testcontainers.internal:${TEST_BACKEND_PORT}/`
 const TEST_BACKEND_URL = `http://localhost:${TEST_BACKEND_PORT}/`
@@ -137,7 +137,7 @@ module.exports = {
 
     const startGw = async (name) => (
       image
-        .withName(name)
+        .withName(name.replaceAll(/[^a-zA-Z0-9_.-]/g, '_')) // replace invalid chars in container name
         .withEnvironment({
           EG_GATEWAY_CONFIG_PATH: `/shared-config/gateway.config.v${TEST_OOAPI_VERSION}.yml`,
           OOAPI_TEST_BACKEND_URL: TEST_BACKEND_CONTAINER_URL,

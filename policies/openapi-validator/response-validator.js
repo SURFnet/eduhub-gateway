@@ -63,11 +63,14 @@ const makeValidator = (validatorFn) => {
   }
 }
 
-const makeValidateResponseMiddleware = (validator) => {
+const makeValidateResponseMiddleware = (validator, validateResponses) => {
   return modifyResponse(
     (req, res) => {
       // This should return true if the response body is to be validated
-      return res.statusCode === httpcode.OK && req.headers['x-validate-response'] === 'true'
+      return res.statusCode === httpcode.OK &&
+        req.headers['x-validate-response'] === 'true' &&
+        (validateResponses === true ||
+         (validateResponses !== false && req.egContext.run(validateResponses)))
     },
     makeValidator(validator)
   )

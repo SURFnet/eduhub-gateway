@@ -18,23 +18,27 @@ const { ValidationError } = require('express-openapi-validate')
 
 const httpcode = require('../../lib/httpcode')
 
-const makeValidateRequestMiddleware = (validatorFn) => {
+const makeValidateRequestMiddleware = (validatorFn, validateRequests) => {
   return (req, res, next) => {
-    validatorFn().match()(req, res, (err) => {
-      if (err instanceof ValidationError) {
-        res.set('content-type', 'application/json')
-        res.status(httpcode.BadRequest)
-        res.send(JSON.stringify({ message: err.message, data: err.data }))
-        res.error_msg = err.message // we log res.error_msg in lifecycle logger
-      } else if (err instanceof Error) {
-        res.set('content-type', 'text/plain')
-        res.status(httpcode.InternalServerError)
-        res.error_msg = err.message // we log res.error_msg in lifecycle logger
-        res.send(err.message)
-      } else {
-        next(err)
-      }
-    })
+    if (validateRequests === true || (validateRequests !== false && req.egContext.run(validateRequests))) {
+      validatorFn().match()(req, res, (err) => {
+        if (err instanceof ValidationError) {
+          res.set('content-type', 'application/json')
+          res.status(httpcode.BadRequest)
+          res.send(JSON.stringify({ message: err.message, data: err.data }))
+          res.error_msg = err.message // we log res.error_msg in lifecycle logger
+        } else if (err instanceof Error) {
+          res.set('content-type', 'text/plain')
+          res.status(httpcode.InternalServerError)
+          res.error_msg = err.message // we log res.error_msg in lifecycle logger
+          res.send(err.message)
+        } else {
+          next(err)
+        }
+      })
+    } else {
+      next()
+    }
   }
 }
 
