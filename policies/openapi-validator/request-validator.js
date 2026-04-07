@@ -33,23 +33,27 @@ const sendBadRequest = (res, err) => {
   res.error_msg = err.message // we log res.error_msg in lifecycle logger
 }
 
-const makeValidateRequestMiddleware = (validatorFn) => {
+const makeValidateRequestMiddleware = (validatorFn, validateRequests) => {
   return (req, res, next) => {
-    try {
-      validatorFn().match()(req, res, (err) => {
-        if (err !== undefined) {
-          // err is always a ValidationError object
+    if (validateRequests === true || (validateRequests !== false && req.egContext.run(validateRequests))) {
+      try {
+        validatorFn().match()(req, res, (err) => {
+          if (err !== undefined) {
+            // err is always a ValidationError object
+            sendBadRequest(res, err)
+          } else {
+            next()
+          }
+        })
+      } catch (err) {
+        if (isMatchError(err)) {
           sendBadRequest(res, err)
         } else {
-          next()
+          throw err
         }
-      })
-    } catch (err) {
-      if (isMatchError(err)) {
-        sendBadRequest(res, err)
-      } else {
-        throw err
       }
+    } else {
+      next()
     }
   }
 }

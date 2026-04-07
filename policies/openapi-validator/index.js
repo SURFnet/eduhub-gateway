@@ -25,14 +25,15 @@ module.exports = {
         description: 'path to the OpenAPI specification to use'
       },
       validateRequests: {
-        type: 'boolean',
-        description: 'whether to validate requests'
+        anyOf: [{ type: 'boolean' }, { type: 'string' }],
+        description: 'whether to validate requests. Either boolean (always true or false) or a string processed as an Expression'
       },
       validateResponses: {
-        type: 'boolean',
-        description: 'whether to validate responses. If true, and the request includes an `X-Validate-Response true` header, the response will be validated'
+        anyOf: [{ type: 'boolean' }, { type: 'string' }],
+        description: 'whether to validate responses. If true, and the request includes an `X-Validate-Response true` header, the response will be validated.  Either boolean (always true or false) or a string processed as an Expression'
       }
     },
+
     required: ['apiSpec']
   },
 

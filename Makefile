@@ -17,5 +17,12 @@ ooapiv5-full.json:
 ooapiv5.json: ooapiv5-full.json
 	cat $< | sh dev/cleanup-ooapiv5.sh > $@
 
+ooapiv6.json: ooapiv6-full.json
+	cat $< | sh dev/cleanup-ooapiv5.sh > $@
+
+ooapiv6-full.json:
+	(cd ooapi-specification/v6 && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv6-full.json
+
+
 ooapiv4.json:
 	(cd ooapi-specification/v4 && npx @redocly/openapi-cli bundle --ext=json spec.yaml --force) > ooapiv4.json
