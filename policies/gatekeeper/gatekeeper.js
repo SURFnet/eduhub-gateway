@@ -58,15 +58,18 @@ module.exports = (params, config) => {
       const acl = acls[app.user]
 
       if (acl) {
-        authorization.prepareRequestHeaders(acl, req)
         try {
+          authorization.prepareRequestHeaders(acl, req)
           if (authorization.isAuthorized(acl, req)) {
             next()
             return
           }
         } catch (e) {
           if (e instanceof xroute.MalformedHeader) {
-            res.status(httpcode.BadRequest).send('Malformed X-Route header')
+            res.status(httpcode.BadRequest).send(e.message)
+            return
+          } else if (e instanceof authorization.VersionError) {
+            res.status(httpcode.NotAcceptable).send(e.message)
             return
           } else {
             throw e

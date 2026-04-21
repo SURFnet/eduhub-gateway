@@ -52,7 +52,7 @@ integrationContext('endpoint timeouts', function () {
       })
 
       assert.equal(res.statusCode, httpcode.BadRequest)
-      assert.equal('Malformed X-Route header', res.body)
+      assert.equal('Malformed X-Route header \'endpoint=Bad.Backend*\'', res.body)
     })
   })
 })

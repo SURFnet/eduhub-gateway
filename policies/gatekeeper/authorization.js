@@ -33,10 +33,10 @@ const compileMatcher = (paths) => {
 
 const compileAcls = (acls) => (
   acls.reduce((m, { app, endpoints }) => {
-    m[app] = endpoints.reduce((appm, { endpoint, paths }) => {
+    m[app] = endpoints.reduce((appm, { endpoint, paths, versions }) => {
       const matcher = compileMatcher(paths)
       if (matcher) {
-        appm[endpoint] = matcher
+        appm[endpoint] = { versions: new Set(versions || ['5']), matcher }
       }
       return appm
     }, {})
@@ -44,18 +44,74 @@ const compileAcls = (acls) => (
   }, {})
 )
 
+// which versions of the ooapi are allowed
+const allowedVersions = (acl, endpoints) => {
+  return endpoints.reduce((versions, endpoint) => {
+    if (versions) {
+      // if acl has no versions, we will ignore it
+      if (acl[endpoint] && acl[endpoint].versions) {
+        return versions.intersection(acl[endpoint].versions)
+      }
+      return versions
+    } else {
+      return acl[endpoint] && acl[endpoint].versions
+    }
+  }, new Set(['4', '5', '6']))
+}
+
+class VersionError extends Error {}
+
 const prepareRequestHeaders = (acl, req) => {
   if (!req.headers['x-route']) {
     req.headers['x-route'] = xroute.encode(Object.keys(acl))
   }
+  if (!req.headers.accept) {
+    const endpoints = xroute.decode(req.headers['x-route'], true)
+    const allowed = allowedVersions(acl, endpoints)
+    if ((!allowed) || allowed.size === 0) {
+      throw new VersionError('No single OOAPI version allowed for these combined endpoints')
+    } else if (allowed.size === 1) {
+      if (allowed.has('5') || allowed.has('4')) {
+        req.headers.accept = 'application/json'
+      } else if (allowed.has('6')) {
+        req.headers.accept = 'application/vnd.oeapi+json;version=6'
+      }
+    } else {
+      throw new VersionError(`Multiple OOAPI versions allowed; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
+    }
+  }
+}
+
+const ooapiVersionFromRequest = (req) => {
+  const accept = req.headers.accept
+  if (!accept) {
+    return null
+  } else if (accept.startsWith('application/json')) {
+    return '5'
+  } else {
+    const res = accept.match(/^application\/vnd.oeapi\+json\s*;\s*version=(\d+).*/)
+    if (res) {
+      return res[1]
+    }
+  }
+  return null
 }
 
 const isAuthorized = (acl, req) => {
   const endpoints = xroute.decode(req.headers['x-route'], true)
+  const version = ooapiVersionFromRequest(req)
+  if (!version) {
+    throw new VersionError(`Unable to determine OOAPI Version from Accept header '${req.headers.accept}'`)
+  }
 
   if (endpoints.length) {
     return endpoints.reduce(
-      (m, endpoint) => m && !!acl[endpoint] && !!acl[endpoint](req.path),
+      (m, endpoint) => {
+        if (acl[endpoint] && acl[endpoint].versions && (!acl[endpoint].versions.has(version))) {
+          throw new VersionError(`Accepted version '${version}' is not available for endpoints`)
+        }
+        return m && !!acl[endpoint] && !!acl[endpoint].matcher(req.path)
+      },
       true
     )
   } else {
@@ -66,5 +122,6 @@ const isAuthorized = (acl, req) => {
 module.exports = {
   compileAcls,
   prepareRequestHeaders,
-  isAuthorized
+  isAuthorized,
+  VersionError
 }

@@ -92,6 +92,7 @@ describe('gatekeeper', () => {
     it('returns Forbidden with known auth credentials but bad endpoint', () => {
       middleware({
         headers: {
+          accept: 'application/json',
           authorization: auth(testCredentials.fred),
           'x-route': 'endpoint=betty'
         },

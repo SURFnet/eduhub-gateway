@@ -141,6 +141,11 @@ pipelines:
     policies:
       - metrics-collector:
       - lifecycle-logger:
+      - request-transformer:
+          - action:
+              headers:
+                add:
+                  'Accept': '"application/json"' # before gatekeeper, to force ooapi v4/v5 semantics
       - gatekeeper:
           - action:
               apps:
@@ -203,6 +208,8 @@ pipelines:
                       paths: ['/', '/programs', '/courses', '/courses/:courseId']
                     - endpoint: 'Unavailable-Test.Backend'
                       paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                    - endpoint: 'Echo.Backend'
+                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
@@ -222,11 +229,6 @@ pipelines:
                     - endpoint: 'OtherSlow.Backend'
                       paths: ['/']
 
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  'Accept': '"application/json"'
       - response-transformer:
           - action:
               headers:

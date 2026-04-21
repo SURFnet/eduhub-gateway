@@ -27,14 +27,17 @@ describe('gatekeeper/authorization', () => {
       endpoints: [
         {
           endpoint: 'wilma',
+          versions: ['5'],
           paths: ['/foo', '/foo/:id', '/bar', '/zoo/:id']
         },
         {
           endpoint: 'betty',
+          versions: ['5'],
           paths: ['/foo']
         },
         {
           endpoint: 'bubbles', // endpoint without paths should be ignored by compiler
+          versions: ['5'],
           paths: []
         }
       ]
@@ -62,15 +65,20 @@ describe('gatekeeper/authorization', () => {
 
   describe('prepareRequestHeaders', () => {
     it('added x-route header when missing', () => {
-      const req = { headers: {} }
+      const req = { headers: { accept: 'application/json' } }
       prepareRequestHeaders(acls.fred, req)
       assert.equal('endpoint=wilma,betty', req.headers['x-route'])
     })
 
     it('does nothing when x-route header already exists', () => {
-      const req = { headers: { 'x-route': 'Yabba Dabba Doo!' } }
+      const req = {
+        headers: {
+          'x-route': 'endpoint=YabbaDabbaDoo',
+          accept: 'application/json'
+        }
+      }
       prepareRequestHeaders(acls.fred, req)
-      assert.equal('Yabba Dabba Doo!', req.headers['x-route'])
+      assert.equal('endpoint=YabbaDabbaDoo', req.headers['x-route'])
     })
   })
   describe('isAuthorized', () => {
@@ -94,57 +102,57 @@ describe('gatekeeper/authorization', () => {
       it('returns true when all match', () => {
         assert.equal(
           true,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty', accept: 'application/json' }, path: '/foo' })
         )
         assert.equal(
           true,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/bar' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/bar' })
         )
         assert.equal(
           true,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/foo/1' })
         )
         assert.equal(
           true,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo/1' })
         )
         assert.equal(
           true,
-          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty' }, path: '/bar' })
+          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty', accept: 'application/json' }, path: '/bar' })
         )
         assert.equal(
           true,
-          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty' }, path: '/foo/1' })
+          isAuthorized(acls.barney, { headers: { 'x-route': 'endpoint=betty', accept: 'application/json' }, path: '/foo/1' })
         )
       })
 
       it('returns false when not supported on all endpoints', () => {
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty,creepella' }, path: '/foo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty,creepella', accept: 'application/json' }, path: '/foo' })
         )
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/foo/1' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty', accept: 'application/json' }, path: '/foo/1' })
         )
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty' }, path: '/bar' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma,betty', accept: 'application/json' }, path: '/bar' })
         )
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=bubbles' }, path: '/' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=bubbles', accept: 'application/json' }, path: '/' })
         )
       })
 
       it('returns false when path does not match', () => {
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/foo/bar/zoo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/foo/bar/zoo' })
         )
         assert.equal(
           false,
-          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma' }, path: '/zoo' })
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo' })
         )
       })
     })
