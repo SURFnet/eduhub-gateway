@@ -27,7 +27,7 @@ const {
 
 integrationContext('security headers', function () {
   it('should set required SURF headers', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/courses'))
+    const res = await httpGet(gatewayUrl('fred', '/courses'), { headers: { accept: 'application/json' } })
     const testHeaders = {
       'x-xss-protection': '1; mode-block',
       'strict-transport-security': 'max-age=31536000; includeSubDomains; preload',

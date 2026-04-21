@@ -81,7 +81,8 @@ integrationContext('validation policy', function () {
       gatewayUrl(
         'fred',
         TEST_OOAPI_VERSION === '4' ? '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator' : '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs,coordinators'
-      )
+      ),
+      { headers: { accept: 'application/json' } }
     )
     assert.equal(resMultiple.statusCode, httpcode.OK, resMultiple.body)
 
@@ -89,7 +90,8 @@ integrationContext('validation policy', function () {
       gatewayUrl(
         'fred',
         '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs'
-      )
+      ),
+      { headers: { accept: 'application/json' } }
     )
     assert.equal(resSingle.statusCode, httpcode.OK, resSingle.body)
   })
@@ -103,7 +105,8 @@ integrationContext('validation policy', function () {
         headers: {
           'X-Validate-Response': 'true',
           'X-Route': 'endpoint=Test.Backend',
-          'Accept-Encoding': 'gzip'
+          'Accept-Encoding': 'gzip',
+          Accept: 'application/json'
         }
       })
       assert.equal(res.statusCode, httpcode.OK, res.body)
@@ -118,8 +121,7 @@ integrationContext('validation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=Test.Backend',
-          'Accept-Encoding': 'gzip'
+          'X-Route': 'endpoint=Test.Backend'
         }
       })
       assert.equal(res.statusCode, httpcode.BadGateway)
