@@ -37,7 +37,8 @@ integrationContext('aggregation policy', function () {
   it('should respond with an envelop', async () => {
     const res = await httpGet(gatewayUrl('fred', '/'), {
       headers: {
-        traceparent: '00-dae550beedf26f1f6ecf0bc3914e255e-e1020e167400e0aa-01'
+        traceparent: '00-dae550beedf26f1f6ecf0bc3914e255e-e1020e167400e0aa-01',
+        'x-route': 'endpoint=Test.Backend,Other-Test.Backend,Unavailable-Test.Backend'
       }
     })
     assert.equal(res.statusCode, httpcode.OK)
@@ -142,7 +143,7 @@ integrationContext('aggregation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/'), {
         headers: {
           'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=Test.Backend'
+          'X-Route': 'endpoint=Other-Test.Backend'
         }
       })
       assert.equal(res.statusCode, httpcode.OK)
@@ -169,7 +170,7 @@ integrationContext('aggregation policy', function () {
       const res = await httpGet(gatewayUrl('fred', '/'), {
         headers: {
           'X-Envelope-Response': 'false',
-          'X-Route': 'endpoint=Test.Backend'
+          'X-Route': 'endpoint=Other-Test.Backend'
         }
       })
       assert.equal(res.statusCode, httpcode.OK)
