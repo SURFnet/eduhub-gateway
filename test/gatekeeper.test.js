@@ -48,6 +48,7 @@ describe('gatekeeper', () => {
           endpoints: [
             {
               endpoint: 'wilma',
+              versions: ['5'],
               paths: ['/', '/dinner/:date']
             }
           ]

@@ -337,7 +337,8 @@ integrationContext('validation policy', function () {
           const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
             headers: {
               'X-Route': 'endpoint=Test.Backend',
-              'X-Validate-Response': 'true'
+              'X-Validate-Response': 'true',
+              Accept: 'application/json'
             }
           })
           const summary =

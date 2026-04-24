@@ -31,12 +31,21 @@ const compileMatcher = (paths) => {
   }
 }
 
+const SUPPORTED_VERSIONS = new Set(['5', '6'])
+
+// given the "raw" acls as provided in the gateway configuration,
+// generate a nested map of app-user -> endpoint -> { versions, matcher
+// } objects
+//
+// versions will be a Set of major versions, as strings: "4", "5" etc.
+// and matcher is a function that will take a request path and return
+// a boolean.
 const compileAcls = (acls) => (
   acls.reduce((m, { app, endpoints }) => {
     m[app] = endpoints.reduce((appm, { endpoint, paths, versions }) => {
       const matcher = compileMatcher(paths)
       if (matcher) {
-        appm[endpoint] = { versions: new Set(versions || ['5']), matcher }
+        appm[endpoint] = { versions: versions ? new Set(versions) : DEFAULT_VERSIONS, matcher }
       }
       return appm
     }, {})
@@ -44,7 +53,8 @@ const compileAcls = (acls) => (
   }, {})
 )
 
-// which versions of the ooapi are allowed
+// which versions of the ooapi are allowed for the given collection of
+// endpoints
 const allowedVersions = (acl, endpoints) => {
   return endpoints.reduce((versions, endpoint) => {
     if (versions) {
@@ -56,7 +66,7 @@ const allowedVersions = (acl, endpoints) => {
     } else {
       return acl[endpoint] && acl[endpoint].versions
     }
-  }, new Set(['4', '5', '6']))
+  }, DEFAULT_VERSIONS)
 }
 
 class VersionError extends Error {}
@@ -71,7 +81,7 @@ const prepareRequestHeaders = (acl, req) => {
     if ((!allowed) || allowed.size === 0) {
       throw new VersionError('No single OOAPI version allowed for these combined endpoints')
     } else if (allowed.size === 1) {
-      if (allowed.has('5') || allowed.has('4')) {
+      if (allowed.has('5')) {
         req.headers.accept = 'application/json'
       } else if (allowed.has('6')) {
         req.headers.accept = 'application/vnd.oeapi+json;version=6'
