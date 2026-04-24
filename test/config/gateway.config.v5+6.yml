@@ -367,20 +367,27 @@ pipelines:
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
+                      versions: ['5']
                       paths: ['/', '/courses', '/programs', '/courses/:courseId']
                     - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
+                      versions: ['5']
                       paths: ['/']
                     - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
+                      versions: ['5']
                       paths: ['/']
                 - app: bubbles
                   endpoints:
                     - endpoint: 'Echo.Backend'
+                      versions: ['5']
                       paths: ['/']
                     - endpoint: 'Bad.Backend'
+                      versions: ['5']
                       paths: ['/']
                     - endpoint: 'Slow.Backend'
+                      versions: ['5']
                       paths: ['/']
                     - endpoint: 'OtherSlow.Backend'
+                      versions: ['5']
                       paths: ['/']
 
       - response-transformer:
