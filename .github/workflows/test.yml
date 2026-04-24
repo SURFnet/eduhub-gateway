@@ -1,4 +1,4 @@
-name: test-v5+v6
+name: test
 
 on:
   - push
@@ -17,5 +17,4 @@ jobs:
       with:
         node-version: 22
     - run: npm ci
-    - run: npm run lint
-    - run: npm run test-v5+6
+    - run: make test
