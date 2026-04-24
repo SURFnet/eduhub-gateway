@@ -23,8 +23,7 @@ const {
   httpGet,
   httpPost,
   integrationContext,
-  gatewayUrl,
-  TEST_OOAPI_VERSION
+  gatewayUrl
 } = require('./integration.environment.js')
 
 integrationContext('validation policy', function () {
@@ -80,7 +79,7 @@ integrationContext('validation policy', function () {
     const resMultiple = await httpGet(
       gatewayUrl(
         'fred',
-        TEST_OOAPI_VERSION === '4' ? '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs&expand=coordinator' : '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs,coordinators'
+        '/courses/900d900d-900d-900d-900d-900d900d900d?expand=programs,coordinators'
       ),
       { headers: { accept: 'application/json' } }
     )
@@ -114,22 +113,6 @@ integrationContext('validation policy', function () {
 
       const course = JSON.parse(res.body)
       assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    });
-
-    // v5 response validation is disabled because of problems loading the full ooapi schema
-    (TEST_OOAPI_VERSION === '5+6' ? xit : it)('should respond with BadGateway for an incorrect response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'), {
-        headers: {
-          'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=Test.Backend'
-        }
-      })
-      assert.equal(res.statusCode, httpcode.BadGateway)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const data = JSON.parse(res.body).data
-      assert.equal(data[0].keyword, 'required')
-      assert.equal(data[0].params.missingProperty, 'name')
     })
   })
 
@@ -287,101 +270,37 @@ integrationContext('validation policy', function () {
     '/rooms/{roomId}'
   ]
 
-  PATHS[4] = [
-    // The following paths have been disabled because of known issues
-    // in the v4 spec / examples:
-    //
-    // '/academic-sessions/{academicSessionId}/offerings',
-    // '/components/{componentId}/offerings',
-    // '/offerings/{offeringId}/associations',
-    // '/associations/{associationId}',
-    // '/offerings/{offeringId}',
-    // '/organizations/{organizationId}/offerings',
-    // '/persons/{personId}/associations',
-    // '/programs/{programId}/offerings',
-
-    '/',
-    '/academic-sessions',
-    '/academic-sessions/{academicSessionId}',
-    '/buildings',
-    '/buildings/{buildingId}',
-    '/buildings/{buildingId}/rooms',
-    '/components/{componentId}',
-    '/courses',
-    '/courses/{courseId}',
-    '/courses/{courseId}/components',
-    '/courses/{courseId}/offerings',
-    '/news-feeds',
-    '/news-feeds/{newsFeedId}',
-    '/news-feeds/{newsFeedId}/news-items',
-    '/news-items/{newsItemId}',
-    '/organizations',
-    '/organizations/{organizationId}',
-    '/organizations/{organizationId}/components',
-    '/organizations/{organizationId}/courses',
-    '/organizations/{organizationId}/programs',
-    '/persons',
-    '/persons/{personId}',
-    '/programs',
-    '/programs/{programId}',
-    '/programs/{programId}/courses',
-    '/rooms',
-    '/rooms/{roomId}'
-  ]
-
-  if (TEST_OOAPI_VERSION === '4') {
-    describe('smoketest for every path', () => {
-      (PATHS[4]).forEach((path) => {
-        const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
-        it(`Path '${p}' should give an OK response`, async () => {
-          const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
-            headers: {
-              'X-Route': 'endpoint=Test.Backend',
-              'X-Validate-Response': 'true',
-              Accept: 'application/json'
-            }
-          })
-          const summary =
-                statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
-          assert.deepEqual(summary, { statusCode: httpcode.OK })
+  describe('smoketest for every v5 path', () => {
+    (PATHS[5]).forEach((path) => {
+      const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
+      it(`Path '${p}' should give an OK response`, async () => {
+        const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
+          headers: {
+            Accept: 'application/json',
+            'X-Route': 'endpoint=Test.Backend'
+          }
         })
+        const summary =
+              statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
+        assert.deepEqual(summary, { statusCode: httpcode.OK })
       })
     })
-  }
+  })
 
-  if (TEST_OOAPI_VERSION === '5+6') {
-    describe('smoketest for every v5 path', () => {
-      (PATHS[5]).forEach((path) => {
-        const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
-        it(`Path '${p}' should give an OK response`, async () => {
-          const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
-            headers: {
-              Accept: 'application/json',
-              'X-Route': 'endpoint=Test.Backend'
-            }
-          })
-          const summary =
-                statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
-          assert.deepEqual(summary, { statusCode: httpcode.OK })
+  describe('smoketest for every v6 path', () => {
+    (PATHS[6]).forEach((path) => {
+      const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
+      it(`Path '${p}' should give an OK response`, async () => {
+        const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
+          headers: {
+            Accept: 'application/vnd.oeapi+json;version=6.0',
+            'X-Route': 'endpoint=Test.Backend'
+          }
         })
+        const summary =
+              statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
+        assert.deepEqual(summary, { statusCode: httpcode.OK })
       })
     })
-
-    describe('smoketest for every v6 path', () => {
-      (PATHS[6]).forEach((path) => {
-        const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
-        it(`Path '${p}' should give an OK response`, async () => {
-          const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
-            headers: {
-              Accept: 'application/vnd.oeapi+json;version=6.0',
-              'X-Route': 'endpoint=Test.Backend'
-            }
-          })
-          const summary =
-                statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
-          assert.deepEqual(summary, { statusCode: httpcode.OK })
-        })
-      })
-    })
-  }
+  })
 })
