@@ -45,7 +45,7 @@ const compileAcls = (acls) => (
     m[app] = endpoints.reduce((appm, { endpoint, paths, versions }) => {
       const matcher = compileMatcher(paths)
       if (matcher) {
-        appm[endpoint] = { versions: versions ? new Set(versions) : DEFAULT_VERSIONS, matcher }
+        appm[endpoint] = { versions: versions ? new Set(versions) : SUPPORTED_VERSIONS, matcher }
       }
       return appm
     }, {})
@@ -66,7 +66,7 @@ const allowedVersions = (acl, endpoints) => {
     } else {
       return acl[endpoint] && acl[endpoint].versions
     }
-  }, DEFAULT_VERSIONS)
+  }, SUPPORTED_VERSIONS)
 }
 
 class VersionError extends Error {}
