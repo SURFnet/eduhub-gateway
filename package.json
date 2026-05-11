@@ -29,7 +29,7 @@
     "yargs": "^18.0.0"
   },
   "dependencies": {
-    "ajv-formats": "2.1.1",
+    "ajv-formats": "3.0.1",
     "express-gateway-lite": "file:vendor/express-gateway-lite",
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.6.1",
