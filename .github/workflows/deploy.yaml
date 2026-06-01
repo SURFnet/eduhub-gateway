@@ -11,6 +11,8 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v4.1.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Docker meta
@@ -42,3 +44,14 @@ jobs:
         with:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+      - name: Sign image with a key
+        run: |
+          images=""
+          for tag in ${TAGS}; do
+            cosign sign --yes --key env://COSIGN_PRIVATE_KEY ${tag}@${DIGEST} --new-bundle-format=false --use-signing-config=false
+          done
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
