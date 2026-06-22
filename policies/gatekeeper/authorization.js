@@ -31,21 +31,21 @@ const compileMatcher = (paths) => {
   }
 }
 
-const SUPPORTED_VERSIONS = new Set(['5', '6'])
+const DEFAULT_OOAPI_VERSION = '5'
 
 // given the "raw" acls as provided in the gateway configuration,
-// generate a nested map of app-user -> endpoint -> { versions, matcher
-// } objects
+// generate a nested map of app-user -> endpoint ->  version -> matcher
+// objects
 //
-// versions will be a Set of major versions, as strings: "4", "5" etc.
-// and matcher is a function that will take a request path and return
-// a boolean.
+// version is a major version, as string: "4", "5". matcher is a
+// function that will take a request path and returns a boolean.
 const compileAcls = (acls) => (
   acls.reduce((m, { app, endpoints }) => {
-    m[app] = endpoints.reduce((appm, { endpoint, paths, versions }) => {
+    m[app] = endpoints.reduce((appm, { endpoint, paths, version }) => {
       const matcher = compileMatcher(paths)
       if (matcher) {
-        appm[endpoint] = { versions: versions ? new Set(versions) : SUPPORTED_VERSIONS, matcher }
+        appm[endpoint] ||= {}
+        appm[endpoint][version || DEFAULT_OOAPI_VERSION] = matcher
       }
       return appm
     }, {})
@@ -56,17 +56,9 @@ const compileAcls = (acls) => (
 // which versions of the ooapi are allowed for the given collection of
 // endpoints
 const allowedVersions = (acl, endpoints) => {
-  return endpoints.reduce((versions, endpoint) => {
-    if (versions) {
-      // if acl has no versions, we will ignore it
-      if (acl[endpoint] && acl[endpoint].versions) {
-        return versions.intersection(acl[endpoint].versions)
-      }
-      return versions
-    } else {
-      return acl[endpoint] && acl[endpoint].versions
-    }
-  }, SUPPORTED_VERSIONS)
+  return endpoints.slice(1).reduce((versions, endpoint) => {
+    return versions.intersection(new Set(Object.keys(acl[endpoint])))
+  }, new Set(Object.keys(acl[endpoints[0]])))
 }
 
 class VersionError extends Error {}
@@ -117,10 +109,10 @@ const isAuthorized = (acl, req) => {
   if (endpoints.length) {
     return endpoints.reduce(
       (m, endpoint) => {
-        if (acl[endpoint] && acl[endpoint].versions && (!acl[endpoint].versions.has(version))) {
+        if (acl[endpoint] && !acl[endpoint][version]) {
           throw new VersionError(`Accepted version '${version}' is not available for endpoints`)
         }
-        return m && !!acl[endpoint] && !!acl[endpoint].matcher(req.path)
+        return m && !!acl[endpoint] && !!acl[endpoint][version](req.path)
       },
       true
     )

@@ -32,9 +32,24 @@ integrationContext('validation policy', function () {
     assert.equal(res.statusCode, httpcode.OK)
   })
 
-  it('should respond with OK for a correct request for programs', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/programs'))
-    assert.equal(res.statusCode, httpcode.OK)
+  it('should respond with OK for a correct request for programs v5', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programs'), {
+      headers: {
+        accept: 'application/json',
+        'x-route': 'endpoint=Echo.Backend'
+      }
+    })
+    assert.equal(httpcode.OK, res.statusCode)
+  })
+
+  it('should respond with OK for a correct request for programmes v6', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programmes'), {
+      headers: {
+        accept: 'application/vnd.oeapi+json;version=6',
+        'x-route': 'endpoint=Echo.Backend'
+      }
+    })
+    assert.equal(httpcode.OK, res.statusCode)
   })
 
   it('should respond with OK for a correct request with parameter', async () => {
