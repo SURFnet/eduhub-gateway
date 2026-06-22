@@ -21,6 +21,7 @@ const httpcode = require('../lib/httpcode')
 
 const {
   httpGet,
+  httpPost,
   integrationContext,
   gatewayUrl,
   TEST_OOAPI_VERSION
@@ -42,6 +43,14 @@ if (TEST_OOAPI_VERSION < 6) {
     it('should respond with OK for a correct request with parameter', async () => {
       const res = await httpGet(gatewayUrl('fred', '/courses?pageNumber=1'))
       assert.equal(res.statusCode, httpcode.OK)
+    })
+
+    it('should respond with BadRequest when using wrong method', async () => {
+      const res = await httpPost(gatewayUrl('fred', '/courses'), { params: {} })
+      assert.equal(res.statusCode, httpcode.BadRequest)
+
+      const { message } = JSON.parse(res.body)
+      assert.equal(message, 'Path=/courses with method=post not found from OpenAPI document')
     })
 
     it('should respond with BadRequest when specifying a parameter with the wrong format', async () => {

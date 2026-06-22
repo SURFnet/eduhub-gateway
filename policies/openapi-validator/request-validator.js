@@ -14,27 +14,43 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const { ValidationError } = require('express-openapi-validate')
-
 const httpcode = require('../../lib/httpcode')
+
+// OpenApiValidator throws generic Error exceptions when no matching
+// method or path can be found. The `allowNoMatch` is broken and would
+// let not matching requests pass.
+
+const NO_MATCH_RE = /\b(method|path)=/i
+
+const isMatchError = (err) => (
+  err instanceof Error && err.message && NO_MATCH_RE.test(err.message)
+)
+
+const sendBadRequest = (res, err) => {
+  res.set('content-type', 'application/json')
+  res.status(httpcode.BadRequest)
+  res.send(JSON.stringify({ message: err.message, data: err.data }))
+  res.error_msg = err.message // we log res.error_msg in lifecycle logger
+}
 
 const makeValidateRequestMiddleware = (validatorFn) => {
   return (req, res, next) => {
-    validatorFn().match()(req, res, (err) => {
-      if (err instanceof ValidationError) {
-        res.set('content-type', 'application/json')
-        res.status(httpcode.BadRequest)
-        res.send(JSON.stringify({ message: err.message, data: err.data }))
-        res.error_msg = err.message // we log res.error_msg in lifecycle logger
-      } else if (err instanceof Error) {
-        res.set('content-type', 'text/plain')
-        res.status(httpcode.InternalServerError)
-        res.error_msg = err.message // we log res.error_msg in lifecycle logger
-        res.send(err.message)
+    try {
+      validatorFn().match()(req, res, (err) => {
+        if (err !== undefined) {
+          // err is always a ValidationError object
+          sendBadRequest(res, err)
+        } else {
+          next()
+        }
+      })
+    } catch (err) {
+      if (isMatchError(err)) {
+        sendBadRequest(res, err)
       } else {
-        next(err)
+        throw err
       }
-    })
+    }
   }
 }
 
