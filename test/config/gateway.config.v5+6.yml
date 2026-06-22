@@ -237,7 +237,100 @@ pipelines:
                 - app: fred
                   endpoints:
                     - endpoint: 'Test.Backend'
-                      versions:  ['5', '6']
+                      version:  '5'
+                      paths:
+                        - '/'
+                        - '/academic-sessions'
+                        - '/academic-sessions/:academicSessionId'
+                        - '/academic-sessions/:academicSessionId/course-offerings'
+                        - '/academic-sessions/:academicSessionId/learning-component-offerings'
+                        - '/academic-sessions/:academicSessionId/offerings'
+                        - '/academic-sessions/:academicSessionId/programme-offerings'
+                        - '/academic-sessions/:academicSessionId/test-component-offerings'
+                        - '/associations/:associationId'
+                        - '/associations/external/me'
+                        - '/buildings'
+                        - '/buildings/:buildingId'
+                        - '/buildings/:buildingId/rooms'
+                        - '/components/:componentId'
+                        - '/components/:componentId/offerings'
+                        - '/course-offering-associations/:courseOfferingAssociationId'
+                        - '/course-offering-associations/external/me'
+                        - '/course-offerings/:courseOfferingId'
+                        - '/course-offerings/:courseOfferingId/course-offering-associations'
+                        - '/course-offerings/:courseOfferingId/groups'
+                        - '/course-offerings/:courseOfferingId/learning-component-offerings'
+                        - '/course-offerings/:courseOfferingId/test-component-offerings'
+                        - '/courses'
+                        - '/courses/:courseId'
+                        - '/courses/:courseId/components'
+                        - '/courses/:courseId/course-offerings'
+                        - '/courses/:courseId/learning-component-offerings'
+                        - '/courses/:courseId/learning-components'
+                        - '/courses/:courseId/offerings'
+                        - '/courses/:courseId/test-component-offerings'
+                        - '/courses/:courseId/test-components'
+                        - '/documents/:documentId'
+                        - '/education-specifications'
+                        - '/education-specifications/:educationSpecificationId'
+                        - '/education-specifications/:educationSpecificationId/courses'
+                        - '/education-specifications/:educationSpecificationId/education-specifications'
+                        - '/education-specifications/:educationSpecificationId/programs'
+                        - '/groups'
+                        - '/groups/:groupId'
+                        - '/groups/:groupId/memberships'
+                        - '/groups/:groupId/memberships/:personId'
+                        - '/groups/:groupId/persons'
+                        - '/learning-components'
+                        - '/learning-components/:learningComponentId'
+                        - '/learning-components/:learningComponentId/learning-component-offerings'
+                        - '/learning-outcomes'
+                        - '/learning-outcomes/:learningOutcomeId'
+                        - '/news-feeds'
+                        - '/news-feeds/:newsFeedId'
+                        - '/news-feeds/:newsFeedId/news-items'
+                        - '/news-items/:newsItemId'
+                        - '/offerings/:offeringId'
+                        - '/offerings/:offeringId/associations'
+                        - '/offerings/:offeringId/groups'
+                        - '/organisations'
+                        - '/organisations/:organisationId'
+                        - '/organisations/:organisationId/course-offerings'
+                        - '/organisations/:organisationId/courses'
+                        - '/organisations/:organisationId/groups'
+                        - '/organisations/:organisationId/learning-component-offerings'
+                        - '/organisations/:organisationId/learning-components'
+                        - '/organisations/:organisationId/programme-offerings'
+                        - '/organisations/:organisationId/programmes'
+                        - '/organisations/:organisationId/test-component-offerings'
+                        - '/organisations/:organisationId/test-components'
+                        - '/organizations'
+                        - '/organizations/:organizationId'
+                        - '/organizations/:organizationId/components'
+                        - '/organizations/:organizationId/courses'
+                        - '/organizations/:organizationId/education-specifications'
+                        - '/organizations/:organizationId/groups'
+                        - '/organizations/:organizationId/offerings'
+                        - '/organizations/:organizationId/programs'
+                        - '/persons'
+                        - '/persons'
+                        - '/persons/:personId'
+                        - '/persons/:personId/associations'
+                        - '/persons/:personId/course-offering-associations'
+                        - '/persons/:personId/groups'
+                        - '/persons/:personId/learning-component-offering-associations'
+                        - '/persons/:personId/programme-offering-associations'
+                        - '/persons/:personId/test-component-offering-associations'
+                        - '/persons/me'
+                        - '/programs'
+                        - '/programs/:programId'
+                        - '/programs/:programId/courses'
+                        - '/programs/:programId/offerings'
+                        - '/programs/:programId/programs'
+                        - '/rooms'
+                        - '/rooms/:roomId'
+                    - endpoint: 'Test.Backend'
+                      version: '6'
                       paths:
                         - '/'
                         - '/academic-sessions'
@@ -336,11 +429,6 @@ pipelines:
                         - '/programmes/:programmeId/courses'
                         - '/programmes/:programmeId/programme-offerings'
                         - '/programmes/:programmeId/programmes'
-                        - '/programs'
-                        - '/programs/:programId'
-                        - '/programs/:programId/courses'
-                        - '/programs/:programId/offerings'
-                        - '/programs/:programId/programs'
                         - '/rooms'
                         - '/rooms/:roomId'
                         - '/test-component-offering-associations-attempt/:testComponentOfferingAssociationAttemptId'
@@ -355,39 +443,42 @@ pipelines:
                         - '/test-components/:testComponentId'
                         - '/test-components/:testComponentId/test-component-offerings'
                     - endpoint: 'Other-Test.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/', '/courses', '/programs', '/courses/:courseId']
                     - endpoint: 'Unavailable-Test.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/', '/programs', '/courses', '/courses/:courseId']
                     - endpoint: 'Echo.Backend'
-                      versions: ['5', '6']
-                      paths: ['/', '/programs', '/programmes', '/courses', '/courses/:courseId']
+                      version: '5'
+                      paths: ['/', '/programs','/courses', '/courses/:courseId']
+                    - endpoint: 'Echo.Backend'
+                      version: '6'
+                      paths: ['/', '/programmes', '/courses', '/courses/:courseId']
 
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/', '/courses', '/programs', '/courses/:courseId']
                     - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
                 - app: bubbles
                   endpoints:
                     - endpoint: 'Echo.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'Bad.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'Slow.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'OtherSlow.Backend'
-                      versions: ['5']
+                      version: '5'
                       paths: ['/']
 
       - response-transformer:

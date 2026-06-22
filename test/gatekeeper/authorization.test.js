@@ -27,17 +27,17 @@ describe('gatekeeper/authorization', () => {
       endpoints: [
         {
           endpoint: 'wilma',
-          versions: ['5'],
+          version: '5',
           paths: ['/foo', '/foo/:id', '/bar', '/zoo/:id']
         },
         {
           endpoint: 'betty',
-          versions: ['5'],
+          version: '5',
           paths: ['/foo']
         },
         {
           endpoint: 'bubbles', // endpoint without paths should be ignored by compiler
-          versions: ['5'],
+          version: '5',
           paths: []
         }
       ]
@@ -50,12 +50,28 @@ describe('gatekeeper/authorization', () => {
           paths: ['/foo', '/foo/:id', '/bar']
         }
       ]
+    },
+    {
+      app: 'bubbles',
+      endpoints: [
+        {
+          version: '6',
+          endpoint: 'betty',
+          paths: ['/foo', '/bar']
+        },
+        {
+          version: '5',
+          endpoint: 'betty',
+          paths: ['/bar', '/baz']
+        }
+
+      ]
     }
   ])
 
   describe('compileAcls', () => {
     it('maps apps and endpoints to matchers', () => {
-      assert.deepEqual(Object.keys(acls), ['fred', 'barney'])
+      assert.deepEqual(Object.keys(acls), ['fred', 'barney', 'bubbles'])
       assert(acls.fred.wilma)
       assert(acls.fred.betty)
       assert(acls.barney.betty)
@@ -153,6 +169,30 @@ describe('gatekeeper/authorization', () => {
         assert.equal(
           false,
           isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo' })
+        )
+      })
+
+      it('is allowed if correct version is provided', () => {
+        assert.equal(
+          true,
+          isAuthorized(acls.bubbles, { headers: { 'x-route': 'endpoint=betty', accept: 'application/json' }, path: '/baz' })
+        )
+
+        assert.equal(
+          true,
+          isAuthorized(acls.bubbles, { headers: { 'x-route': 'endpoint=betty', accept: 'application/vnd.oeapi+json;version=6' }, path: '/foo' })
+        )
+      })
+
+      it('is forbidden if incorrect version is provided', () => {
+        assert.equal(
+          false,
+          isAuthorized(acls.bubbles, { headers: { 'x-route': 'endpoint=betty', accept: 'application/json' }, path: '/foo' })
+        )
+
+        assert.equal(
+          false,
+          isAuthorized(acls.bubbles, { headers: { 'x-route': 'endpoint=betty', accept: 'application/vnd.oeapi+json;version=6' }, path: '/baz' })
         )
       })
     })
