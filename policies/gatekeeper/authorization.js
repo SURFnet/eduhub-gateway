@@ -77,6 +77,8 @@ const prepareRequestHeaders = (acl, req) => {
         req.headers.accept = 'application/json'
       } else if (allowed.has('6')) {
         req.headers.accept = 'application/vnd.oeapi+json;version=6'
+      } else {
+        throw new VersionError(`No supported OOAPI version; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
       }
     } else {
       throw new VersionError(`Multiple OOAPI versions allowed; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
@@ -109,10 +111,14 @@ const isAuthorized = (acl, req) => {
   if (endpoints.length) {
     return endpoints.reduce(
       (m, endpoint) => {
-        if (acl[endpoint] && !acl[endpoint][version]) {
-          throw new VersionError(`Accepted version '${version}' is not available for endpoints`)
+        // throw version error if there IS an ACL for this
+        // app-endpoint combo, but not with the accepted version
+        if (acl?.[endpoint] && !acl[endpoint][version]) {
+          throw new VersionError(`Accepted version '${version}' is not available for endpoint '${endpoint}'`)
+        } else {
+          // otherwise, do a regular authorization check
+          return m && !!acl?.[endpoint]?.[version]?.(req.path)
         }
-        return m && !!acl[endpoint] && !!acl[endpoint][version](req.path)
       },
       true
     )
