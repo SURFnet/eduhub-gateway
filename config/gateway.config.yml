@@ -1,5 +1,6 @@
 http: # remove http section in production environment
   port: 8080
+  host: localhost
 admin:
   port: 9876
   host: localhost
@@ -10,55 +11,134 @@ apiEndpoints:
   api:
     # all matching paths should be specified including any template
     # params as used in the ooapi spec
+    #
+    # These are the combined paths for OEAPI v5 and OEAPI v6
     paths:
        - '/'
        - '/academic-sessions'
        - '/academic-sessions/:academicSessionId'
+       - '/academic-sessions/:academicSessionId/course-offerings'
+       - '/academic-sessions/:academicSessionId/learning-component-offerings'
        - '/academic-sessions/:academicSessionId/offerings'
+       - '/academic-sessions/:academicSessionId/programme-offerings'
+       - '/academic-sessions/:academicSessionId/test-component-offerings'
        - '/associations/:associationId'
+       - '/associations/external/me'
        - '/buildings'
        - '/buildings/:buildingId'
        - '/buildings/:buildingId/rooms'
        - '/components/:componentId'
        - '/components/:componentId/offerings'
+       - '/course-offering-associations/:courseOfferingAssociationId'
+       - '/course-offering-associations/external/me'
+       - '/course-offerings/:courseOfferingId'
+       - '/course-offerings/:courseOfferingId/course-offering-associations'
+       - '/course-offerings/:courseOfferingId/groups'
+       - '/course-offerings/:courseOfferingId/learning-component-offerings'
+       - '/course-offerings/:courseOfferingId/test-component-offerings'
        - '/courses'
        - '/courses/:courseId'
        - '/courses/:courseId/components'
+       - '/courses/:courseId/course-offerings'
+       - '/courses/:courseId/learning-component-offerings'
+       - '/courses/:courseId/learning-components'
        - '/courses/:courseId/offerings'
+       - '/courses/:courseId/test-component-offerings'
+       - '/courses/:courseId/test-components'
+       - '/documents/:documentId'
+       - '/education-specifications'
+       - '/education-specifications/:educationSpecificationId'
+       - '/education-specifications/:educationSpecificationId/courses'
+       - '/education-specifications/:educationSpecificationId/education-specifications'
+       - '/education-specifications/:educationSpecificationId/programs'
+       - '/groups'
+       - '/groups/:groupId'
+       - '/groups/:groupId/memberships'
+       - '/groups/:groupId/memberships/:personId'
+       - '/groups/:groupId/persons'
+       - '/learning-component-offering-associations/:learningComponentOfferingAssociationId'
+       - '/learning-component-offerings/:learningComponentOfferingId'
+       - '/learning-component-offerings/:learningComponentOfferingId/groups'
+       - '/learning-component-offerings/:learningComponentOfferingId/learning-component-offering-associations'
+       - '/learning-components'
+       - '/learning-components/:learningComponentId'
+       - '/learning-components/:learningComponentId/learning-component-offerings'
+       - '/learning-outcomes'
+       - '/learning-outcomes/:learningOutcomeId'
        - '/news-feeds'
        - '/news-feeds/:newsFeedId'
        - '/news-feeds/:newsFeedId/news-items'
        - '/news-items/:newsItemId'
        - '/offerings/:offeringId'
        - '/offerings/:offeringId/associations'
+       - '/offerings/:offeringId/groups'
+       - '/organisations'
+       - '/organisations/:organisationId'
+       - '/organisations/:organisationId/course-offerings'
+       - '/organisations/:organisationId/courses'
+       - '/organisations/:organisationId/groups'
+       - '/organisations/:organisationId/learning-component-offerings'
+       - '/organisations/:organisationId/learning-components'
+       - '/organisations/:organisationId/programme-offerings'
+       - '/organisations/:organisationId/programmes'
+       - '/organisations/:organisationId/test-component-offerings'
+       - '/organisations/:organisationId/test-components'
        - '/organizations'
        - '/organizations/:organizationId'
        - '/organizations/:organizationId/components'
        - '/organizations/:organizationId/courses'
-       - '/organizations/:organizationId/programs'
+       - '/organizations/:organizationId/education-specifications'
+       - '/organizations/:organizationId/groups'
        - '/organizations/:organizationId/offerings'
+       - '/organizations/:organizationId/programs'
+       - '/persons'
        - '/persons'
        - '/persons/:personId'
        - '/persons/:personId/associations'
+       - '/persons/:personId/course-offering-associations'
+       - '/persons/:personId/groups'
+       - '/persons/:personId/learning-component-offering-associations'
+       - '/persons/:personId/programme-offering-associations'
+       - '/persons/:personId/test-component-offering-associations'
+       - '/persons/me'
+       - '/programme-offering-associations/:programmeOfferingAssociationId'
+       - '/programme-offering-associations/external/me'
+       - '/programme-offerings/:programmeOfferingId'
+       - '/programme-offerings/:programmeOfferingId/groups'
+       - '/programme-offerings/:programmeOfferingId/programme-offering-associations'
+       - '/programmes'
+       - '/programmes/:programmeId'
+       - '/programmes/:programmeId/courses'
+       - '/programmes/:programmeId/programme-offerings'
+       - '/programmes/:programmeId/programmes'
        - '/programs'
        - '/programs/:programId'
        - '/programs/:programId/courses'
        - '/programs/:programId/offerings'
+       - '/programs/:programId/programs'
        - '/rooms'
        - '/rooms/:roomId'
+       - '/test-component-offering-associations-attempt/:testComponentOfferingAssociationAttemptId'
+       - '/test-component-offering-associations/:testComponentOfferingAssociationId'
+       - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempt/:testComponentOfferingAssociationAttemptId'
+       - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempts'
+       - '/test-component-offering-associations/:testComponentOfferingAssociationId/url'
+       - '/test-component-offerings/:testComponentOfferingId'
+       - '/test-component-offerings/:testComponentOfferingId/groups'
+       - '/test-component-offerings/:testComponentOfferingId/test-component-offering-associations'
+       - '/test-components'
+       - '/test-components/:testComponentId'
+       - '/test-components/:testComponentId/test-component-offerings'
   not_found: # fallback: needed to track non-matching requests
     paths:
        - '/*'
 serviceEndpoints:
   'Test.Backend':
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
-    # proxyOptions:
-    #   auth: fred:wilma
-    proxyOptionsEncoded: >-
-      9b81c96aaa8172e1b29555a50b78d0ed:eMNq3dYGf+NH9Yy+8zZLK+3l4uSExYzzj8TGyotAPt8=
+    proxyOptions:
+      auth: fred:wilma
   'Other-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
-    # can't provide proxyOptionsEncoded because of use of ${}
     proxyOptions:
       oauth2:
         clientCredentials:
@@ -72,7 +152,6 @@ serviceEndpoints:
     url: 'http://localhost:65535'
   'Bad-Credentials-Oauth-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
-    # can't provide proxyOptionsEncoded because of use of ${}
     proxyOptions:
       oauth2:
         clientCredentials:
@@ -83,27 +162,25 @@ serviceEndpoints:
               client_id: dino
   'ENOTFOUND-OAUTH-URL-Test.Backend':
     url: '${OOAPI_OTHER_TEST_BACKEND_URL:-http://localhost:8083/ooapi/}'
-    # proxyOptions:
-    #   oauth2:
-    #     clientCredentials:
-    #       tokenEndpoint:
-    #         url: 'http://dummy:9999/'
-    #         params:
-    #           grant_type: client_credentials
-    #           client_id: fred
-    #           client_secret: wilma
-    proxyOptionsEncoded: >-
-      b115c681c531d8266ca84b6161465149:S9eu6lmyNDJUasO0heJue25pOBbdY1IdUR9B0XR648/fAOBlUH0cgFNZt/L7Kp5cpZ8rEaB33KCjumWP7PZwLzmQef3yDW2XNMQqgSFK3HNKlUnrYvzF5p6hj8N/7P/EAvuK48L09/Z1Qckeu3LHwOIVe7iAParwtZZRQiwj+Md4EaPRYSixGyDZJ7VmZ3OmYeTJMkJnpuOs802zob6zLp7+jel8PHzcDwfaas+LIn0=
+    proxyOptions:
+      oauth2:
+        clientCredentials:
+          tokenEndpoint:
+            url: 'http://dummy:9999/'
+            params:
+              grant_type: client_credentials
+              client_id: fred
+              client_secret: wilma
   'Echo.Backend':
     url: '${OOAPI_ECHO_BACKEND_URL:-http://localhost:8085/}'
   'Bad.Backend':
     url: '${OOAPI_BAD_BACKEND_URL:-http://localhost:8085/}'
   'Slow.Backend':
     url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
-    # proxyOptions:
-    #   proxyTimeout: 500
-    proxyOptionsEncoded: >-
-      1ad6802a2431e8d09a03f7d9e7dbaf28:VyJb/QWzTZ/2jIU41q0zQGuJdRoZrr0yJ6W/pUE9jq8=
+    proxyOptions:
+      proxyTimeout: 500
+  'OtherSlow.Backend':
+    url: '${OOAPI_SLOW_BACKEND_URL:-http://localhost:8086/}'
 
 policies:
   - basic-auth
@@ -148,8 +225,8 @@ pipelines:
                   passwordSalt: 8b52795e90b598eb022647f17c93ac2b
                   passwordHash: e4c9628c52aead0dcf10330a6864d8bcc78a5a4a463b274bee39cee4cfc0a574
                 barney:
-                  client_name: 'Barney Rubble'
-                  client_schachome: 'barney.rubble'
+                  client_name: 'Bubbles Flintstone'
+                  client_schachome: 'bubbles.flintstone'
                   passwordSalt: 5e5b3fb149fdd06ba9d18edd178d77cb
                   passwordHash: 19d767b82ebb294e3c2008b53a0bcc59140e688baded13eea1794099c869e89f
                 bubbles:
@@ -161,68 +238,250 @@ pipelines:
                 - app: fred
                   endpoints:
                     - endpoint: 'Test.Backend'
+                      version:  '5'
                       paths:
                         - '/'
                         - '/academic-sessions'
                         - '/academic-sessions/:academicSessionId'
+                        - '/academic-sessions/:academicSessionId/course-offerings'
+                        - '/academic-sessions/:academicSessionId/learning-component-offerings'
                         - '/academic-sessions/:academicSessionId/offerings'
+                        - '/academic-sessions/:academicSessionId/programme-offerings'
+                        - '/academic-sessions/:academicSessionId/test-component-offerings'
                         - '/associations/:associationId'
+                        - '/associations/external/me'
                         - '/buildings'
                         - '/buildings/:buildingId'
                         - '/buildings/:buildingId/rooms'
                         - '/components/:componentId'
                         - '/components/:componentId/offerings'
+                        - '/course-offering-associations/:courseOfferingAssociationId'
+                        - '/course-offering-associations/external/me'
+                        - '/course-offerings/:courseOfferingId'
+                        - '/course-offerings/:courseOfferingId/course-offering-associations'
+                        - '/course-offerings/:courseOfferingId/groups'
+                        - '/course-offerings/:courseOfferingId/learning-component-offerings'
+                        - '/course-offerings/:courseOfferingId/test-component-offerings'
                         - '/courses'
                         - '/courses/:courseId'
                         - '/courses/:courseId/components'
+                        - '/courses/:courseId/course-offerings'
+                        - '/courses/:courseId/learning-component-offerings'
+                        - '/courses/:courseId/learning-components'
                         - '/courses/:courseId/offerings'
+                        - '/courses/:courseId/test-component-offerings'
+                        - '/courses/:courseId/test-components'
+                        - '/documents/:documentId'
+                        - '/education-specifications'
+                        - '/education-specifications/:educationSpecificationId'
+                        - '/education-specifications/:educationSpecificationId/courses'
+                        - '/education-specifications/:educationSpecificationId/education-specifications'
+                        - '/education-specifications/:educationSpecificationId/programs'
+                        - '/groups'
+                        - '/groups/:groupId'
+                        - '/groups/:groupId/memberships'
+                        - '/groups/:groupId/memberships/:personId'
+                        - '/groups/:groupId/persons'
+                        - '/learning-components'
+                        - '/learning-components/:learningComponentId'
+                        - '/learning-components/:learningComponentId/learning-component-offerings'
+                        - '/learning-outcomes'
+                        - '/learning-outcomes/:learningOutcomeId'
                         - '/news-feeds'
                         - '/news-feeds/:newsFeedId'
                         - '/news-feeds/:newsFeedId/news-items'
                         - '/news-items/:newsItemId'
                         - '/offerings/:offeringId'
                         - '/offerings/:offeringId/associations'
+                        - '/offerings/:offeringId/groups'
+                        - '/organisations'
+                        - '/organisations/:organisationId'
+                        - '/organisations/:organisationId/course-offerings'
+                        - '/organisations/:organisationId/courses'
+                        - '/organisations/:organisationId/groups'
+                        - '/organisations/:organisationId/learning-component-offerings'
+                        - '/organisations/:organisationId/learning-components'
+                        - '/organisations/:organisationId/programme-offerings'
+                        - '/organisations/:organisationId/programmes'
+                        - '/organisations/:organisationId/test-component-offerings'
+                        - '/organisations/:organisationId/test-components'
                         - '/organizations'
                         - '/organizations/:organizationId'
                         - '/organizations/:organizationId/components'
                         - '/organizations/:organizationId/courses'
-                        - '/organizations/:organizationId/programs'
+                        - '/organizations/:organizationId/education-specifications'
+                        - '/organizations/:organizationId/groups'
                         - '/organizations/:organizationId/offerings'
+                        - '/organizations/:organizationId/programs'
+                        - '/persons'
                         - '/persons'
                         - '/persons/:personId'
                         - '/persons/:personId/associations'
+                        - '/persons/:personId/course-offering-associations'
+                        - '/persons/:personId/groups'
+                        - '/persons/:personId/learning-component-offering-associations'
+                        - '/persons/:personId/programme-offering-associations'
+                        - '/persons/:personId/test-component-offering-associations'
+                        - '/persons/me'
                         - '/programs'
                         - '/programs/:programId'
                         - '/programs/:programId/courses'
                         - '/programs/:programId/offerings'
+                        - '/programs/:programId/programs'
                         - '/rooms'
                         - '/rooms/:roomId'
+                    - endpoint: 'Test.Backend'
+                      version: '6'
+                      paths:
+                        - '/'
+                        - '/academic-sessions'
+                        - '/academic-sessions/:academicSessionId'
+                        - '/academic-sessions/:academicSessionId/course-offerings'
+                        - '/academic-sessions/:academicSessionId/learning-component-offerings'
+                        - '/academic-sessions/:academicSessionId/offerings'
+                        - '/academic-sessions/:academicSessionId/programme-offerings'
+                        - '/academic-sessions/:academicSessionId/test-component-offerings'
+                        - '/associations/:associationId'
+                        - '/associations/external/me'
+                        - '/buildings'
+                        - '/buildings/:buildingId'
+                        - '/buildings/:buildingId/rooms'
+                        - '/components/:componentId'
+                        - '/components/:componentId/offerings'
+                        - '/course-offering-associations/:courseOfferingAssociationId'
+                        - '/course-offering-associations/external/me'
+                        - '/course-offerings/:courseOfferingId'
+                        - '/course-offerings/:courseOfferingId/course-offering-associations'
+                        - '/course-offerings/:courseOfferingId/groups'
+                        - '/course-offerings/:courseOfferingId/learning-component-offerings'
+                        - '/course-offerings/:courseOfferingId/test-component-offerings'
+                        - '/courses'
+                        - '/courses/:courseId'
+                        - '/courses/:courseId/components'
+                        - '/courses/:courseId/course-offerings'
+                        - '/courses/:courseId/learning-component-offerings'
+                        - '/courses/:courseId/learning-components'
+                        - '/courses/:courseId/offerings'
+                        - '/courses/:courseId/test-component-offerings'
+                        - '/courses/:courseId/test-components'
+                        - '/documents/:documentId'
+                        - '/education-specifications'
+                        - '/education-specifications/:educationSpecificationId'
+                        - '/education-specifications/:educationSpecificationId/courses'
+                        - '/education-specifications/:educationSpecificationId/education-specifications'
+                        - '/education-specifications/:educationSpecificationId/programs'
+                        - '/groups'
+                        - '/groups/:groupId'
+                        - '/groups/:groupId/memberships'
+                        - '/groups/:groupId/memberships/:personId'
+                        - '/groups/:groupId/persons'
+                        - '/learning-component-offering-associations/:learningComponentOfferingAssociationId'
+                        - '/learning-component-offerings/:learningComponentOfferingId'
+                        - '/learning-component-offerings/:learningComponentOfferingId/groups'
+                        - '/learning-component-offerings/:learningComponentOfferingId/learning-component-offering-associations'
+                        - '/learning-components'
+                        - '/learning-components/:learningComponentId'
+                        - '/learning-components/:learningComponentId/learning-component-offerings'
+                        - '/learning-outcomes'
+                        - '/learning-outcomes/:learningOutcomeId'
+                        - '/news-feeds'
+                        - '/news-feeds/:newsFeedId'
+                        - '/news-feeds/:newsFeedId/news-items'
+                        - '/news-items/:newsItemId'
+                        - '/offerings/:offeringId'
+                        - '/offerings/:offeringId/associations'
+                        - '/offerings/:offeringId/groups'
+                        - '/organisations'
+                        - '/organisations/:organisationId'
+                        - '/organisations/:organisationId/course-offerings'
+                        - '/organisations/:organisationId/courses'
+                        - '/organisations/:organisationId/groups'
+                        - '/organisations/:organisationId/learning-component-offerings'
+                        - '/organisations/:organisationId/learning-components'
+                        - '/organisations/:organisationId/programme-offerings'
+                        - '/organisations/:organisationId/programmes'
+                        - '/organisations/:organisationId/test-component-offerings'
+                        - '/organisations/:organisationId/test-components'
+                        - '/organizations'
+                        - '/organizations/:organizationId'
+                        - '/organizations/:organizationId/components'
+                        - '/organizations/:organizationId/courses'
+                        - '/organizations/:organizationId/education-specifications'
+                        - '/organizations/:organizationId/groups'
+                        - '/organizations/:organizationId/offerings'
+                        - '/organizations/:organizationId/programs'
+                        - '/persons'
+                        - '/persons'
+                        - '/persons/:personId'
+                        - '/persons/:personId/associations'
+                        - '/persons/:personId/course-offering-associations'
+                        - '/persons/:personId/groups'
+                        - '/persons/:personId/learning-component-offering-associations'
+                        - '/persons/:personId/programme-offering-associations'
+                        - '/persons/:personId/test-component-offering-associations'
+                        - '/persons/me'
+                        - '/programme-offering-associations/:programmeOfferingAssociationId'
+                        - '/programme-offering-associations/external/me'
+                        - '/programme-offerings/:programmeOfferingId'
+                        - '/programme-offerings/:programmeOfferingId/groups'
+                        - '/programme-offerings/:programmeOfferingId/programme-offering-associations'
+                        - '/programmes'
+                        - '/programmes/:programmeId'
+                        - '/programmes/:programmeId/courses'
+                        - '/programmes/:programmeId/programme-offerings'
+                        - '/programmes/:programmeId/programmes'
+                        - '/rooms'
+                        - '/rooms/:roomId'
+                        - '/test-component-offering-associations-attempt/:testComponentOfferingAssociationAttemptId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempt/:testComponentOfferingAssociationAttemptId'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/test-component-offering-association-attempts'
+                        - '/test-component-offering-associations/:testComponentOfferingAssociationId/url'
+                        - '/test-component-offerings/:testComponentOfferingId'
+                        - '/test-component-offerings/:testComponentOfferingId/groups'
+                        - '/test-component-offerings/:testComponentOfferingId/test-component-offering-associations'
+                        - '/test-components'
+                        - '/test-components/:testComponentId'
+                        - '/test-components/:testComponentId/test-component-offerings'
                     - endpoint: 'Other-Test.Backend'
-                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                      version: '5'
+                      paths: ['/', '/courses', '/programs', '/courses/:courseId']
                     - endpoint: 'Unavailable-Test.Backend'
+                      version: '5'
                       paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                    - endpoint: 'Echo.Backend'
+                      version: '5'
+                      paths: ['/', '/programs','/courses', '/courses/:courseId']
+                    - endpoint: 'Echo.Backend'
+                      version: '6'
+                      paths: ['/', '/programmes', '/courses', '/courses/:courseId']
+
                 - app: barney
                   endpoints:
                     - endpoint: 'Other-Test.Backend'
-                      paths: ['/', '/programs', '/courses', '/courses/:courseId']
+                      version: '5'
+                      paths: ['/', '/courses', '/programs', '/courses/:courseId']
                     - endpoint: 'Bad-Credentials-Oauth-Test.Backend'
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'ENOTFOUND-OAUTH-URL-Test.Backend'
+                      version: '5'
                       paths: ['/']
                 - app: bubbles
                   endpoints:
                     - endpoint: 'Echo.Backend'
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'Bad.Backend'
+                      version: '5'
                       paths: ['/']
                     - endpoint: 'Slow.Backend'
+                      version: '5'
+                      paths: ['/']
+                    - endpoint: 'OtherSlow.Backend'
+                      version: '5'
                       paths: ['/']
 
-      - request-transformer:
-          - action:
-              headers:
-                add:
-                  'Accept': '"application/json"'
       - response-transformer:
           - action:
               headers:
@@ -240,24 +499,30 @@ pipelines:
 
       - openapi-validator:
           - action:
-              apiSpec: 'ooapiv4.json'
-              validateRequests: true
-              validateResponses: true
+              apiSpec: 'ooapiv6.json'
+              validateRequests: '/^application\/vnd.oeapi+json\s*;\s*version=6.*/.test(req.headers["accept"])'
+              validateResponses: false # disable, always
 
+      - openapi-validator:
+          - action:
+              apiSpec: 'ooapiv5.json'
+              validateRequests: 'req.headers["accept"].startsWith("application/json")'
+              validateResponses: false # disable, always
+              
       - aggregation:
           - action:
               noEnvelopIfAnyHeaders:
-                'X-Validate-Response': 'true'
                 'X-Envelope-Response': 'false'
               keepRequestHeaders:
                 - 'accept-language'
                 - 'accept'
                 - 'traceparent'
-                - 'x-validate-response' # needed for resp validation
               keepResponseHeaders:
-                - 'traceparent'
                 - 'content-type'
                 - 'content-length'
+                - 'traceparent'
+              proxyOptions:
+                proxyTimeout: 2000
   not_found:
     apiEndpoints:
       - not_found
