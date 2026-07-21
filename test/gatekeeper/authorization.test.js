@@ -80,6 +80,13 @@ describe('gatekeeper/authorization', () => {
   })
 
   describe('prepareRequestHeaders', () => {
+    it('throws correct exception with invalid x-route header', () => {
+      assert.throws(
+        () => {
+          isAuthorized(acls.fred, { path: '/foo', headers: { 'x-route': 'dummy' } })
+        }, MalformedHeader
+      )
+    })
     it('added x-route header when missing', () => {
       const req = { headers: { accept: 'application/json' } }
       prepareRequestHeaders(acls.fred, req)

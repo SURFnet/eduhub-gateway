@@ -65,7 +65,7 @@ class VersionError extends Error {}
 
 const prepareRequestHeaders = (acl, req) => {
   if (!req.headers['x-route']) {
-    req.headers['x-route'] = xroute.encode(Object.keys(acl))
+    req.headers['x-route'] = xroute.encode(Object.keys(acl), true)
   }
   if (!req.headers.accept) {
     const endpoints = xroute.decode(req.headers['x-route'], true)
