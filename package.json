@@ -32,7 +32,7 @@
     "express-modify-response": "1.0.2",
     "express-openapi-validate": "0.6.1",
     "http-proxy-3": "^1.21.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.2.0",
     "path-to-regexp": "^6.3.0",
     "prom-client": "14.2.0",
     "traceparent": "1.0.0"
