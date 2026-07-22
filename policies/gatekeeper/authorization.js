@@ -67,7 +67,9 @@ const prepareRequestHeaders = (acl, req) => {
   if (!req.headers['x-route']) {
     req.headers['x-route'] = xroute.encode(Object.keys(acl), true)
   }
-  if (!req.headers.accept) {
+  // if no or wildcard accept header, and only one version is acceptable for
+  // the current request, set the accept header to that version
+  if (!req.headers.accept || req.headers.accept.match(/^(\*|application)\/\*/)) {
     const endpoints = xroute.decode(req.headers['x-route'], true)
     const allowed = allowedVersions(acl, endpoints)
     if ((!allowed) || allowed.size === 0) {
