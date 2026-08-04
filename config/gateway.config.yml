@@ -500,7 +500,7 @@ pipelines:
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv6.json'
-              validateRequests: '/^application\/vnd.oeapi+json\s*;\s*version=6.*/.test(req.headers["accept"])'
+              validateRequests: '/^application\/vnd.oeapi\+json\s*;\s*version=6.*/.test(req.headers["accept"])'
               validateResponses: false # disable, always
 
       - openapi-validator:
