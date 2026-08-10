@@ -95,7 +95,7 @@ const ooapiVersionFromRequest = (req) => {
   } else if (accept.startsWith('application/json')) {
     return '5'
   } else {
-    const res = accept.match(/^application\/vnd.oeapi\+json\s*;\s*version=(\d+).*/)
+    const res = accept.match(/^application\/vnd\.oeapi\+json\s*;\s*version=(\d+)\b.*/)
     if (res) {
       return res[1]
     }
