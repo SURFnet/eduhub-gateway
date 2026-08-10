@@ -506,9 +506,9 @@ pipelines:
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv5.json'
-              validateRequests: 'req.headers["accept"].startsWith("application/json")'
+              validateRequests: 'req.headers["accept"].startsWith("application/json") || /^application\/vnd.oeapi\+json\s*;\s*version=5.*/.test(req.headers["accept"])'
               validateResponses: false # disable, always
-              
+
       - aggregation:
           - action:
               noEnvelopIfAnyHeaders:
