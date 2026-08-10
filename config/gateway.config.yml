@@ -500,13 +500,13 @@ pipelines:
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv6.json'
-              validateRequests: '/^application\/vnd.oeapi\+json\s*;\s*version=6.*/.test(req.headers["accept"])'
+              validateRequests: '/^application\/vnd\.oeapi\+json\s*;\s*version=6\b.*/.test(req.headers["accept"])'
               validateResponses: false # disable, always
 
       - openapi-validator:
           - action:
               apiSpec: 'ooapiv5.json'
-              validateRequests: 'req.headers["accept"].startsWith("application/json") || /^application\/vnd.oeapi\+json\s*;\s*version=5.*/.test(req.headers["accept"])'
+              validateRequests: 'req.headers["accept"].startsWith("application/json") || /^application\/vnd\.oeapi\+json\s*;\s*version=5\b.*/.test(req.headers["accept"])'
               validateResponses: false # disable, always
 
       - aggregation:
