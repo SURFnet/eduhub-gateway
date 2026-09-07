@@ -131,7 +131,7 @@ apiEndpoints:
        - '/test-components/:testComponentId/test-component-offerings'
   not_found: # fallback: needed to track non-matching requests
     paths:
-       - '/*'
+       - '{/*path}'
 serviceEndpoints:
   'Test.Backend':
     url: '${OOAPI_TEST_BACKEND_URL:-http://localhost:8082}'
