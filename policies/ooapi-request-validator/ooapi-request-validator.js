@@ -21,15 +21,15 @@ const { OpenApiValidator } = require('express-openapi-validate')
 const httpcode = require('../../lib/httpcode')
 const { ooapiVersionFromRequest } = require('../../lib/ooapi')
 
-const sendNotAccepteable = (res, message) => {
-  res.set('content-type', 'application/json')
-  res.status(httpcode.BadRequest)
+const sendNotAcceptable = (res, message) => {
+  res.setHeader('content-type', 'application/json')
+  res.status(httpcode.NotAcceptable)
   res.send(JSON.stringify({ message }))
   res.error_msg = message // we log res.error_msg in lifecycle logger
 }
 
 const sendBadRequest = (res, err) => {
-  res.set('content-type', 'application/json')
+  res.setHeader('content-type', 'application/json')
   res.status(httpcode.BadRequest)
   res.send(JSON.stringify({ message: err.message, data: err.data }))
   res.error_msg = err.message // we log res.error_msg in lifecycle logger
@@ -67,12 +67,12 @@ module.exports = ({ apiSpecs }) => {
     const version = ooapiVersionFromRequest(req)
 
     if (!version) {
-      sendNotAccepteable('No OOAPI version detected')
+      sendNotAcceptable(res, 'No OOAPI version detected')
       return
     }
 
     if (!apiSpecs[version]) {
-      sendNotAccepteable(`OOAPI version ${version} not supported`)
+      sendNotAcceptable(res, `OOAPI version ${version} not supported`)
       return
     }
 

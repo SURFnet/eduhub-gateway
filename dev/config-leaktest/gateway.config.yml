@@ -103,6 +103,13 @@ pipelines:
     policies:
       - metrics-collector:
       - lifecycle-logger:
+
+      - ooapi-request-validator:
+          - action:
+              apiSpecs:
+                  '5': 'ooapiv5.json'
+                  '6': 'ooapiv6.json'
+
       - gatekeeper:
           - action:
               apps:
@@ -190,12 +197,6 @@ pipelines:
                   'Content-Security-Policy': "'default-src \\'self\\''"
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
-
-      - ooapi-request-validator:
-          - action:
-              apiSpecs:
-                '5': 'ooapiv5.json'
-                '6': 'ooapiv6.json'
 
       - aggregation:
           - action:
