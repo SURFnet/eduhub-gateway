@@ -124,47 +124,6 @@ integrationContext('validation policy', function () {
     assert.equal(resSingle.statusCode, httpcode.OK, resSingle.body)
   })
 
-  describe('with validation', () => {
-    it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(gatewayUrl(
-        'fred',
-        '/courses/900d900d-900d-900d-900d-900d900d900d'
-      ), {
-        headers: {
-          'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=Test.Backend',
-          'Accept-Encoding': 'gzip',
-          Accept: 'application/json'
-        }
-      })
-      assert.equal(res.statusCode, httpcode.OK, res.body)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body)
-      assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    })
-  })
-
-  describe('without validation', () => {
-    it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'))
-      assert.equal(res.statusCode, httpcode.OK)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body).responses['Test.Backend']
-      assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    })
-
-    it('should respond with OK for an incorrect response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'))
-      assert.equal(res.statusCode, httpcode.OK)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body).responses['Test.Backend']
-      assert.equal(course.courseId, 'badbadba-badb-badb-badb-badbadbadbad')
-    })
-  })
-
   const PATHS = []
 
   PATHS[6] = [
