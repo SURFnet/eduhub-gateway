@@ -32,20 +32,34 @@ integrationContext('validation policy', function () {
     assert.equal(res.statusCode, httpcode.OK)
   })
 
-  it('should respond with OK for a correct request for programs v5', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/programs'), {
+  it('should respond with NotAcceptable when no acceptable "accept" header set', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/courses'), {
+      headers: { accept: 'rocks/boulders' }
+    })
+    assert.equal(httpcode.NotAcceptable, res.statusCode)
+  })
+
+  it('should respond with NotAcceptable for unsupported version 999', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programmes'), {
+      headers: { accept: 'application/vnd.oeapi+json;version=999' }
+    })
+    assert.equal(httpcode.NotAcceptable, res.statusCode)
+  })
+
+  it('should respond with OK for a correct request for programmes v6', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/courses'), {
       headers: {
-        accept: 'application/json',
+        accept: 'application/vnd.oeapi+json;version=6',
         'x-route': 'endpoint=Echo.Backend'
       }
     })
     assert.equal(httpcode.OK, res.statusCode)
   })
 
-  it('should respond with OK for a correct request for programmes v6', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/programmes'), {
+  it('should respond with OK for a correct request for programs v5', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programs'), {
       headers: {
-        accept: 'application/vnd.oeapi+json;version=6',
+        accept: 'application/json',
         'x-route': 'endpoint=Echo.Backend'
       }
     })

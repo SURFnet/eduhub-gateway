@@ -76,7 +76,7 @@ policies:
   - key-auth
   - lifecycle-logger
   - proxy
-  - openapi-validator
+  - ooapi-request-validator
   - gatekeeper
   - request-transformer
   - response-transformer
@@ -191,20 +191,17 @@ pipelines:
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
 
-      - openapi-validator:
+      - ooapi-request-validator:
           - action:
-              apiSpec: 'ooapiv5.json'
-              validateRequests: true
-              validateResponses: true
+              apiSpecs:
+                '5': 'ooapiv5.json'
+                '6': 'ooapiv6.json'
 
       - aggregation:
           - action:
-              noEnvelopIfAnyHeaders:
-                'X-Validate-Response': 'true'
               keepRequestHeaders:
                 - 'accept-language'
                 - 'accept'
-                - 'x-validate-response' # needed for resp validation
               keepResponseHeaders:
                 - 'content-type'
                 - 'content-length'

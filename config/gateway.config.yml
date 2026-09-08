@@ -189,7 +189,7 @@ policies:
   - key-auth
   - lifecycle-logger
   - proxy
-  - openapi-validator
+  - ooapi-request-validator
   - gatekeeper
   - request-transformer
   - response-transformer
@@ -497,17 +497,11 @@ pipelines:
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
 
-      - openapi-validator:
+      - ooapi-request-validator:
           - action:
-              apiSpec: 'ooapiv6.json'
-              validateRequests: '/^application\/vnd\.oeapi\+json\s*;\s*version=6\b.*/.test(req.headers["accept"])'
-              validateResponses: false # disable, always
-
-      - openapi-validator:
-          - action:
-              apiSpec: 'ooapiv5.json'
-              validateRequests: 'req.headers["accept"].startsWith("application/json") || /^application\/vnd\.oeapi\+json\s*;\s*version=5\b.*/.test(req.headers["accept"])'
-              validateResponses: false # disable, always
+              apiSpecs:
+                '5': 'ooapiv5.json'
+                '6': 'ooapiv6.json'
 
       - aggregation:
           - action:

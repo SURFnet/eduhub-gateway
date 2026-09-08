@@ -16,6 +16,7 @@
 
 const { pathToRegexp } = require('path-to-regexp')
 const xroute = require('../../lib/xroute')
+const { ooapiVersionFromRequest } = require('../../lib/ooapi')
 
 // Given a collection of `paths` with `:param` placeholders, return a
 // function that matches an actual path (returns true if the given
@@ -86,21 +87,6 @@ const prepareRequestHeaders = (acl, req) => {
       throw new VersionError(`Multiple OOAPI versions allowed; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
     }
   }
-}
-
-const ooapiVersionFromRequest = (req) => {
-  const accept = req.headers.accept
-  if (!accept) {
-    return null
-  } else if (accept.startsWith('application/json')) {
-    return '5'
-  } else {
-    const res = accept.match(/^application\/vnd\.oeapi\+json\s*;\s*version=(\d+)\b.*/)
-    if (res) {
-      return res[1]
-    }
-  }
-  return null
 }
 
 const isAuthorized = (acl, req) => {
