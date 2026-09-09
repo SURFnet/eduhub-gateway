@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2026 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,17 +14,21 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const path = require('path')
-const gateway = require('express-gateway-lite')
+module.exports = {
+  name: 'ooapi-request-validator',
+  schema: {
+    $id: 'http://example.com/schemas/policies/ooapi-request-validator.json',
+    type: 'object',
+    properties: {
+      apiSpecs: {
+        type: 'object',
+        description: 'paths to the OpenAPI specifications per version',
+        additionalProperties: { type: 'string' }
+      }
+    },
 
-const policies = require('express-gateway-lite/lib/policies')
-policies.register(require('../policies/lifecycle-logger'))
-policies.register(require('../policies/gatekeeper'))
-policies.register(require('../policies/ooapi-request-validator'))
-policies.register(require('../policies/aggregation'))
-policies.register(require('../policies/metrics-collector'))
-policies.register(require('../policies/metrics-reporter'))
+    required: ['apiSpecs']
+  },
 
-gateway()
-  .load(path.join(__dirname, 'config-leaktest'))
-  .run()
+  policy: require('./ooapi-request-validator')
+}

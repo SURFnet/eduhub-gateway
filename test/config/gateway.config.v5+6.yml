@@ -188,7 +188,7 @@ policies:
   - key-auth
   - lifecycle-logger
   - proxy
-  - openapi-validator
+  - ooapi-request-validator
   - gatekeeper
   - request-transformer
   - response-transformer
@@ -215,6 +215,13 @@ pipelines:
     policies:
       - metrics-collector:
       - lifecycle-logger:
+
+      - ooapi-request-validator:
+          - action:
+              apiSpecs:
+                '5': 'ooapiv5.json'
+                '6': 'ooapiv6.json'
+
       - gatekeeper:
           - action:
               apps:
@@ -496,27 +503,13 @@ pipelines:
                   'Access-Control-Allow-Origin': "'*.surf.nl'"
                   'Referrer-Policy': "'no-referrer-when-downgrade'"
 
-      - openapi-validator:
-          - action:
-              apiSpec: 'ooapiv6.json'
-              validateRequests: '/^application\/vnd\.oeapi\+json\s*;\s*version=6\b.*/.test(req.headers["accept"])'
-              validateResponses: false # disable, always
-
-      - openapi-validator:
-          - action:
-              apiSpec: 'ooapiv5.json'
-              validateRequests: 'req.headers["accept"].startsWith("application/json") || /^application\/vnd\.oeapi\+json\s*;\s*version=5\b.*/.test(req.headers["accept"])'
-              validateResponses: false # disable, always
-
       - aggregation:
           - action:
               noEnvelopIfAnyHeaders:
-                'X-Validate-Response': 'true'
                 'X-Envelope-Response': 'false'
               keepRequestHeaders:
                 - 'accept-language'
                 - 'accept'
-                - 'x-validate-response' # needed for resp validation
                 - 'traceparent'
               keepResponseHeaders:
                 - 'content-type'

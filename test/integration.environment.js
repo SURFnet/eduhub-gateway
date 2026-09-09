@@ -81,17 +81,27 @@ const httpRequest = (url, { data, ...opts }) => {
 }
 
 const httpGet = (url, opts) => {
-  return httpRequest(url, { ...opts, method: 'GET' })
+  const { headers, ...opts_ } = opts || {}
+  return httpRequest(url, {
+    ...opts_,
+    headers: {
+      accept: 'application/json', // default to v5
+      ...(headers || {})
+    },
+    method: 'GET'
+  })
 }
 
-const httpPost = (url, { params, ...opts }) => {
+const httpPost = (url, { params, headers, ...opts }) => {
   const data = querystring.stringify(params)
   return httpRequest(url, {
     data,
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Content-Length': Buffer.byteLength(data)
+      accept: 'application/json', // default to v5
+      ...(headers || {}),
+      'content-type': 'application/x-www-form-urlencoded',
+      'content-length': Buffer.byteLength(data)
     }
   })
 }

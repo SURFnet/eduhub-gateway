@@ -32,20 +32,38 @@ integrationContext('validation policy', function () {
     assert.equal(res.statusCode, httpcode.OK)
   })
 
-  it('should respond with OK for a correct request for programs v5', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/programs'), {
+  it('should respond with NotAcceptable when no acceptable "accept" header set', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/courses'), {
+      headers: { accept: 'rocks/boulders' }
+    })
+    assert.equal(httpcode.NotAcceptable, res.statusCode)
+    const { message } = JSON.parse(res.body)
+    assert.equal(message, 'No OOAPI version detected')
+  })
+
+  it('should respond with NotAcceptable for unsupported version 999', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programmes'), {
+      headers: { accept: 'application/vnd.oeapi+json;version=999' }
+    })
+    assert.equal(httpcode.NotAcceptable, res.statusCode)
+    const { message } = JSON.parse(res.body)
+    assert.equal(message, 'OOAPI version 999 not supported')
+  })
+
+  it('should respond with OK for a correct request for programmes v6', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/courses'), {
       headers: {
-        accept: 'application/json',
+        accept: 'application/vnd.oeapi+json;version=6',
         'x-route': 'endpoint=Echo.Backend'
       }
     })
     assert.equal(httpcode.OK, res.statusCode)
   })
 
-  it('should respond with OK for a correct request for programmes v6', async () => {
-    const res = await httpGet(gatewayUrl('fred', '/programmes'), {
+  it('should respond with OK for a correct request for programs v5', async () => {
+    const res = await httpGet(gatewayUrl('fred', '/programs'), {
       headers: {
-        accept: 'application/vnd.oeapi+json;version=6',
+        accept: 'application/json',
         'x-route': 'endpoint=Echo.Backend'
       }
     })
@@ -108,47 +126,6 @@ integrationContext('validation policy', function () {
       { headers: { accept: 'application/json' } }
     )
     assert.equal(resSingle.statusCode, httpcode.OK, resSingle.body)
-  })
-
-  describe('with validation', () => {
-    it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(gatewayUrl(
-        'fred',
-        '/courses/900d900d-900d-900d-900d-900d900d900d'
-      ), {
-        headers: {
-          'X-Validate-Response': 'true',
-          'X-Route': 'endpoint=Test.Backend',
-          'Accept-Encoding': 'gzip',
-          Accept: 'application/json'
-        }
-      })
-      assert.equal(res.statusCode, httpcode.OK, res.body)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body)
-      assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    })
-  })
-
-  describe('without validation', () => {
-    it('should respond with OK for a correct response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/900d900d-900d-900d-900d-900d900d900d'))
-      assert.equal(res.statusCode, httpcode.OK)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body).responses['Test.Backend']
-      assert.equal(course.courseId, '900d900d-900d-900d-900d-900d900d900d')
-    })
-
-    it('should respond with OK for an incorrect response', async () => {
-      const res = await httpGet(gatewayUrl('fred', '/courses/badbadba-badb-badb-badb-badbadbadbad'))
-      assert.equal(res.statusCode, httpcode.OK)
-      assert.match(res.headers['content-type'], /^application\/json\b/)
-
-      const course = JSON.parse(res.body).responses['Test.Backend']
-      assert.equal(course.courseId, 'badbadba-badb-badb-badb-badbadbadbad')
-    })
   })
 
   const PATHS = []
@@ -290,10 +267,7 @@ integrationContext('validation policy', function () {
       const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
       it(`Path '${p}' should give an OK response`, async () => {
         const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
-          headers: {
-            Accept: 'application/json',
-            'X-Route': 'endpoint=Test.Backend'
-          }
+          headers: { 'X-Route': 'endpoint=Test.Backend' }
         })
         const summary =
               statusCode === httpcode.OK ? { statusCode } : { statusCode, body }
@@ -308,7 +282,7 @@ integrationContext('validation policy', function () {
       it(`Path '${p}' should give an OK response`, async () => {
         const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
           headers: {
-            Accept: 'application/vnd.oeapi+json;version=6.0',
+            accept: 'application/vnd.oeapi+json;version=6.0',
             'X-Route': 'endpoint=Test.Backend'
           }
         })

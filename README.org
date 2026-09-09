@@ -328,50 +328,36 @@ to ~proxyOptionsEncoded~ using the key in ~SECRETS_KEY_FILE~.
       openssl x509 -req -days 365 -in testServer.csr -CA testRootCA.pem -CAkey testRootCA.key -set_serial 01 -out testServer.crt
     #+end_src
 
-** Request/response validation
+** Request validation
 
-   Requests and responses can be validated against the [[./ooapiv4.json][OOAPI
-   specification]] using the ~openapi-validator~ policy.
+Requests will be validated against the [[./ooapiv5.json][OOAPI specification V5]] or [[./ooapiv6.json][OOAPI
+specification V6]] using the ~ooapi-request-validator~ policy.
 
-   #+begin_src yaml
-     - openapi-validator:
+#+begin_src yaml
+    - ooapi-request-validator:
         - action:
-            apiSpec: 'ooapiv4.json'
-            validateRequests: true
-            validateResponses: true
-   #+end_src
-
-   When ~validateRequests~ is ~true~, all incoming requests are
-   validated.
-
-   When ~validateResponses~ is ~true~, responses are validated when
-   the request has an ~X-Validate-Response: true~ header.
-
-*** OOAPI V4 & V5 configuration & validation
-
-There are example configurations for handling and validating OOAPI v4
-and v5 at [[config/gateway.config.yml.v4]] and
-[[config/gateway.config.yml.v5]]. These include the correct set of
-endpoint paths for each version, and refer to the API specifications
-at [[ooapiv4.json]] and [[ooapiv5.json]].
-
-The ooapiv5 json can be regenerated from the specification repository
-(included as a submodule in [[ooapi-specification]]) by running:
-
-#+begin_src sh
-  make ooapiv5.json
+            apiSpecs:
+                '5': 'ooapiv5.json'
+                '6': 'ooapiv6.json'
 #+end_src
 
-Which will generate a version of ooapi specification that excludes the
-response schemas since the full v5 specification is incompatible with
+When the requested version can not be derived from the "Accept"
+header, it will respond with a ~406 Not Acceptable~ response.
+
+When the request does not match one of the specification, it will
+respond with a ~400 Bad Request~ response.
+
+The spec files can be generated using:
+
+#+begin_src sh
+  make ooapiv5.json ooapiv6.json
+#+end_src
+
+Which will generate a versions of OOAPI specification that exclude the
+response schemas since the full specifications are not compatible with
 the validation library used.
 
-You will need to have [[https://stedolan.github.io/jq/][jq]] installed. On MacOS, jq is available with
-brew:
-
-#+begin_src sh
-  brew install jq
-#+end_src
+You will need to have [[https://stedolan.github.io/jq/][jq]] installed.
 
 ** Aggregation
 
