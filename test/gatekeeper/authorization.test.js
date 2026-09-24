@@ -28,7 +28,7 @@ describe('gatekeeper/authorization', () => {
         {
           endpoint: 'wilma',
           version: '5',
-          paths: ['/foo', '/foo/:id', '/bar', '/zoo/:id']
+          paths: ['/foo', '/foo/:id', '/bar', '/zoo/:id', '/zoo/:id/quux', '/zoo/:id/quux/:other']
         },
         {
           endpoint: 'betty',
@@ -138,6 +138,15 @@ describe('gatekeeper/authorization', () => {
         assert.equal(
           true,
           isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo/1' })
+        )
+        assert.equal(
+          true,
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo/a-1-b-2/quux' })
+        )
+        assert.equal(
+          true,
+          isAuthorized(acls.fred, { headers: { 'x-route': 'endpoint=wilma', accept: 'application/json' }, path: '/zoo/a-1-b-2/quux/123' }),
+          '/zoo/a-1-b-2/quux/123'
         )
         assert.equal(
           true,

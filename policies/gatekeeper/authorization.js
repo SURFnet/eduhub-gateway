@@ -14,9 +14,11 @@
  * with this program. If not, see http://www.gnu.org/licenses/.
  */
 
-const { pathToRegexp } = require('path-to-regexp')
 const xroute = require('../../lib/xroute')
 const { ooapiVersionFromRequest } = require('../../lib/ooapi')
+
+// Create a regex for a path.  Note: only very basic `:param` placeholders are supported.
+const pathToRegexp = (path) => new RegExp(`^${path.replaceAll(/:\w+/g, '[^/]+')}$`)
 
 // Given a collection of `paths` with `:param` placeholders, return a
 // function that matches an actual path (returns true if the given
