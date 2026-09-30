@@ -16,6 +16,7 @@
 
 const logger = require('express-gateway-lite/lib/logger').createLoggerWithLabel('[OAGW:Gatekeeper]')
 
+const { sendBadRequest, sendNotAcceptable } = require('../../lib/utils')
 const httpcode = require('../../lib/httpcode')
 const xroute = require('../../lib/xroute')
 const authentication = require('./authentication')
@@ -66,10 +67,10 @@ module.exports = (params, config) => {
           }
         } catch (e) {
           if (e instanceof xroute.MalformedHeader) {
-            res.status(httpcode.BadRequest).send(e.message)
+            sendBadRequest(res, { message: e.message })
             return
           } else if (e instanceof authorization.VersionError) {
-            res.status(httpcode.NotAcceptable).send(e.message)
+            sendNotAcceptable(res, { message: e.message })
             return
           } else {
             throw e

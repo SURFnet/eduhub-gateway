@@ -52,7 +52,18 @@ integrationContext('endpoint timeouts', function () {
       })
 
       assert.equal(res.statusCode, httpcode.BadRequest)
-      assert.equal('Malformed X-Route header \'endpoint=Bad.Backend*\'', res.body)
+      const { message } = JSON.parse(res.body)
+      assert.equal('Malformed X-Route header \'endpoint=Bad.Backend*\'', message)
+    })
+  })
+
+  describe('missing version', () => {
+    it('response status code is NotAcceptable', async () => {
+      const res = await httpGet(gatewayUrl('bambam', '/'), { headers: { } })
+
+      assert.equal(res.statusCode, httpcode.NotAcceptable)
+      const { message } = JSON.parse(res.body)
+      assert.equal("Ambiguous OOAPI version requested, please specify an 'Accept' header", message)
     })
   })
 
@@ -80,7 +91,8 @@ integrationContext('endpoint timeouts', function () {
       })
 
       assert.equal(res.statusCode, httpcode.BadRequest)
-      assert.equal('Malformed X-Route header \'endpoint=Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend\'', res.body)
+      const { message } = JSON.parse(res.body)
+      assert.equal('Malformed X-Route header \'endpoint=Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend, endpoint=Other-Test.Backend\'', message)
     })
   })
 })

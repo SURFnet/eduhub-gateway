@@ -216,12 +216,6 @@ pipelines:
       - metrics-collector:
       - lifecycle-logger:
 
-      - ooapi-request-validator:
-          - action:
-              apiSpecs:
-                '5': 'ooapiv5.json'
-                '6': 'ooapiv6.json'
-
       - gatekeeper:
           - action:
               apps:
@@ -238,6 +232,11 @@ pipelines:
                 bubbles:
                   client_name: 'Bubbles Flintstone'
                   client_schachome: 'bubbles.flintstone'
+                  passwordSalt: 5970ad7d7501916274cf114f68d2aed0
+                  passwordHash: 5e063ba6dcff4b7bc0234be7861dac8c4dd7db573f36755e0578b2e77a5cf6bf
+                bambam:
+                  client_name: 'Bambam Flintstone'
+                  client_schachome: 'bambam.flintstone'
                   passwordSalt: 5970ad7d7501916274cf114f68d2aed0
                   passwordHash: 5e063ba6dcff4b7bc0234be7861dac8c4dd7db573f36755e0578b2e77a5cf6bf
               acls:
@@ -487,6 +486,23 @@ pipelines:
                     - endpoint: 'OtherSlow.Backend'
                       version: '5'
                       paths: ['/']
+                - app: bambam
+                  endpoints:
+                    - endpoint: 'Echo.Backend'
+                      version: '5'
+                      paths: ['/']
+                    - endpoint: 'Other-Test.Backend'
+                      version: '6'
+                      paths: ['/']
+
+      # note: this policy goes after gatekeeper to allow not setting
+      # request accept header.  It is set by the gatekeeper in that
+      # case based on which exclusive version is accessible.
+      - ooapi-request-validator:
+          - action:
+              apiSpecs:
+                '5': 'ooapiv5.json'
+                '6': 'ooapiv6.json'
 
       - response-transformer:
           - action:

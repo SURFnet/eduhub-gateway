@@ -38,7 +38,7 @@ integrationContext('validation policy', function () {
     })
     assert.equal(httpcode.NotAcceptable, res.statusCode)
     const { message } = JSON.parse(res.body)
-    assert.equal(message, 'No OOAPI version detected')
+    assert.equal(message, 'Accept header not recognized; rocks/boulders')
   })
 
   it('should respond with NotAcceptable for unsupported version 999', async () => {
@@ -47,7 +47,7 @@ integrationContext('validation policy', function () {
     })
     assert.equal(httpcode.NotAcceptable, res.statusCode)
     const { message } = JSON.parse(res.body)
-    assert.equal(message, 'OOAPI version 999 not supported')
+    assert.equal(message, "Accepted version '999' is not available for endpoint 'Test.Backend'")
   })
 
   it('should respond with OK for a correct request for programmes v6', async () => {
@@ -267,7 +267,10 @@ integrationContext('validation policy', function () {
       const p = path.replace(/{.*}/, '900d900d-900d-900d-900d-900d900d900d')
       it(`Path '${p}' should give an OK response`, async () => {
         const { statusCode, body } = await httpGet(gatewayUrl('fred', p), {
-          headers: { 'X-Route': 'endpoint=Test.Backend' }
+          headers: {
+            accept: 'application/json',
+            'X-Route': 'endpoint=Test.Backend'
+          }
         })
         const summary =
               statusCode === httpcode.OK ? { statusCode } : { statusCode, body }

@@ -59,6 +59,7 @@ describe('gatekeeper', () => {
     let calledNext, gotStatus, gotSet
     const res = {
       set: (v) => { gotSet = v },
+      setHeader: (k, v) => {},
       sendStatus: (v) => { gotStatus = v },
       status: (v) => { gotStatus = v; return res },
       send: () => {}
