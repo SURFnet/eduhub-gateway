@@ -217,12 +217,6 @@ pipelines:
       - metrics-collector:
       - lifecycle-logger:
 
-      - ooapi-request-validator:
-          - action:
-              apiSpecs:
-                  '5': 'ooapiv5.json'
-                  '6': 'ooapiv6.json'
-
       - gatekeeper:
           - action:
               apps:
@@ -488,6 +482,15 @@ pipelines:
                     - endpoint: 'OtherSlow.Backend'
                       version: '5'
                       paths: ['/']
+
+      # note: this policy goes after gatekeeper to allow not setting
+      # request accept header.  It is set by the gatekeeper in that
+      # case based on which exclusive version is accessible.
+      - ooapi-request-validator:
+          - action:
+              apiSpecs:
+                  '5': 'ooapiv5.json'
+                  '6': 'ooapiv6.json'
 
       - response-transformer:
           - action:

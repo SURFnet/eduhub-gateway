@@ -51,7 +51,8 @@ const REDIS_HOST = 'host.testcontainers.internal'
 const testCredentials = {
   fred: 'fred:96557fbdbcf0ac9d83876f17165c0f16',
   barney: 'barney:df9b24c6f9f412f73b70579b049ff993',
-  bubbles: 'bubbles:06864d9f7974969d9c7af0f729f0129a'
+  bubbles: 'bubbles:06864d9f7974969d9c7af0f729f0129a',
+  bambam: 'bambam:06864d9f7974969d9c7af0f729f0129a'
 }
 
 const httpRequest = (url, { data, ...opts }) => {
@@ -85,7 +86,6 @@ const httpGet = (url, opts) => {
   return httpRequest(url, {
     ...opts_,
     headers: {
-      accept: 'application/json', // default to v5
       ...(headers || {})
     },
     method: 'GET'
@@ -98,7 +98,6 @@ const httpPost = (url, { params, headers, ...opts }) => {
     data,
     method: 'POST',
     headers: {
-      accept: 'application/json', // default to v5
       ...(headers || {}),
       'content-type': 'application/x-www-form-urlencoded',
       'content-length': Buffer.byteLength(data)

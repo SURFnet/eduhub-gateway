@@ -17,7 +17,7 @@
 /* eslint-env mocha */
 
 const assert = require('assert').strict
-const { compileAcls, prepareRequestHeaders, isAuthorized } = require('../../policies/gatekeeper/authorization')
+const { compileAcls, prepareRequestHeaders, isAuthorized, VersionError } = require('../../policies/gatekeeper/authorization')
 const { MalformedHeader } = require('../../lib/xroute')
 
 describe('gatekeeper/authorization', () => {
@@ -66,12 +66,28 @@ describe('gatekeeper/authorization', () => {
         }
 
       ]
+    },
+    {
+      app: 'bambam',
+      endpoints: [
+        {
+          version: '5',
+          endpoint: 'wilma',
+          paths: ['/foo', '/bar']
+        },
+        {
+          version: '6',
+          endpoint: 'betty',
+          paths: ['/foo', '/bar']
+        }
+
+      ]
     }
   ])
 
   describe('compileAcls', () => {
     it('maps apps and endpoints to matchers', () => {
-      assert.deepEqual(Object.keys(acls), ['fred', 'barney', 'bubbles'])
+      assert.deepEqual(Object.keys(acls), ['fred', 'barney', 'bubbles', 'bambam'])
       assert(acls.fred.wilma)
       assert(acls.fred.betty)
       assert(acls.barney.betty)
@@ -87,6 +103,7 @@ describe('gatekeeper/authorization', () => {
         }, MalformedHeader
       )
     })
+
     it('added x-route header when missing', () => {
       const req = { headers: { accept: 'application/json' } }
       prepareRequestHeaders(acls.fred, req)
@@ -103,7 +120,31 @@ describe('gatekeeper/authorization', () => {
       prepareRequestHeaders(acls.fred, req)
       assert.equal('endpoint=YabbaDabbaDoo', req.headers['x-route'])
     })
+
+    describe('without accept header', () => {
+      it('sets accept header with only available ooapi version for all routes for fred', () => {
+        const req = { headers: { } }
+        prepareRequestHeaders(acls.fred, req)
+        assert.equal('application/vnd.oeapi+json;version=5', req.headers.accept)
+      })
+
+      it('fails to set accept header for all routes for bambam due to ambiguous version', () => {
+        const req = { headers: { } }
+        assert.throws(
+          () => {
+            prepareRequestHeaders(acls.bambam, req)
+          }, VersionError
+        )
+      })
+
+      it('sets accept header for specific route for bambam', () => {
+        const req = { headers: { 'x-routes': 'endpoint=wilma' } }
+        prepareRequestHeaders(acls.fred, req)
+        assert.equal('application/vnd.oeapi+json;version=5', req.headers.accept)
+      })
+    })
   })
+
   describe('isAuthorized', () => {
     it('throws exception with invalid x-route header', () => {
       assert.throws(

@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 SURFnet B.V.
+/* Copyright (C) 2020-2026 SURFnet B.V.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -56,59 +56,56 @@ const compileAcls = (acls) => (
   }, {})
 )
 
-// which versions of the ooapi are allowed for the given collection of
-// endpoints
-const allowedVersions = (acl, endpoints) => {
-  return endpoints.slice(1).reduce((versions, endpoint) => {
-    return versions.intersection(new Set(Object.keys(acl[endpoint])))
-  }, new Set(Object.keys(acl[endpoints[0]])))
-}
+// Return array for versions allowed for all given endpoints.
+const allowedVersions = (acl, endpoints) => (
+  Array.from(
+    endpoints.slice(1).reduce((versions, endpoint) => (
+      versions.intersection(new Set(Object.keys(acl[endpoint])))
+    ), new Set(Object.keys(acl[endpoints[0]] || {})))
+  )
+)
 
 class VersionError extends Error {}
 
 const prepareRequestHeaders = (acl, req) => {
+  // When x-route not set, use all endpoints
   if (!req.headers['x-route']) {
     req.headers['x-route'] = xroute.encode(Object.keys(acl), true)
   }
-  // if no or wildcard accept header, and only one version is acceptable for
-  // the current request, set the accept header to that version
-  if (!req.headers.accept || req.headers.accept.match(/^(\*|application)\/\*/)) {
+
+  // Set accept header for correct version
+  if (!req.headers.accept) {
     const endpoints = xroute.decode(req.headers['x-route'], true)
+
+    // Only one OOAPI version may be available at this point
     const allowed = allowedVersions(acl, endpoints)
-    if ((!allowed) || allowed.size === 0) {
-      throw new VersionError('No single OOAPI version allowed for these combined endpoints')
-    } else if (allowed.size === 1) {
-      if (allowed.has('5')) {
-        req.headers.accept = 'application/json'
-      } else if (allowed.has('6')) {
-        req.headers.accept = 'application/vnd.oeapi+json;version=6'
-      } else {
-        throw new VersionError(`No supported OOAPI version; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
-      }
-    } else {
-      throw new VersionError(`Multiple OOAPI versions allowed; ${Array.from(allowed).join(',')} please specify an 'Accept' header`)
+    if (allowed.length !== 1) {
+      throw new VersionError("Ambiguous OOAPI version requested, please specify an 'Accept' header")
     }
+
+    req.headers.accept = `application/vnd.oeapi+json;version=${allowed[0]}`
+  } else if (!ooapiVersionFromRequest(req)) {
+    throw new VersionError(`Accept header not recognized; ${req.headers.accept}`)
   }
 }
 
+// NOTE: should be called after prepareRequestHeaders, otherwise
+// requested endpoint version may be unknown.
 const isAuthorized = (acl, req) => {
   const endpoints = xroute.decode(req.headers['x-route'], true)
+
   const version = ooapiVersionFromRequest(req)
-  if (!version) {
-    throw new VersionError(`Unable to determine OOAPI Version from Accept header '${req.headers.accept}'`)
-  }
 
   if (endpoints.length) {
     return endpoints.reduce(
       (m, endpoint) => {
-        // throw version error if there IS an ACL for this
-        // app-endpoint combo, but not with the accepted version
+        // throw version error when there *is* an ACL for this app-endpoint combo, but not with the accepted version
         if (acl?.[endpoint] && !acl[endpoint][version]) {
           throw new VersionError(`Accepted version '${version}' is not available for endpoint '${endpoint}'`)
-        } else {
-          // otherwise, do a regular authorization check
-          return m && !!acl?.[endpoint]?.[version]?.(req.path)
         }
+
+        // otherwise, do a regular authorization check
+        return m && !!acl?.[endpoint]?.[version]?.(req.path)
       },
       true
     )

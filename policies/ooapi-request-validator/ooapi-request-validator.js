@@ -18,22 +18,8 @@ const fs = require('fs')
 const jsYaml = require('js-yaml')
 const { OpenApiValidator } = require('express-openapi-validate')
 
-const httpcode = require('../../lib/httpcode')
 const { ooapiVersionFromRequest } = require('../../lib/ooapi')
-
-const sendNotAcceptable = (res, message) => {
-  res.setHeader('content-type', 'application/json')
-  res.status(httpcode.NotAcceptable)
-  res.send(JSON.stringify({ message }))
-  res.error_msg = message // we log res.error_msg in lifecycle logger
-}
-
-const sendBadRequest = (res, err) => {
-  res.setHeader('content-type', 'application/json')
-  res.status(httpcode.BadRequest)
-  res.send(JSON.stringify({ message: err.message, data: err.data }))
-  res.error_msg = err.message // we log res.error_msg in lifecycle logger
-}
+const { sendBadRequest, sendNotAcceptable } = require('../../lib/utils')
 
 const NO_MATCH_RE = /\b(method|path)=/i
 
@@ -66,27 +52,29 @@ module.exports = ({ apiSpecs }) => {
   return (req, res, next) => {
     const version = ooapiVersionFromRequest(req)
 
+    // Note: accept header for version will be provided by
+    // authorization.prepareRequestHeaders when not in the original
+    // request.
     if (!version) {
-      sendNotAcceptable(res, 'No OOAPI version detected')
-      return
+      throw new Error('Internal error: missing OOAPI version, gatekeeper policy missing or misplaced')
     }
 
     if (!apiSpecs[version]) {
-      sendNotAcceptable(res, `OOAPI version ${version} not supported`)
+      sendNotAcceptable(res, { message: `OOAPI version ${version} not supported` })
       return
     }
 
     try {
       validatorFns[version]().match()(req, res, (err) => {
         if (err !== undefined) {
-          sendBadRequest(res, err)
+          sendBadRequest(res, { message: err, data: err.data })
         } else {
           next()
         }
       })
     } catch (err) {
       if (isMatchError(err)) {
-        sendBadRequest(res, err)
+        sendBadRequest(res, { message: err.message })
       } else {
         throw err
       }
