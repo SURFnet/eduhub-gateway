@@ -520,7 +520,7 @@ pipelines:
                 - 'content-length'
                 - 'traceparent'
               proxyOptions:
-                proxyTimeout: 30000
+                proxyTimeout: 300000
   not_found:
     apiEndpoints:
       - not_found
