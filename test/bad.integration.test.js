@@ -58,12 +58,44 @@ integrationContext('endpoint timeouts', function () {
   })
 
   describe('missing version', () => {
-    it('response status code is NotAcceptable', async () => {
-      const res = await httpGet(gatewayUrl('bambam', '/'), { headers: { } })
+    describe('with x-route', () => {
+      it('response status code is NotAcceptable for endpoint with multiple versions', async () => {
+        const res = await httpGet(gatewayUrl('bambam', '/'), {
+          headers: { 'X-Route': 'endpoint=Echo.Backend,Other-Test.Backend' }
+        })
 
-      assert.equal(res.statusCode, httpcode.NotAcceptable)
-      const { message } = JSON.parse(res.body)
-      assert.equal("Ambiguous OOAPI version requested, please specify an 'Accept' header", message)
+        assert.equal(res.statusCode, httpcode.NotAcceptable)
+        const { message } = JSON.parse(res.body)
+        assert.equal("Ambiguous OOAPI version requested, please specify an 'Accept' header", message)
+      })
+    })
+
+    describe('without x-route', () => {
+      it('response status code is NotAcceptable for endpoint with multiple versions', async () => {
+        const res = await httpGet(gatewayUrl('bambam', '/'), { headers: { } })
+
+        assert.equal(res.statusCode, httpcode.NotAcceptable)
+        const { message } = JSON.parse(res.body)
+        assert.equal("Ambiguous OOAPI version requested, please specify an 'Accept' header", message)
+      })
+    })
+  })
+
+  describe('wrong endpoint', () => {
+    it('response status code is Forbidden for not existing endpoint', async () => {
+      const res = await httpGet(gatewayUrl('bambam', '/'), {
+        headers: { 'X-Route': 'endpoint=NotExisting' }
+      })
+
+      assert.equal(res.statusCode, httpcode.Forbidden)
+    })
+
+    it('response status code is Forbidden for not accessible endpoint', async () => {
+      const res = await httpGet(gatewayUrl('bambam', '/'), {
+        headers: { 'X-Route': 'endpoint=Unavailable-Test.Backend' }
+      })
+
+      assert.equal(res.statusCode, httpcode.Forbidden)
     })
   })
 

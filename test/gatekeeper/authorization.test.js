@@ -125,7 +125,7 @@ describe('gatekeeper/authorization', () => {
       it('sets accept header with only available ooapi version for all routes for fred', () => {
         const req = { headers: { } }
         prepareRequestHeaders(acls.fred, req)
-        assert.equal('application/vnd.oeapi+json;version=5', req.headers.accept)
+        assert.equal('application/json', req.headers.accept)
       })
 
       it('fails to set accept header for all routes for bambam due to ambiguous version', () => {
@@ -140,12 +140,31 @@ describe('gatekeeper/authorization', () => {
       it('sets accept header for specific route for bambam', () => {
         const req = { headers: { 'x-routes': 'endpoint=wilma' } }
         prepareRequestHeaders(acls.fred, req)
-        assert.equal('application/vnd.oeapi+json;version=5', req.headers.accept)
+        assert.equal('application/json', req.headers.accept)
+      })
+
+      it('does not set accept header for unauthorized route for bambam', () => {
+        const req = { headers: { 'x-route': 'endpoint=unauthorized' } }
+        prepareRequestHeaders(acls.fred, req)
+        assert(!req.headers.accept)
+      })
+
+      it('does not set accept header for some unauthorized route for bambam', () => {
+        const req = { headers: { 'x-route': 'endpoint=wilma,unauthorized' } }
+        prepareRequestHeaders(acls.fred, req)
+        assert(!req.headers.accept)
       })
     })
   })
 
   describe('isAuthorized', () => {
+    it('returns false when accept header not set', () => {
+      assert.equal(
+        false,
+        isAuthorized(acls.fred, { headers: { } })
+      )
+    })
+
     it('throws exception with invalid x-route header', () => {
       assert.throws(
         () => {
