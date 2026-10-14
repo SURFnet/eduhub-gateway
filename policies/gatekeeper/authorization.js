@@ -60,9 +60,22 @@ const compileAcls = (acls) => (
 const allowedVersions = (acl, endpoints) => (
   Array.from(
     endpoints.slice(1).reduce((versions, endpoint) => (
-      versions.intersection(new Set(Object.keys(acl[endpoint])))
+      versions.intersection(new Set(Object.keys(acl[endpoint] || {})))
     ), new Set(Object.keys(acl[endpoints[0]] || {})))
   )
+)
+
+// Return true when all endpoints are available in acl, return false
+// when endpoints is empty.
+const areAllEndpointsAllowed = (acl, endpoints) => (
+  endpoints?.length &&
+    endpoints.reduce((allowed, endpoint) => (
+      allowed && !!acl[endpoint]
+    ), true)
+)
+
+const acceptHeader = (version) => (
+  `${version}` === '5' ? 'application/json' : `application/vnd.oeapi+json;version=${version}`
 )
 
 class VersionError extends Error {}
@@ -77,13 +90,14 @@ const prepareRequestHeaders = (acl, req) => {
   if (!req.headers.accept) {
     const endpoints = xroute.decode(req.headers['x-route'], true)
 
-    // Only one OOAPI version may be available at this point
-    const allowed = allowedVersions(acl, endpoints)
-    if (allowed.length !== 1) {
-      throw new VersionError("Ambiguous OOAPI version requested, please specify an 'Accept' header")
+    if (areAllEndpointsAllowed(acl, endpoints)) {
+      const allowed = allowedVersions(acl, endpoints)
+      if (allowed.length === 1) {
+        req.headers.accept = acceptHeader(allowed[0])
+      } else {
+        throw new VersionError("Ambiguous OOAPI version requested, please specify an 'Accept' header")
+      }
     }
-
-    req.headers.accept = `application/vnd.oeapi+json;version=${allowed[0]}`
   } else if (!ooapiVersionFromRequest(req)) {
     throw new VersionError(`Accept header not recognized; ${req.headers.accept}`)
   }
@@ -93,10 +107,11 @@ const prepareRequestHeaders = (acl, req) => {
 // requested endpoint version may be unknown.
 const isAuthorized = (acl, req) => {
   const endpoints = xroute.decode(req.headers['x-route'], true)
-
   const version = ooapiVersionFromRequest(req)
 
-  if (endpoints.length) {
+  if (endpoints?.length) {
+    if (!areAllEndpointsAllowed(acl, endpoints)) return false
+
     return endpoints.reduce(
       (m, endpoint) => {
         // throw version error when there *is* an ACL for this app-endpoint combo, but not with the accepted version
