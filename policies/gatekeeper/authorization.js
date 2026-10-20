@@ -15,7 +15,7 @@
  */
 
 const xroute = require('../../lib/xroute')
-const { ooapiVersionFromRequest } = require('../../lib/ooapi')
+const { ooapiVersionFromRequest, isOoapiVersionWildcard } = require('../../lib/ooapi')
 
 // Create a regex for a path.  Note: only very basic `:param` placeholders are supported.
 const pathToRegexp = (path) => new RegExp(`^${path.replaceAll(/:\w+/g, '[^/]+')}$`)
@@ -87,7 +87,7 @@ const prepareRequestHeaders = (acl, req) => {
   }
 
   // Set accept header for correct version
-  if (!req.headers.accept) {
+  if (isOoapiVersionWildcard(req)) {
     const endpoints = xroute.decode(req.headers['x-route'], true)
 
     if (areAllEndpointsAllowed(acl, endpoints)) {
