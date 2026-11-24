@@ -58,7 +58,7 @@ integrationContext('aggregation policy', function () {
           responseCode: httpcode.OK,
           headers: {
             'content-length': '123',
-            'content-type': 'application/json; charset=UTF-8',
+            'content-type': 'application/json; charset=utf-8',
             traceparent: body.gateway.endpoints['Test.Backend'].headers.traceparent
           }
         },
@@ -67,7 +67,7 @@ integrationContext('aggregation policy', function () {
           responseCode: httpcode.OK,
           headers: {
             'content-length': '136',
-            'content-type': 'application/json; charset=UTF-8',
+            'content-type': 'application/json; charset=utf-8',
             traceparent: body.gateway.endpoints['Other-Test.Backend'].headers.traceparent
           }
         },
@@ -126,7 +126,7 @@ integrationContext('aggregation policy', function () {
           responseCode: httpcode.OK,
           headers: {
             'content-length': '123',
-            'content-type': 'application/json; charset=UTF-8',
+            'content-type': 'application/json; charset=utf-8',
             traceparent: body.gateway.endpoints['Test.Backend'].headers.traceparent
           }
         },
